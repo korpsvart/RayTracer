@@ -8,6 +8,11 @@ import java.util.Optional;
 public class Scene {
 
     private static final int MAX_RAY_DEPTH = 10; //max depth of ray tracing recursion
+
+    public static double getBias() {
+        return bias;
+    }
+
     private static final double bias = 10e-6; //bias for shadow acne
     private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
 
@@ -17,6 +22,15 @@ public class Scene {
     private final double fieldOfView;
     private final BufferedImage img;
     private final Vector3f cameraPosition;
+
+    public ArrayList<SceneObject> getSceneObjects() {
+        return sceneObjects;
+    }
+
+    public ArrayList<PointLight> getPointLights() {
+        return pointLights;
+    }
+
     private ArrayList<SceneObject> sceneObjects;
     private ArrayList<PointLight> pointLights;
 
@@ -92,7 +106,6 @@ public class Scene {
         if (found) {
             Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(interceptMin));
             Vector3f surfaceNormal = objectFound.getSurfaceNormal(hitPoint);
-            //add bias for shadow acne in direction of surface normal
             if (objectFound.isDiffuse()) {
                 //shading perfect diffuse surfaces using albedo, light intensity and cosine
                 //Do this for each light in the scene

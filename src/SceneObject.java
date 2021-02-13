@@ -10,6 +10,7 @@ public interface SceneObject {
     public abstract double getIor();
     public abstract boolean isDiffuse();
     public abstract Optional<Double> rayIntersection(Line3d ray);
+    public Optional<Double> trace(Line3d ray, RayType rayType);
     public abstract Vector3f getSurfaceNormal(Vector3f point);
 
 }
