@@ -1,0 +1,98 @@
+public class Matrix4D {
+
+    //A matrix to describe affine transform
+    //using homogeneous points
+
+
+    private double mInternal[][] = new double[4][4];
+
+    public Matrix4D(double[][] matrix) {
+        mInternal = matrix.clone();
+    }
+
+    public Matrix4D(Vector3f c) {
+        //Pure translation matrix
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                mInternal[i][j] = 0;
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            mInternal[i][3] = c.getElement(i);
+        }
+        for (int j = 0; j < 3; j++) {
+            mInternal[3][j] = 0;
+        }
+        mInternal[3][3] = 1;
+    }
+
+    public double[][] getmInternal() {
+        return mInternal.clone();
+    }
+
+    public Matrix3D getA() {
+        //get the linear part of affine transform
+        double matrix[][] = new double[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                matrix[i][j] = mInternal[i][j];
+            }
+        }
+        return new Matrix3D(matrix);
+    }
+
+    public Vector3f getC() {
+        //get translational part of affine transform
+        Vector3f c = new Vector3f(mInternal[0][3], mInternal[1][3], mInternal[2][3]);
+        return c;
+    }
+
+    public Vector3f transformVector(Vector3f v) {
+        Vector3f vTransform;
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        double w = 0;
+        for (int j = 0; j < 3; j++) {
+            x += mInternal[0][j]*v.getElement(j);
+        }
+        for (int j = 0; j < 3; j++) {
+            y += mInternal[1][j]*v.getElement(j);
+        }
+        for (int j = 0; j < 3; j++) {
+            z += mInternal[2][j]*v.getElement(j);
+        }
+        for (int j = 0; j < 3; j++) {
+            w += mInternal[3][j]*v.getElement(j);
+        }
+        x+=mInternal[0][3];
+        y+=mInternal[1][3];
+        z+=mInternal[2][3];
+        w+=mInternal[3][3];
+        vTransform = new Vector3f(x, y, z);
+        if (w != 1 && w != 0) {
+            vTransform = vTransform.mul(1/w);
+        }
+        return vTransform;
+    }
+
+    public Matrix4D matrixMult(Matrix4D m2) {
+        double result[][] = new double[4][4];
+        double m2Internal[][] = m2.getmInternal();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    result[i][j] += mInternal[i][k]*m2Internal[k][j];
+                }
+            }
+        }
+        return new Matrix4D(result);
+    }
+
+    public Matrix4D invertRotationMatrix() {
+        //see method for 3D matrix
+        Matrix3D m = this.getA().invertRotationMatrix();
+        return m.get4DMatrix(new Vector3f(0, 0, 0));
+    }
+
+}
