@@ -7,6 +7,19 @@ public abstract class MirrorTransparent implements SceneObject {
     of transparency)
      */
 
+    private double ior = 1;
+    private final static double AIR_IOR = 1;
+
+    public double getIor() {
+        return ior;
+    }
+
+    public void setIor(double ior) {
+        this.ior = ior;
+    }
+
+
+
     @Override
     public Optional<Double> trace(Line3d ray, RayType rayType) {
         if (rayType==RayType.SHADOW) {
@@ -33,5 +46,63 @@ public abstract class MirrorTransparent implements SceneObject {
         } else {
             return this.rayIntersection(ray);
         }
+    }
+
+    @Override
+    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
+        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);
+        return reflectionRefraction(hitPoint, ray.getDirection(), surfaceNormal, AIR_IOR, this.ior, rayDepth, currentScene);
+    }
+
+
+    public Vector3f reflectionRefraction(Vector3f hitPoint, Vector3f incident, Vector3f surfaceNormal, double ior1, double ior2, int rayDepth,
+                                         Scene currentScene) {
+        //compute refraction and reflection
+
+        //compute ratio of reflected and refracted light
+        //using fresnel equation
+
+        Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
+        Vector3f refractionDir;
+        double fr; //ratio of reflected light
+        double c1 = incident.dotProduct(surfaceNormal);
+        if (c1 < 0) {
+            c1 = -c1;
+        } else {
+            //we are going outside the object
+            //reverse normal
+            //(dont invert c1 cause its already positive)
+            //Also swap indexes of refraction!
+            double temp = ior1;
+            ior1=ior2;
+            ior2=temp;
+            surfaceNormal = surfaceNormal.mul(-1);
+        }
+        double eta = ior1 / ior2;
+        double c = 1 - Math.pow(ior1/ior2, 2)*(1-Math.pow(c1, 2));
+        Vector3f hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
+        Vector3f hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
+        if (c < 0) {
+            //incident angle is greater then critical angle:
+            //total internal reflection.
+            //We don't need to compute refraction direction
+            return currentScene.rayTrace(new Line3d(hitPointRefl, reflectionDir), rayDepth+1);
+        } else {
+            double c2 = Math.sqrt(c);
+            //compute refraction direction
+            refractionDir = incident.mul(eta).add(surfaceNormal.mul(eta*c1 - c2));
+            //compute fr using Fresnel equations
+            double cosRefr = -refractionDir.dotProduct(surfaceNormal); //cosine of angle of refraction
+            assert (cosRefr>0);
+            double x12 = ior1*cosRefr;
+            double x21 = ior2*c1;
+            double fr_parallel = Math.pow((x21-x12)/(x21+x12), 2);
+            double fr_perpendicular = Math.pow((x12-x21)/(x12+x21), 2);
+            fr = (fr_parallel+fr_perpendicular)/2;
+            Vector3f reflectionColor = currentScene.rayTrace(new Line3d(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
+            Vector3f refractionColor = currentScene.rayTrace(new Line3d(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
+            return reflectionColor.add(refractionColor);
+        }
+
     }
 }

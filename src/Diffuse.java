@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Optional;
 
-public abstract class Diffuse implements SceneObject
+public abstract class Diffuse extends SceneObject
 {
     private double albedo = 0.3; //albedo is only considered for diffuse objects
 
@@ -14,7 +14,8 @@ public abstract class Diffuse implements SceneObject
         return this.rayIntersection(ray);
     }
 
-    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int ratDepth, Scene currentScene) {
+    @Override
+    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
         ArrayList<PointLight> pointLights = currentScene.getPointLights();
         ArrayList<SceneObject> sceneObjects = currentScene.getSceneObjects();
         Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);

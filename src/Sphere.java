@@ -1,35 +1,16 @@
 import java.awt.*;
 import java.util.Optional;
 
-public class Sphere implements SceneObject {
+public class Sphere extends GeometricObject {
 
     private final Vector3f centre;
     private final double radius;
-    private final Color color;
-    private boolean isDiffuse = true;
-    private double ior = 1;
 
 
-    public void setIor(double ior) {
-        this.ior = ior;
-    }
-
-
-    @Override
-    public double getIor() {
-        return ior;
-    }
-
-
-    public Sphere(Vector3f centre, double radius, Color color) {
+    public Sphere(Vector3f centre, double radius) {
         this.centre = centre;
         this.radius = radius;
-        this.color = color;
-    }
 
-    public Sphere(Vector3f centre, double radius, Color color, boolean isDiffuse) {
-        this(centre, radius, color);
-        this.isDiffuse = isDiffuse;
     }
 
 
@@ -41,20 +22,6 @@ public class Sphere implements SceneObject {
         return radius;
     }
 
-    @Override
-    public Color getColor() {
-        return this.color;
-    }
-
-    @Override
-    public double getAlbedo() {
-        return albedo;
-    }
-
-    @Override
-    public boolean isDiffuse() {
-        return isDiffuse;
-    }
 
     @Override
     public Optional<Double> rayIntersection(Line3d ray) {
@@ -82,6 +49,7 @@ public class Sphere implements SceneObject {
             return Optional.empty();
         }
     }
+
 
     @Override
     public Vector3f getSurfaceNormal(Vector3f point) {

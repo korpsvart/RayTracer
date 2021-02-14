@@ -1,16 +1,31 @@
 import java.awt.*;
 import java.util.Optional;
 
-public interface SceneObject {
+public abstract class SceneObject extends GeometricObject{
 
-    double albedo = 0.3; //default value
+    /*Scene Object, decorating (more like wrapping) a GeometricObject,
+    adding material properties to them.
+    This class should be extended by class like Diffuse, MirrorLike ecc...
+     */
 
-    public abstract Color getColor();
-    public abstract double getAlbedo();
-    public abstract double getIor();
-    public abstract boolean isDiffuse();
-    public abstract Optional<Double> rayIntersection(Line3d ray);
-    public Optional<Double> trace(Line3d ray, RayType rayType);
-    public abstract Vector3f getSurfaceNormal(Vector3f point);
+    private GeometricObject geometricObject;
+
+    public SceneObject(GeometricObject geometricObject) {
+        //wrap the geometric object passed
+        this.geometricObject = geometricObject;
+    }
+
+    @Override
+    public Optional<Double> rayIntersection(Line3d ray) {
+        return geometricObject.rayIntersection(ray);
+    }
+
+    @Override
+    public Vector3f getSurfaceNormal(Vector3f point) {
+        return geometricObject.getSurfaceNormal(point);
+    }
+
+    public abstract Optional<Double> trace(Line3d ray, RayType rayType);
+    public abstract Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene);
 
 }
