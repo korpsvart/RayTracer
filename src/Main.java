@@ -29,28 +29,35 @@ public class Main {
         Color color1 = new Color(1f,1f,1f);
         Color color2 = new Color(0.8f,0.6f,0.3f);
         Color color3 = new Color(0.4f,0.9f,0.1f);
-        Sphere sphere1 = new Sphere(new Vector3f(1,0,-10), 1, color1, true);
-        Sphere sphere2 = new Sphere(new Vector3f(-0.5, 0.5, -8), 1, color2, false);
-        Sphere sphere4 = new Sphere(new Vector3f(-3, 2, -10), 1.6, color2, true);
-        sphere2.setIor(1.5);
-        Sphere sphere3 = new Sphere(new Vector3f(-2, -2, -7), 0.6, color2, true);
-        Sphere sphere5 = new Sphere(new Vector3f(0, -2, -7), 0.5, color2, true);
-        Sphere sphere6 = new Sphere(new Vector3f(0, -2, -4), 0.3, color2, true);
-        Sphere sphere7 = new Sphere(new Vector3f(0, -2, -11), 0.6, color2, true);
+        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(1,0,-10), 1));
+        MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
+        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(-3, 2, -10), 1.6));
+        transparentSphere.setIor(1.5);
+        Sphere sphere3 = new Sphere(new Vector3f(-2, -2, -7), 0.6);
+        Sphere sphere4 = new Sphere(new Vector3f(0, -2, -7), 0.5);
+        Sphere sphere5 = new Sphere(new Vector3f(0, -2, -4), 0.3);
+        Sphere sphere6 = new Sphere(new Vector3f(0, -2, -11), 0.6);
+        Diffuse diffuseSphere3 = new Diffuse(sphere3);
+        Diffuse diffuseSphere4 = new Diffuse(sphere4);
+        Diffuse diffuseSphere5 = new Diffuse(sphere5);
+        Diffuse diffuseSphere6 = new Diffuse(sphere6);
+
 
         Triangle triangle1 = new Triangle(new Vector3f(-1.8,1,-7), new Vector3f(0,1,-7), new Vector3f(-1,1.6,-7));
-        PlaneObject plane1 = new PlaneObject(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0), color2, false);
-        PlaneObject plane2 = new PlaneObject(new Vector3f(0, -3, 0), new Vector3f(0, 1, 0), color2, true);
-        plane1.setIor(1.3);
-        scene.addSceneObject(sphere1);
-        scene.addSceneObject(sphere2);
-        scene.addSceneObject(sphere3);
-        scene.addSceneObject(sphere4);
-        scene.addSceneObject(sphere5);
-        scene.addSceneObject(sphere6);
-        scene.addSceneObject(sphere7);
-        scene.addSceneObject(plane1);
-        scene.addSceneObject(plane2);
+        Plane3d plane1 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
+        Plane3d plane2 = new Plane3d(new Vector3f(0, -3, 0), new Vector3f(0, 1, 0));
+        MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
+        Diffuse diffusePlane = new Diffuse(plane2);
+        transparentPlane.setIor(1.3);
+        scene.addSceneObject(diffuseSphere1);
+        scene.addSceneObject(transparentSphere);
+        scene.addSceneObject(diffuseSphere2);
+        scene.addSceneObject(diffuseSphere3);
+        scene.addSceneObject(diffuseSphere4);
+        scene.addSceneObject(diffuseSphere5);
+        scene.addSceneObject(diffuseSphere6);
+        scene.addSceneObject(transparentPlane);
+        scene.addSceneObject(diffusePlane);
 //        scene.addSceneObject(triangle1);
         Vector3f[][] controlPoints = {
                 new Vector3f[] { new Vector3f(0, 0, -5),

@@ -45,7 +45,7 @@ public class TriangleMesh {
     public void makeTriangles(Scene scene) {
         for (int i = 0; i < numTriangles; i++) {
             Triangle triangle = new Triangle(vertex[vertexIndex[i*3]], vertex[vertexIndex[i*3+1]], vertex[vertexIndex[i*3+2]]);
-            scene.addSceneObject(triangle);
+            scene.addSceneObject(new Diffuse(triangle)); //now all triangles are diffuse by default
         }
     }
 

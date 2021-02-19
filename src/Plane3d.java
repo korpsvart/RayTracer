@@ -1,6 +1,6 @@
 import java.util.Optional;
 
-public class Plane3d {
+public class Plane3d extends GeometricObject {
 
     protected final Vector3f point;
     protected final Vector3f e1;
@@ -76,6 +76,11 @@ public class Plane3d {
 
     }
 
+
+    @Override
+    public Vector3f getSurfaceNormal(Vector3f point) {
+        return this.n;
+    }
 
 
 

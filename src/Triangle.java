@@ -1,51 +1,16 @@
 import java.awt.*;
 import java.util.Optional;
 
-public class Triangle implements SceneObject {
+public class Triangle extends GeometricObject {
 
     //Vertices must be given in CCW ordering
 
     private final Vector3f v0, v1, v2;
-    private boolean isDiffuse = true;
-    private double ior = 1;
-
-
-    public void setIor(double ior) {
-        this.ior = ior;
-    }
-
-
-    @Override
-    public double getIor() {
-        return ior;
-    }
-
 
     public Triangle(Vector3f v0, Vector3f v1, Vector3f v2) {
         this.v0 = v0;
         this.v1 = v1;
         this.v2 = v2;
-    }
-
-    public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, boolean isDiffuse) {
-        this(v0, v1, v2);
-        this.isDiffuse = isDiffuse;
-    }
-
-
-    @Override
-    public Color getColor() {
-        return Color.BLUE; //a caso
-    }
-
-    @Override
-    public double getAlbedo() {
-        return albedo;
-    }
-
-    @Override
-    public boolean isDiffuse() {
-        return isDiffuse;
     }
 
     @Override

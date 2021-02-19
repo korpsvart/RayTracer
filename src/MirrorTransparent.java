@@ -1,6 +1,6 @@
 import java.util.Optional;
 
-public abstract class MirrorTransparent implements SceneObject {
+public class MirrorTransparent extends SceneObject {
 
     /* Objects which react to light both with
     reflection and refraction (they have some degree
@@ -9,6 +9,10 @@ public abstract class MirrorTransparent implements SceneObject {
 
     private double ior = 1;
     private final static double AIR_IOR = 1;
+
+    public MirrorTransparent(GeometricObject geometricObject) {
+        super(geometricObject);
+    }
 
     public double getIor() {
         return ior;

@@ -1,10 +1,14 @@
 import java.util.Optional;
 
-public abstract class MirrorLike implements SceneObject{
+public abstract class MirrorLike extends SceneObject{
 
     /*Objects which only reflect light (no refraction) */
 
     private double fr = 0.8; //fraction of reflected light
+
+    public MirrorLike(GeometricObject geometricObject) {
+        super(geometricObject);
+    }
 
     @Override
     public Optional<Double> trace(Line3d ray, RayType rayType) {

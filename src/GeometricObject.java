@@ -1,6 +1,7 @@
 import java.util.Optional;
 
 public abstract class GeometricObject {
+
     /* Geometric object, not considering its material properties
     with respect to light. This class can be directly inherited by geometric
     objects, which only needs to supply methods regarding geometric properties.

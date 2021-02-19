@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.util.Optional;
 
-public abstract class SceneObject extends GeometricObject{
+public abstract class SceneObject extends GeometricObject {
 
     /*Scene Object, decorating (more like wrapping) a GeometricObject,
     adding material properties to them.

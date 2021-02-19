@@ -1,9 +1,13 @@
 import java.util.ArrayList;
 import java.util.Optional;
 
-public abstract class Diffuse extends SceneObject
+public class Diffuse extends SceneObject
 {
     private double albedo = 0.3; //albedo is only considered for diffuse objects
+
+    public Diffuse(GeometricObject geometricObject) {
+        super(geometricObject);
+    }
 
     public void setAlbedo(double albedo) {
         this.albedo = albedo;
