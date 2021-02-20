@@ -3,10 +3,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class Main {
+
+    //variables for evaluating performance
+    //and acceleration structures
+    int numPrimaryRays = 0;
+    int rayTriangleTests = 0;
+    AtomicInteger rayTriangleIntersections = new AtomicInteger(0);
 
 
     public static void main(String[] args) throws Exception {
@@ -17,13 +24,14 @@ public class Main {
         //(0, 0, -1)
         //Screen is placed at z=-1
 
-        int width = 3840;
-        int height = 2160;
+        int width = 1280;
+        int height = 1024;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
 
         Scene scene = new Scene(width, height, fieldOfView, img, cameraPosition, new Vector3f(0.7f, 0.3f, 0.8f));
+
 
         //Sample sphere
         Color color1 = new Color(1f,1f,1f);
@@ -49,13 +57,13 @@ public class Main {
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-        scene.addSceneObject(diffuseSphere1);
-        scene.addSceneObject(transparentSphere);
-        scene.addSceneObject(diffuseSphere2);
-        scene.addSceneObject(diffuseSphere3);
-        scene.addSceneObject(diffuseSphere4);
-        scene.addSceneObject(diffuseSphere5);
-        scene.addSceneObject(diffuseSphere6);
+//        scene.addSceneObject(diffuseSphere1);
+//        scene.addSceneObject(transparentSphere);
+//        scene.addSceneObject(diffuseSphere2);
+//        scene.addSceneObject(diffuseSphere3);
+//        scene.addSceneObject(diffuseSphere4);
+//        scene.addSceneObject(diffuseSphere5);
+//        scene.addSceneObject(diffuseSphere6);
         scene.addSceneObject(transparentPlane);
         scene.addSceneObject(diffusePlane);
 //        scene.addSceneObject(triangle1);
@@ -83,14 +91,15 @@ public class Main {
                         new Vector3f(0.9, 1.2, -5.8)
                 }
         };
-//        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
-//        bezierSurface.triangulate(32).makeTriangles(scene);
+        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
+        bezierSurface.triangulate(16).makeTriangles(scene);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(1, 1.5, -4));
         scene.addPointLight(pointLight1);
         scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
+
         scene.render();
 
         File outputImg = new File("img.png");
