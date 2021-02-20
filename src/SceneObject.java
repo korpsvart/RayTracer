@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.Optional;
 
 public abstract class SceneObject extends GeometricObject {
@@ -16,7 +15,7 @@ public abstract class SceneObject extends GeometricObject {
     }
 
     @Override
-    public Optional<Double> rayIntersection(Line3d ray) {
+    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
         return geometricObject.rayIntersection(ray);
     }
 
@@ -25,7 +24,7 @@ public abstract class SceneObject extends GeometricObject {
         return geometricObject.getSurfaceNormal(point);
     }
 
-    public abstract Optional<Double> trace(Line3d ray, RayType rayType);
+    public abstract Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType);
     public abstract Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene);
 
 }

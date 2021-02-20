@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.util.Optional;
 
 public class DistantLight extends LightSource {
     //Distant lights are only "directional"

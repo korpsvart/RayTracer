@@ -1,6 +1,6 @@
-import java.util.ArrayList;
+import java.util.Optional;
 
-public class TriangleMesh {
+public class TriangleMesh extends GeometricObject{
 
 
     //create triangle mesh from arbitrary
@@ -11,6 +11,7 @@ public class TriangleMesh {
     private Vector3f[] vertex;
     private int numTriangles;
     private int numVertices;
+    private Triangle triangles[];
 
     public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[]) {
         //This is an algorithm I came up with
@@ -40,13 +41,42 @@ public class TriangleMesh {
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
         }
+
+        triangles = new Triangle[numTriangles];
+        makeTriangles();
     }
 
-    public void makeTriangles(Scene scene) {
+    public void makeTriangles() {
         for (int i = 0; i < numTriangles; i++) {
             Triangle triangle = new Triangle(vertex[vertexIndex[i*3]], vertex[vertexIndex[i*3+1]], vertex[vertexIndex[i*3+2]]);
-            scene.addSceneObject(new Diffuse(triangle)); //now all triangles are diffuse by default
+            triangles[i] = triangle;
         }
     }
 
+    @Override
+    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+        //loop over all triangles
+        //return minimum t (distance of intersection)
+        //and corresponding triangle
+        //(if found anything)
+        double minT = Double.POSITIVE_INFINITY;
+        Optional<IntersectionDataGeometric> intersectionDataGeometricMin = Optional.empty();
+        for (Triangle triangle :
+                triangles) {
+            Optional<IntersectionDataGeometric> intersectionDataGeometric = triangle.rayIntersection(ray);
+            if (intersectionDataGeometric.isPresent()) {
+                double t = intersectionDataGeometric.get().getT();
+                if (t < minT) {
+                    minT = t;
+                    intersectionDataGeometricMin = intersectionDataGeometric;
+                }
+            }
+        }
+        return intersectionDataGeometricMin;
+    }
+
+    @Override
+    public Vector3f getSurfaceNormal(Vector3f point) {
+        return null;
+    }
 }

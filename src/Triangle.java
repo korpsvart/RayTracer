@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.Optional;
 
 public class Triangle extends GeometricObject {
@@ -14,7 +13,8 @@ public class Triangle extends GeometricObject {
     }
 
     @Override
-    public Optional<Double> rayIntersection(Line3d ray) {
+    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+        Main.getRayTriangleTests().incrementAndGet();
         //Using local coordinates u,v
         //solving linear system with Cramer's rule
         //(akin to Moller-Trumbore algorithm)
@@ -55,7 +55,8 @@ public class Triangle extends GeometricObject {
         if (v < 0 || (u + v) > 1) {
             return Optional.empty();
         } else {
-            return Optional.of(b.dotProduct(n) / denom);
+            Main.getRayTriangleIntersections().incrementAndGet();
+            return Optional.of(new IntersectionDataGeometric(b.dotProduct(n) / denom, this));
         }
 
 

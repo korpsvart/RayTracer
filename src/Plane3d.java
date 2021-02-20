@@ -63,7 +63,7 @@ public class Plane3d extends GeometricObject {
         }
     }
 
-    public Optional<Double> rayIntersection(Line3d ray) {
+    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
         Vector3f v = ray.getDirection();
         double dotProduct = v.dotProduct(this.n);
 
@@ -71,7 +71,8 @@ public class Plane3d extends GeometricObject {
             return Optional.empty();
         } else {
             double t = ray.getPoint().moveTo(this.point).dotProduct(this.n) / dotProduct;
-            return t>=0 ? Optional.of(t) : Optional.empty();
+            return t>=0 ?  Optional.of(new IntersectionDataGeometric(t, this)) :
+                    Optional.empty();
         }
 
     }

@@ -10,6 +10,6 @@ public abstract class GeometricObject {
     You MUST add material properties to be able to render them in the Scene).
      */
 
-    public abstract Optional<Double> rayIntersection(Line3d ray);
+    public abstract Optional<IntersectionDataGeometric> rayIntersection(Line3d ray);
     public abstract Vector3f getSurfaceNormal(Vector3f point);
 }

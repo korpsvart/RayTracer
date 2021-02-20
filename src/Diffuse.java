@@ -14,8 +14,14 @@ public class Diffuse extends SceneObject
     }
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
-        return this.rayIntersection(ray);
+    public Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType) {
+        Optional<IntersectionDataGeometric> intersectionDataGeometric = this.rayIntersection(ray);
+        if (intersectionDataGeometric.isPresent()) {
+            GeometricObject geometricObject = intersectionDataGeometric.get().getGeometricObject();
+            return Optional.of(new IntersectionDataScene(intersectionDataGeometric.get().getT(), new Diffuse(geometricObject)));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -38,8 +44,8 @@ public class Diffuse extends SceneObject
             boolean visibility = true;
             for (SceneObject sO :
                     sceneObjects) {
-                    Optional<Double> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
-                    if (tIntecept.isPresent() && tIntecept.get() < distance) {
+                    Optional<IntersectionDataScene> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
+                    if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
                         visibility = false;
                     }
             }

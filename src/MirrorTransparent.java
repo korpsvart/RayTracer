@@ -25,7 +25,7 @@ public class MirrorTransparent extends SceneObject {
 
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType) {
         if (rayType==RayType.SHADOW) {
             /*Details about the implementation:
             A classic problem is when we are looking at diffuse objects which are
@@ -48,7 +48,13 @@ public class MirrorTransparent extends SceneObject {
              */
             return Optional.empty();
         } else {
-            return this.rayIntersection(ray);
+            Optional<IntersectionDataGeometric> intersectionDataGeometric = this.rayIntersection(ray);
+            if (intersectionDataGeometric.isPresent()) {
+                GeometricObject geometricObject = intersectionDataGeometric.get().getGeometricObject();
+                return Optional.of(new IntersectionDataScene(intersectionDataGeometric.get().getT(), new Diffuse(geometricObject)));
+            } else {
+                return Optional.empty();
+            }
         }
     }
 

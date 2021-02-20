@@ -1,8 +1,3 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Optional;
-
-
 public class Line3d {
 
     //I should probably rename this to Ray

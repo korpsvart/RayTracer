@@ -3,17 +3,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class Main {
 
+    public static AtomicLong getRayTriangleTests() {
+        return rayTriangleTests;
+    }
+
+    public static AtomicLong getRayTriangleIntersections() {
+        return rayTriangleIntersections;
+    }
+
     //variables for evaluating performance
     //and acceleration structures
-    int numPrimaryRays = 0;
-    int rayTriangleTests = 0;
-    AtomicInteger rayTriangleIntersections = new AtomicInteger(0);
+    private static AtomicLong rayTriangleTests = new AtomicLong(0);
+    private static AtomicLong rayTriangleIntersections = new AtomicLong(0);
 
 
     public static void main(String[] args) throws Exception {
@@ -92,7 +99,11 @@ public class Main {
                 }
         };
         BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
-        bezierSurface.triangulate(16).makeTriangles(scene);
+        long start = 0;
+        start = System.nanoTime();
+        Diffuse triangleMesh = new Diffuse(bezierSurface.triangulate(16));
+        long triangulationTime = System.nanoTime() - start;
+        scene.addSceneObject(triangleMesh);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(1, 1.5, -4));
@@ -100,7 +111,11 @@ public class Main {
         scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
 
+        //calculate render time
+        //(note that this is a very bad way of benchmarking)
+        start = System.nanoTime();
         scene.render();
+        long renderTime = System.nanoTime() - start;
 
         File outputImg = new File("img.png");
         try {
@@ -109,6 +124,12 @@ public class Main {
             System.out.println("errore nel salvataggio immagine");
         }
 
+        System.out.println("Rendering time: " + renderTime/10e9); //divide to get seconds
+        System.out.println("Ray number: " + width*height); //divide to get seconds
+        System.out.println("Triangulation time: " + triangulationTime/10e9);
+        System.out.println("Number of ray-triangle tests: " + rayTriangleTests);
+        System.out.println("Number of ray-triangle intersections: " + rayTriangleIntersections);
+        System.out.println("Hit-ratio: " + (double)rayTriangleIntersections.longValue()/rayTriangleTests.longValue()*100); //hit ratio as percentage
     }
 
 }

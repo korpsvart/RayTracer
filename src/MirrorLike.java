@@ -11,8 +11,14 @@ public abstract class MirrorLike extends SceneObject{
     }
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
-        return this.rayIntersection(ray);
+    public Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType) {
+        Optional<IntersectionDataGeometric> intersectionDataGeometric = this.rayIntersection(ray);
+        if (intersectionDataGeometric.isPresent()) {
+            GeometricObject geometricObject = intersectionDataGeometric.get().getGeometricObject();
+            return Optional.of(new IntersectionDataScene(intersectionDataGeometric.get().getT(), new Diffuse(geometricObject)));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

@@ -95,10 +95,10 @@ public class Scene {
         SceneObject objectFound = null;
         for (SceneObject sO: sceneObjects
         ) {
-            Optional<Double> interceptT = sO.trace(ray, RayType.PRIMARY);
-            if (interceptT.isPresent() && (interceptT.get() < interceptMin)) {
-                objectFound = sO;
-                interceptMin = interceptT.get();
+            Optional<IntersectionDataScene> interceptT = sO.trace(ray, RayType.PRIMARY);
+            if (interceptT.isPresent() && (interceptT.get().getT() < interceptMin)) {
+                objectFound = interceptT.get().getSceneObject();
+                interceptMin = interceptT.get().getT();
             }
         }
         if (objectFound != null) {
