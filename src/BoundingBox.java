@@ -19,8 +19,8 @@ public class BoundingBox {
         double tmax_x = (bound[1-sign_x].getX() - ray.getPoint().getX()) * inverseDirection.getX();
 
 
-        double tmin_y = (bound[sign_x].getY() - ray.getPoint().getY()) * inverseDirection.getY();
-        double tmax_y = (bound[1-sign_x].getY() - ray.getPoint().getY()) * inverseDirection.getY();
+        double tmin_y = (bound[sign_y].getY() - ray.getPoint().getY()) * inverseDirection.getY();
+        double tmax_y = (bound[1-sign_y].getY() - ray.getPoint().getY()) * inverseDirection.getY();
 
 
         if ((tmax_x < tmin_y) || (tmax_y < tmin_x)) {
@@ -41,8 +41,8 @@ public class BoundingBox {
             tmax = tmax_y;
         }
 
-        double tmin_z = (bound[sign_x].getZ() - ray.getPoint().getZ()) * inverseDirection.getZ();
-        double tmax_z = (bound[1-sign_x].getZ() - ray.getPoint().getZ()) * inverseDirection.getZ();
+        double tmin_z = (bound[sign_z].getZ() - ray.getPoint().getZ()) * inverseDirection.getZ();
+        double tmax_z = (bound[1-sign_z].getZ() - ray.getPoint().getZ()) * inverseDirection.getZ();
 
 
         if (tmax_z < tmin) {

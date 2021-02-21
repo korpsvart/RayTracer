@@ -18,7 +18,7 @@ public class Diffuse extends SceneObject
         Optional<IntersectionDataGeometric> intersectionDataGeometric = this.rayIntersection(ray);
         if (intersectionDataGeometric.isPresent()) {
             GeometricObject geometricObject = intersectionDataGeometric.get().getGeometricObject();
-            return Optional.of(new IntersectionDataScene(intersectionDataGeometric.get().getT(), new Diffuse(geometricObject)));
+            return Optional.of(new IntersectionDataScene(intersectionDataGeometric.get().getT(), this));
         } else {
             return Optional.empty();
         }
@@ -47,6 +47,7 @@ public class Diffuse extends SceneObject
                     Optional<IntersectionDataScene> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
                     if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
                         visibility = false;
+                        break;
                     }
             }
             if (visibility) {
