@@ -103,7 +103,7 @@ public class Main {
         start = System.nanoTime();
         Diffuse triangleMesh = new Diffuse(bezierSurface.triangulate(16));
         long triangulationTime = System.nanoTime() - start;
-//        scene.addSceneObject(triangleMesh);
+        scene.addSceneObject(triangleMesh);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(1, 1.5, -4));

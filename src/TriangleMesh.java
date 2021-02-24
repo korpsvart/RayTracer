@@ -1,6 +1,6 @@
 import java.util.Optional;
 
-public class TriangleMesh extends GeometricObject{
+public class TriangleMesh extends GeometricObject {
 
 
     //create triangle mesh from arbitrary
@@ -12,6 +12,7 @@ public class TriangleMesh extends GeometricObject{
     private int numTriangles;
     private int numVertices;
     private Triangle triangles[];
+    private BoundingBox boundingBox;
 
     public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[]) {
         //This is an algorithm I came up with
@@ -44,6 +45,17 @@ public class TriangleMesh extends GeometricObject{
 
         triangles = new Triangle[numTriangles];
         makeTriangles();
+
+        //If bounding box is not given explicitly by caller
+        //compute it here from vertices
+        boundingBox = new BoundingBox(vertex);
+
+    }
+
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], BoundingBox boundingBox) {
+        //bounding box given explicitly (ex. for bezier surfaces)
+        this(faceIndex, vertexIndex, vertex);
+        this.boundingBox = boundingBox;
     }
 
     public void makeTriangles() {
@@ -59,6 +71,12 @@ public class TriangleMesh extends GeometricObject{
         //return minimum t (distance of intersection)
         //and corresponding triangle
         //(if found anything)
+
+        //bounding box check
+        if (!this.boxCheck(ray)) {
+            return Optional.empty();
+        }
+
         double minT = Double.POSITIVE_INFINITY;
         Optional<IntersectionDataGeometric> intersectionDataGeometricMin = Optional.empty();
         for (Triangle triangle :
@@ -73,6 +91,11 @@ public class TriangleMesh extends GeometricObject{
             }
         }
         return intersectionDataGeometricMin;
+    }
+
+    @Override
+    public boolean boxCheck(Line3d ray) {
+        return this.boundingBox.rayIntersection(ray);
     }
 
     @Override

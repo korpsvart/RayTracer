@@ -1,8 +1,36 @@
 public class BoundingBox {
-    //static class for ray-box intersection
+
+    private Vector3f min;
+    private Vector3f max;
+
+    public BoundingBox(Vector3f min, Vector3f max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public BoundingBox(Vector3f vertex[]) {
+        double xMin = Double.POSITIVE_INFINITY;
+        double yMin = Double.POSITIVE_INFINITY;
+        double zMin = Double.POSITIVE_INFINITY;
+        double xMax = Double.NEGATIVE_INFINITY;
+        double yMax = Double.NEGATIVE_INFINITY;
+        double zMax = Double.NEGATIVE_INFINITY;
+        for (Vector3f point:
+                vertex) {
+            if (point.getX() < xMin) xMin = point.getX();
+            if (point.getY() < yMin) yMin = point.getY();
+            if (point.getZ() < zMin) zMin = point.getZ();
+            if (point.getX() > xMax) xMax = point.getX();
+            if (point.getY() > yMax) yMax = point.getY();
+            if (point.getZ() > zMax) zMax = point.getZ();
+        }
+        this.min = new Vector3f(xMin, yMin, zMin);
+        this.max = new Vector3f(xMax, yMax, zMax);
+    }
 
 
-    public boolean rayBoxIntersection(Vector3f min, Vector3f max, Line3d ray) {
+
+    public static boolean rayBoxIntersection(Vector3f min, Vector3f max, Line3d ray) {
 
         double tmin, tmax; //actual t values of intersection points
 
@@ -64,5 +92,9 @@ public class BoundingBox {
 
         return true;
 
+    }
+
+    public boolean rayIntersection(Line3d ray) {
+        return BoundingBox.rayBoxIntersection(this.min, this.max, ray);
     }
 }

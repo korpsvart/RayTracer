@@ -66,10 +66,15 @@ public class BezierSurface33 {
             }
         }
 
-        return new TriangleMesh(faceIndex, vertexIndex, vertex);
 
-
-
+        Vector3f cPoints[] = new Vector3f[16];
+        for (int i = 0; i < controlPoints.length; i++) {
+            for (int j = 0; j < controlPoints[0].length; j++) {
+                cPoints[i*4+j]=controlPoints[i][j];
+            }
+        }
+        BoundingBox boundingBox = new BoundingBox(cPoints);
+        return new TriangleMesh(faceIndex, vertexIndex, vertex, boundingBox);
 
     }
 

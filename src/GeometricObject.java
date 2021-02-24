@@ -12,4 +12,9 @@ public abstract class GeometricObject {
 
     public abstract Optional<IntersectionDataGeometric> rayIntersection(Line3d ray);
     public abstract Vector3f getSurfaceNormal(Vector3f point);
+    public boolean boxCheck(Line3d ray) {
+        //default implementation for objects
+        //for which box check is overkill
+        return true;
+    }
 }
