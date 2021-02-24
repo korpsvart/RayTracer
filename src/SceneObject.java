@@ -26,5 +26,8 @@ public abstract class SceneObject extends GeometricObject {
 
     public abstract Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType);
     public abstract Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene);
+    public void triangulate(Scene currentScene) {
+        GeometricObject geometricObjects[] = this.geometricObject.makeTriangles();
+    }
 
 }

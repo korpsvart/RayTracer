@@ -11,7 +11,6 @@ public class TriangleMesh extends GeometricObject {
     private Vector3f[] vertex;
     private int numTriangles;
     private int numVertices;
-    private Triangle triangles[];
     private BoundingBox boundingBox;
 
     public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[]) {
@@ -43,7 +42,6 @@ public class TriangleMesh extends GeometricObject {
             polygonFaceOffset+=faceIndex[i];
         }
 
-        triangles = new Triangle[numTriangles];
         makeTriangles();
 
         //If bounding box is not given explicitly by caller
@@ -61,7 +59,7 @@ public class TriangleMesh extends GeometricObject {
     public void makeTriangles() {
         for (int i = 0; i < numTriangles; i++) {
             Triangle triangle = new Triangle(vertex[vertexIndex[i*3]], vertex[vertexIndex[i*3+1]], vertex[vertexIndex[i*3+2]]);
-            triangles[i] = triangle;
+
         }
     }
 

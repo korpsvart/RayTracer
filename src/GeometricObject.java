@@ -17,4 +17,8 @@ public abstract class GeometricObject {
         //for which box check is overkill
         return true;
     }
+
+    public makeTriangles() {
+
+    }
 }
