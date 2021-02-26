@@ -9,6 +9,11 @@ public class Diffuse extends SceneObject
         super(geometricObject);
     }
 
+    @Override
+    public void addToScene(Scene currentScene, GeometricObject geometricObject) {
+        currentScene.addSceneObject(new Diffuse(geometricObject));
+    }
+
     public void setAlbedo(double albedo) {
         this.albedo = albedo;
     }
@@ -63,4 +68,6 @@ public class Diffuse extends SceneObject
         finalColor = finalColor.mul(albedo/(4*Math.pow(Math.PI, 2)));
         return finalColor;
     }
+
+
 }

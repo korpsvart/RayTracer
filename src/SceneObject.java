@@ -14,6 +14,8 @@ public abstract class SceneObject extends GeometricObject {
         this.geometricObject = geometricObject;
     }
 
+    public abstract void addToScene(Scene currentScene, GeometricObject geometricObject);
+
     @Override
     public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
         return geometricObject.rayIntersection(ray);
@@ -24,10 +26,17 @@ public abstract class SceneObject extends GeometricObject {
         return geometricObject.getSurfaceNormal(point);
     }
 
+    @Override
+    public TriangleMesh triangulate(int divs) {
+        return geometricObject.triangulate(divs);
+    }
+
     public abstract Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType);
     public abstract Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene);
-    public void triangulate(Scene currentScene) {
-        GeometricObject geometricObjects[] = this.geometricObject.makeTriangles();
+
+    public void triangulateAndAddToScene(Scene currentScene, int divs) {
+        TriangleMesh triangleMesh = this.triangulate(divs);
+        triangleMesh.addToScene(currentScene, this);
     }
 
 }

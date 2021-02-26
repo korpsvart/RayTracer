@@ -22,6 +22,11 @@ public class MirrorLike extends SceneObject{
     }
 
     @Override
+    public void addToScene(Scene currentScene, GeometricObject geometricObject) {
+        currentScene.addSceneObject(new MirrorLike(geometricObject));
+    }
+
+    @Override
     public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
         Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);
         hitPoint = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //add bias in direction of surface normal
@@ -30,4 +35,6 @@ public class MirrorLike extends SceneObject{
         Line3d reflectionRay = new Line3d(hitPoint, reflectionDir);
         return currentScene.rayTrace(reflectionRay, rayDepth+1).mul(fr);
     }
+
+
 }

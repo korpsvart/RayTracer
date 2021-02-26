@@ -58,14 +58,13 @@ public class Main {
         Diffuse diffuseSphere6 = new Diffuse(sphere6);
 
 
-        Triangle triangle1 = new Triangle(new Vector3f(-1.8,1,-7), new Vector3f(0,1,-7), new Vector3f(-1,1.6,-7));
         Plane3d plane1 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
         Plane3d plane2 = new Plane3d(new Vector3f(0, -3, 0), new Vector3f(0, 1, 0));
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-        scene.addSceneObject(diffuseSphere1);
-        scene.addSceneObject(transparentSphere);
+//        scene.addSceneObject(diffuseSphere1);
+//        scene.addSceneObject(transparentSphere);
 //        scene.addSceneObject(diffuseSphere2);
 //        scene.addSceneObject(diffuseSphere3);
 //        scene.addSceneObject(diffuseSphere4);
@@ -101,9 +100,9 @@ public class Main {
         BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
         long start = 0;
         start = System.nanoTime();
-        Diffuse triangleMesh = new Diffuse(bezierSurface.triangulate(16));
+        Diffuse diffuseBezier = new Diffuse(bezierSurface);
+        diffuseBezier.triangulateAndAddToScene(scene, 16);
         long triangulationTime = System.nanoTime() - start;
-        scene.addSceneObject(triangleMesh);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(1, 1.5, -4));

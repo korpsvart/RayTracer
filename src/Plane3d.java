@@ -63,7 +63,7 @@ public class Plane3d extends GeometricObject {
         }
     }
 
-    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+    public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
         Vector3f v = ray.getDirection();
         double dotProduct = v.dotProduct(this.n);
 

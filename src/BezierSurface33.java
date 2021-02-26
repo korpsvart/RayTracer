@@ -1,4 +1,4 @@
-public class BezierSurface33 {
+public class BezierSurface33 extends GeometricObject {
 
     //Bezier Surface of degree (3,3)
 
@@ -30,7 +30,7 @@ public class BezierSurface33 {
     }
 
 
-
+    @Override
     public TriangleMesh triangulate(int divs) {
         double du;
         double dv = du = (float)1 / divs; //grid resolution
@@ -77,6 +77,8 @@ public class BezierSurface33 {
         return new TriangleMesh(faceIndex, vertexIndex, vertex, boundingBox);
 
     }
+
+
 
 
 

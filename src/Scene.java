@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class Scene {
 
-    private static final int MAX_RAY_DEPTH = 10; //max depth of ray tracing recursion
+    private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
 
     public static double getBias() {
         return bias;

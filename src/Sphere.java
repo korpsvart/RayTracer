@@ -23,7 +23,7 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+    public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
         //This version uses a quadratic equation to derive the specific
         //t value to put into the ray parametric equation for the intercept
         double interceptT;

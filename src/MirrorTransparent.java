@@ -115,4 +115,11 @@ public class MirrorTransparent extends SceneObject {
         }
 
     }
+
+    @Override
+    public void addToScene(Scene currentScene, GeometricObject geometricObject) {
+        currentScene.addSceneObject(new MirrorTransparent(geometricObject));
+    }
+
+
 }

@@ -10,15 +10,35 @@ public abstract class GeometricObject {
     You MUST add material properties to be able to render them in the Scene).
      */
 
-    public abstract Optional<IntersectionDataGeometric> rayIntersection(Line3d ray);
-    public abstract Vector3f getSurfaceNormal(Vector3f point);
+    public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
+        //default implementation
+        //for objects for which we are not able to calculate directly intersection
+        //(i.e. bezier surfaces, which are always triangulated)
+
+        return Optional.empty();
+    }
+
+    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+        //this is the version which should be always called from outside
+        //which always includes the bounding box check
+        if (this.boxCheck(ray)) {
+            return this.rayIntersection2(ray);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public Vector3f getSurfaceNormal(Vector3f point) {
+        return null;
+    }
     public boolean boxCheck(Line3d ray) {
         //default implementation for objects
         //for which box check is overkill
         return true;
     }
 
-    public makeTriangles() {
-
+    public TriangleMesh triangulate(int divs) {
+        return null;
     }
+
 }
