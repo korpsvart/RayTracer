@@ -10,7 +10,7 @@ public abstract class GeometricObject {
     You MUST add material properties to be able to render them in the Scene).
      */
 
-    public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
+    public Optional<Double> rayIntersection2(Line3d ray) {
         //default implementation
         //for objects for which we are not able to calculate directly intersection
         //(i.e. bezier surfaces, which are always triangulated)
@@ -18,7 +18,7 @@ public abstract class GeometricObject {
         return Optional.empty();
     }
 
-    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+    public Optional<Double> rayIntersection(Line3d ray) {
         //this is the version which should be always called from outside
         //which always includes the bounding box check
         if (this.boxCheck(ray)) {

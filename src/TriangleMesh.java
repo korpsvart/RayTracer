@@ -2,7 +2,7 @@ import java.util.Optional;
 
 public class TriangleMesh {
 
-    private class Triangle extends GeometricObject {
+    public class Triangle extends GeometricObject {
 
         //Vertices must be given in CCW ordering
         //this class is meant to be used in combination with triangle mesh
@@ -19,11 +19,12 @@ public class TriangleMesh {
         }
 
         @Override
-        public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
-            Main.getRayTriangleTests().incrementAndGet();
+        public Optional<Double> rayIntersection2(Line3d ray) {
             //Using local coordinates u,v
             //solving linear system with Cramer's rule
             //(akin to Moller-Trumbore algorithm)
+
+            Main.getRayTriangleTests().getAndIncrement();
 
             Vector3f e1 = v0.moveTo(v1);
             Vector3f e2 = v0.moveTo(v2);
@@ -61,8 +62,8 @@ public class TriangleMesh {
             if (v < 0 || (u + v) > 1) {
                 return Optional.empty();
             } else {
-                Main.getRayTriangleIntersections().incrementAndGet();
-                return Optional.of(new IntersectionDataGeometric(b.dotProduct(n) / denom, this));
+                Main.getRayTriangleIntersections().getAndIncrement();
+                return Optional.of(b.dotProduct(n) / denom);
             }
 
 

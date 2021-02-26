@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.Optional;
 
 public class Sphere extends GeometricObject {
@@ -23,7 +24,7 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Optional<IntersectionDataGeometric> rayIntersection2(Line3d ray) {
+    public Optional<Double> rayIntersection(Line3d ray) {
         //This version uses a quadratic equation to derive the specific
         //t value to put into the ray parametric equation for the intercept
         double interceptT;
@@ -38,9 +39,9 @@ public class Sphere extends GeometricObject {
             double t1 = (-b - Math.sqrt(d))/(2*a);
             double t2 = (-b + Math.sqrt(d))/(2*a);
             if (t1 >= 0 && t1 < t2) {
-                return Optional.of(new IntersectionDataGeometric(t1, this));
+                return Optional.of(t1);
             } else if (t2 >=0) {
-                return Optional.of(new IntersectionDataGeometric(t2, this));
+                return Optional.of(t2);
             } else {
                 return Optional.empty();
             }

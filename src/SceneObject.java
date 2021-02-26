@@ -17,7 +17,7 @@ public abstract class SceneObject extends GeometricObject {
     public abstract void addToScene(Scene currentScene, GeometricObject geometricObject);
 
     @Override
-    public Optional<IntersectionDataGeometric> rayIntersection(Line3d ray) {
+    public Optional<Double> rayIntersection(Line3d ray) {
         return geometricObject.rayIntersection(ray);
     }
 
@@ -31,7 +31,7 @@ public abstract class SceneObject extends GeometricObject {
         return geometricObject.triangulate(divs);
     }
 
-    public abstract Optional<IntersectionDataScene> trace(Line3d ray, RayType rayType);
+    public abstract Optional<Double> trace(Line3d ray, RayType rayType);
     public abstract Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene);
 
     public void triangulateAndAddToScene(Scene currentScene, int divs) {
