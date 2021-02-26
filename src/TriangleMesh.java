@@ -24,6 +24,11 @@ public class TriangleMesh {
             //solving linear system with Cramer's rule
             //(akin to Moller-Trumbore algorithm)
 
+            //note that this implementation is equivalent
+            //to the one in the "base" triangle class
+            //we use different formulas and variable names for readability here
+            //but the equations are equivalent
+
             Main.getRayTriangleTests().getAndIncrement();
 
             Vector3f e1 = v1.moveTo(v0);
