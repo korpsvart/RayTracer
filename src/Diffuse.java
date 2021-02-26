@@ -27,14 +27,15 @@ public class Diffuse extends SceneObject
         //Do this for each light in the scene
         //and sum all the contributions
         //First, verify there's no obstacle between point and light!
-        hitPoint = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
+        hitPoint = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //adding normal bias
         Vector3f finalColor = new Vector3f(0f,0f,0f);
         for (PointLight pLight:
                 pointLights) {
             Vector3f lDir = hitPoint.moveTo(pLight.getPosition());
             double distance = lDir.magnitude();
             lDir = lDir.normalize();
-            Line3d shadowRay = new Line3d(hitPoint, lDir);
+            Vector3f hitPoint2 = hitPoint.add(lDir.mul(10-3)); //adding depth bias
+            Line3d shadowRay = new Line3d(hitPoint2, lDir);
             boolean visibility = true;
             for (SceneObject sO :
                     sceneObjects) {

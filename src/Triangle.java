@@ -38,8 +38,8 @@ public class Triangle extends GeometricObject {
 
         if (Scene.isBackFaceCulling() && denom < 0) {
             //if denom is < 0
-            //oject is backfacing
-            //don't show if back face culling is enalbed
+            //object is backfacing
+            //don't show if back face culling is enabled
             return Optional.empty();
         }
 

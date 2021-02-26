@@ -26,13 +26,13 @@ public class TriangleMesh {
 
             Main.getRayTriangleTests().getAndIncrement();
 
-            Vector3f e1 = v0.moveTo(v1);
-            Vector3f e2 = v0.moveTo(v2);
-            Vector3f n = e1.crossProduct(e2);
+            Vector3f e1 = v1.moveTo(v0);
+            Vector3f e2 = v2.moveTo(v0);
+            Vector3f h = e1.crossProduct(e2);
 
-            Vector3f rayDirOpposite = ray.getDirection().mul(-1);
+            Vector3f d = ray.getDirection();
 
-            double denom = rayDirOpposite.dotProduct(n);
+            double denom = d.dotProduct(h);
 
             if (Math.abs(denom) < 10e-6) {
                 //if denom is really close to 0 it means
@@ -41,29 +41,30 @@ public class TriangleMesh {
                 return Optional.empty();
             }
 
-            if (Scene.isBackFaceCulling() && denom < 0) {
-                //if denom is < 0
-                //oject is backfacing
-                //don't show if back face culling is enalbed
+            if (Scene.isBackFaceCulling() && denom > 0) {
+                //if denom is > 0
+                //(ray and normal are facing in the same direction)
+                //object is backfacing
+                //don't show if back face culling is enabled
                 return Optional.empty();
             }
 
-            Vector3f b = v0.moveTo(ray.getPoint());
-            Vector3f q = b.crossProduct(ray.getDirection());
+            Vector3f t = ray.getPoint().moveTo(v0);
+            Vector3f k = d.crossProduct(t);
 
-            double u = e2.dotProduct(q) / denom;
+            double u = e2.dotProduct(k) / denom;
 
             if (u < 0 || u > 1) {
                 return Optional.empty();
             }
 
-            double v = e1.mul(-1).dotProduct(q) / denom;
+            double v = e1.mul(-1).dotProduct(k) / denom;
 
             if (v < 0 || (u + v) > 1) {
                 return Optional.empty();
             } else {
                 Main.getRayTriangleIntersections().getAndIncrement();
-                return Optional.of(b.dotProduct(n) / denom);
+                return Optional.of(t.dotProduct(h) / denom);
             }
 
 
