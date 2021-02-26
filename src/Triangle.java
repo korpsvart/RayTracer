@@ -70,4 +70,5 @@ public class Triangle extends GeometricObject {
         Vector3f e2 = v0.moveTo(v2);
         return e1.crossProduct(e2).normalize();
     }
+
 }

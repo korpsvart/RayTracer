@@ -14,6 +14,11 @@ public class MirrorTransparent extends SceneObject {
         super(geometricObject);
     }
 
+    public MirrorTransparent(GeometricObject geometricObject, double ior) {
+        super(geometricObject);
+        this.ior = ior;
+    }
+
     public double getIor() {
         return ior;
     }
@@ -111,8 +116,11 @@ public class MirrorTransparent extends SceneObject {
     }
 
     @Override
-    public void addToScene(Scene currentScene, GeometricObject geometricObject) {
-        currentScene.addSceneObject(new MirrorTransparent(geometricObject));
+    public void addTrianglesToScene(Scene currentScene, TriangleMesh triangleMesh) {
+        for (TriangleMesh.Triangle triangle :
+                triangleMesh.getTriangles()) {
+            currentScene.addSceneObject(new MirrorTransparent(triangle, this.ior));
+        }
     }
 
 

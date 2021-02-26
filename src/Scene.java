@@ -16,7 +16,7 @@ public class Scene {
     private static final double bias = 10e-6; //bias for shadow acne
     private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = true;
+    private static boolean backFaceCulling = false;
     private final int width;
     private final int height;
     private final double fieldOfView;
@@ -68,6 +68,11 @@ public class Scene {
 
     public void addSceneObject(SceneObject sceneObject) {
         sceneObjects.add(sceneObject);
+    }
+
+    public void triangulateAndAddSceneObject(SceneObject sceneObject, int divs) {
+        TriangleMesh triangleMesh = sceneObject.triangulate(divs);
+        sceneObject.addTrianglesToScene(this, triangleMesh);
     }
 
     public void render() {

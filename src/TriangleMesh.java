@@ -184,11 +184,5 @@ public class TriangleMesh {
         return this.boundingBox.rayIntersection(ray);
     }
 
-    public void addToScene(Scene currentScene, SceneObject sceneObject) {
-        for (Triangle triangle :
-                triangles) {
-            sceneObject.addToScene(currentScene, triangle);
-        }
-    }
 
 }
