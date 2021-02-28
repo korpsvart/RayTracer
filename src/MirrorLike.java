@@ -11,14 +11,18 @@ public class MirrorLike extends SceneObject{
     }
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
         return this.rayIntersection(ray);
     }
 
 
     @Override
-    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);
+    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
+        Double t = intersectionData.getT();
+        Double u = intersectionData.getU();
+        Double v = intersectionData.getV();
+        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         hitPoint = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //add bias in direction of surface normal
         Vector3f incident = ray.getDirection();
         Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);

@@ -30,7 +30,7 @@ public class MirrorTransparent extends SceneObject {
 
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
         if (rayType==RayType.SHADOW) {
             /*Details about the implementation:
             A classic problem is when we are looking at diffuse objects which are
@@ -58,8 +58,12 @@ public class MirrorTransparent extends SceneObject {
     }
 
     @Override
-    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);
+    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
+        Double t = intersectionData.getT();
+        Double u = intersectionData.getU();
+        Double v = intersectionData.getV();
+        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         return reflectionRefraction(hitPoint, ray.getDirection(), surfaceNormal, AIR_IOR, this.ior, rayDepth, currentScene);
     }
 

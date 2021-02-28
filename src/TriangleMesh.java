@@ -8,8 +8,17 @@ public class TriangleMesh {
         //this class is meant to be used in combination with triangle mesh
 
 
+
+        private boolean useVertexNormal = false;
         private final Vector3f v0, v1, v2;
         private TriangleMesh triangleMesh; //corresponding triangle mesh
+        private Vector3f faceNormal = null;
+        private double area  = -1;
+        public Vector3f[] vertexNormal = null;
+
+        public void setUseVertexNormal(boolean useVertexNormal) {
+            this.useVertexNormal = useVertexNormal;
+        }
 
         public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh) {
             this.v0 = v0;
@@ -18,16 +27,21 @@ public class TriangleMesh {
             this.triangleMesh = triangleMesh;
         }
 
+        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Vector3f vertexNormal[]) {
+            this(v0, v1, v2, triangleMesh);
+            this.vertexNormal = vertexNormal.clone();
+        }
+
         @Override
-        public Optional<Double> rayIntersection2(Line3d ray) {
+        public Optional<IntersectionData> rayIntersection2(Line3d ray) {
             //Using local coordinates u,v
             //solving linear system with Cramer's rule
             //(akin to Moller-Trumbore algorithm)
 
-            //note that this implementation is equivalent
-            //to the one in the "base" triangle class
-            //we use different formulas and variable names for readability here
-            //but the equations are equivalent
+            //Convention used is:
+            //P = A + u*AB + v*AC
+            //A should correspond to v0,
+            //B to v1, C to v2
 
             Main.getRayTriangleTests().getAndIncrement();
 
@@ -69,7 +83,7 @@ public class TriangleMesh {
                 return Optional.empty();
             } else {
                 Main.getRayTriangleIntersections().getAndIncrement();
-                return Optional.of(t.dotProduct(h) / denom);
+                return Optional.of(new IntersectionData(t.dotProduct(h) / denom, u, v));
             }
 
 
@@ -81,11 +95,43 @@ public class TriangleMesh {
         }
 
         @Override
-        public Vector3f getSurfaceNormal(Vector3f point) {
-            Vector3f e1 = v0.moveTo(v1);
-            Vector3f e2 = v0.moveTo(v2);
-            return e1.crossProduct(e2).normalize();
+        public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
+            if (!useVertexNormal) {
+                if (this.faceNormal == null) {
+                    //also precompute area for performance reasons
+                    Vector3f e1 = v0.moveTo(v1);
+                    Vector3f e2 = v0.moveTo(v2);
+                    Vector3f n = e1.crossProduct(e2); //area of parallelogram
+                    faceNormal = n.normalize();
+                    area = n.magnitude()/2;
+                }
+                return faceNormal;
+            } else {
+                //vertexNormal[0] should be normal data
+                //for vertex v0, aka vertex A
+                //vertexNormal[1] for vertex v1 (aka B)
+                //and so on...
+                //w = 1 - u - v
+                //If u=1 then we are on vertex B
+                //If v =1 then we are on vertex C
+                double w = 1-u-v;
+                return vertexNormal[0].mul(w).add(vertexNormal[1].mul(u).add(vertexNormal[2].mul(v)));
+            }
         }
+
+        public double getArea() {
+            if (area < 0) {
+                //also precompute facenormal for performance reasons
+                Vector3f e1 = v0.moveTo(v1);
+                Vector3f e2 = v0.moveTo(v2);
+                Vector3f n = e1.crossProduct(e2); //area of parallelogram
+                faceNormal = n.normalize();
+                area = n.magnitude()/2;
+            }
+            return area;
+        }
+
+
     }
 
 

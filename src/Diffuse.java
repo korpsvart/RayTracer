@@ -14,15 +14,19 @@ public class Diffuse extends SceneObject
     }
 
     @Override
-    public Optional<Double> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
         return this.rayIntersection(ray);
     }
 
     @Override
-    public Vector3f computeColor(Vector3f hitPoint, Line3d ray, int rayDepth, Scene currentScene) {
+    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
         ArrayList<PointLight> pointLights = currentScene.getPointLights();
         ArrayList<SceneObject> sceneObjects = currentScene.getSceneObjects();
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint);
+        Double t = intersectionData.getT();
+        Double u = intersectionData.getU();
+        Double v = intersectionData.getV();
+        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         //shading perfect diffuse surfaces using albedo, light intensity, cosine and square rolloff
         //Do this for each light in the scene
         //and sum all the contributions
@@ -39,8 +43,8 @@ public class Diffuse extends SceneObject
             boolean visibility = true;
             for (SceneObject sO :
                     sceneObjects) {
-                    Optional<Double> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
-                    if (tIntecept.isPresent() && tIntecept.get() < distance) {
+                    Optional<IntersectionData> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
+                    if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
                         visibility = false;
                         break;
                     }

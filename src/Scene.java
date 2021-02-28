@@ -97,18 +97,20 @@ public class Scene {
             return this.backgroundColor;
         }
         double interceptMin = Double.POSITIVE_INFINITY;
+        IntersectionData intersectionDataMin = null;
         SceneObject objectFound = null;
         for (SceneObject sO: sceneObjects
         ) {
-            Optional<Double> interceptT = sO.trace(ray, RayType.PRIMARY);
-            if (interceptT.isPresent() && (interceptT.get() < interceptMin)) {
+            Optional<IntersectionData> interceptT = sO.trace(ray, RayType.PRIMARY);
+            if (interceptT.isPresent() && (interceptT.get().getT() < interceptMin)) {
                 objectFound = sO;
-                interceptMin = interceptT.get();
+                interceptMin = interceptT.get().getT();
+                intersectionDataMin = interceptT.get();
             }
         }
         if (objectFound != null) {
-            Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(interceptMin));
-            return objectFound.computeColor(hitPoint,ray,rayDepth,this);
+//            Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(interceptMin));
+            return objectFound.computeColor(intersectionDataMin,ray,rayDepth,this);
         } else {
             return backgroundColor;
         }

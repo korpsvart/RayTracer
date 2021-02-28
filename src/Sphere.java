@@ -24,7 +24,7 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Optional<Double> rayIntersection(Line3d ray) {
+    public Optional<IntersectionData> rayIntersection(Line3d ray) {
         //This version uses a quadratic equation to derive the specific
         //t value to put into the ray parametric equation for the intercept
         double interceptT;
@@ -39,9 +39,9 @@ public class Sphere extends GeometricObject {
             double t1 = (-b - Math.sqrt(d))/(2*a);
             double t2 = (-b + Math.sqrt(d))/(2*a);
             if (t1 >= 0 && t1 < t2) {
-                return Optional.of(t1);
+                return Optional.of(new IntersectionData(t1));
             } else if (t2 >=0) {
-                return Optional.of(t2);
+                return Optional.of(new IntersectionData(t2));
             } else {
                 return Optional.empty();
             }
@@ -52,7 +52,7 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Vector3f getSurfaceNormal(Vector3f point) {
+    public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
         return this.centre.moveTo(point).normalize();
     }
 
