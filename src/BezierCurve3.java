@@ -60,4 +60,53 @@ public class BezierCurve3 {
         return subCurves;
 
     }
+
+    public Vector3f derivative(double t) {
+        //Evaluate derivative of Bezier Curve at t
+
+        //There are several ways of doing this
+        //Here we use the one which employs the DeCasteljau
+        //algorithm on two curves of degree 2 (n-1 in general)
+
+        //We know that the derivative at t is equal to
+        //n*(C1(t) - C2(t))
+        //where C1 is a Bezier Curve on the points {P1, ..., Pn}
+        //and C2 is a Bezier Curve on the points {P0, ..., Pn-1}
+
+        BezierCurve2 c1 = new BezierCurve2(controlPoints[1], controlPoints[2], controlPoints[3]);
+        BezierCurve2 c2 = new BezierCurve2(controlPoints[0], controlPoints[1], controlPoints[2]);
+
+        Vector3f p1 = c1.evaluate(t);
+        Vector3f p2 = c2.evaluate(t);
+
+        return p1.add(p2.mul(-1)).mul(3); //n is the degree, 3 in this case
+
+    }
+
+    public Vector3f[] evaluateAndDerivative(double t) {
+        //Using DeCasteljau algorithm
+        //we can evaluate both the original curve
+        //and the derivative at the same time
+
+        //Level 1
+        Vector3f p10 = controlPoints[0].mul(1-t).add(controlPoints[1].mul(t));
+        Vector3f p11 = controlPoints[1].mul(1-t).add(controlPoints[2].mul(t));
+        Vector3f p12 = controlPoints[2].mul(1-t).add(controlPoints[3].mul(t));
+
+        //Level 2
+        Vector3f p20 = p10.mul(1-t).add(p11.mul(t));
+        Vector3f p21 = p11.mul(1-t).add(p12.mul(t));
+
+        //Level 3, point is P(t)
+        Vector3f p30 = p20.mul(1-t).add(p21.mul(t));
+
+        //Tangent vector is given by
+        //n*(P21 - P20)
+        Vector3f tangent = p21.add(p20.mul(-1)).mul(3);
+
+        return new Vector3f[]{p30, tangent};
+
+    }
+
+
 }
