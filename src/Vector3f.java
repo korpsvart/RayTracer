@@ -4,6 +4,8 @@ import static java.lang.StrictMath.sqrt;
 
 public class Vector3f{
 
+    public static final double epsilon = 10e-9; //tolerance for equality comparison
+
     private final double x;
     private final double y;
     private final double z;
@@ -163,5 +165,25 @@ public class Vector3f{
 
     public Vector3f invert() {
         return new Vector3f(1/x, 1/y, 1/z);
+    }
+
+    public Vector3f abs() {
+        return new Vector3f(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Vector3f) {
+            Vector3f v = (Vector3f)obj;
+            Vector3f delta = this.add(v.mul(-1)).abs();
+            if (delta.x < epsilon && delta.y < epsilon && delta.z < epsilon) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return this.equals(obj);
+        }
     }
 }

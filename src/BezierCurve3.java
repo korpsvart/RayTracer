@@ -108,5 +108,20 @@ public class BezierCurve3 {
 
     }
 
+    public boolean checkG0(BezierCurve3 bezierCurve) {
+        //check G0 (or C0, as they are the same) condition for joining two
+        //degree 3 bezier curves
+        return this.controlPoints[3].equals(bezierCurve.controlPoints[0]);
+    }
+
+    public boolean checkG1(BezierCurve3 bezierCurve3) {
+        //check G1 condition for joining
+        //we simply check if the first and last segment
+        //have the same direction
+        Vector3f last = this.controlPoints[3].add(this.controlPoints[2].mul(-1));
+        Vector3f first = bezierCurve3.controlPoints[1].add(bezierCurve3.controlPoints[0].mul(-1));
+        return last.normalize().equals(first.normalize());
+    }
+
 
 }
