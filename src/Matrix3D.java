@@ -2,8 +2,8 @@ public class Matrix3D {
 
     //A matrix for linear transforms from 3D space into 3D space
 
-    private static final int ROW_VECTOR = 0;
-    private static final int COL_VECTOR = 1;
+    public static final int ROW_VECTOR = 0;
+    public static final int COL_VECTOR = 1;
     private double mInternal[][] = new double[3][3];
 
     public Matrix3D(double mInternal[][]) {

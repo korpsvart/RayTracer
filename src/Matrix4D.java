@@ -5,9 +5,32 @@ public class Matrix4D {
 
 
     private double mInternal[][] = new double[4][4];
+    private Matrix3D a;
+    private Vector3f c;
 
     public Matrix4D(double[][] matrix) {
+
         mInternal = matrix.clone();
+        a = this.getA();
+        c = this.getC();
+    }
+
+    public Matrix4D(Matrix3D a, Vector3f c) {
+        this.a = a;
+        this.c = c;
+        double[][] m = a.getmInternal();
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                mInternal[i][j] = m[i][j];
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            mInternal[i][3] = c.getElement(i);
+        }
+        for (int j = 0; j < 3; j++) {
+            mInternal[3][j] = 0;
+        }
+        mInternal[3][3] = 1;
     }
 
     public Matrix4D(Vector3f c) {
