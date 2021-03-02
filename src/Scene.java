@@ -133,4 +133,12 @@ public class Scene {
         this.cameraToWorld = new Matrix4D(new Matrix3D(new Vector3f[]{right, up, forward}, Matrix3D.COL_VECTOR), translation);
 
     }
+
+    public BufferedImage getImg() {
+        return img;
+    }
+
+    public Matrix4D getCameraToWorld() {
+        return cameraToWorld;
+    }
 }

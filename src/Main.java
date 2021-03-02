@@ -113,18 +113,10 @@ public class Main {
 
         //calculate render time
         //(note that this is a very bad way of benchmarking)
-        start = System.nanoTime();
         scene.render();
-        long renderTime = System.nanoTime() - start;
 
-        File outputImg = new File("img.png");
-        try {
-            ImageIO.write(img, "png", outputImg);
-        } catch (IOException e) {
-            System.out.println("errore nel salvataggio immagine");
-        }
+        Visualizer visualizer = new Visualizer(scene);
 
-        System.out.println("Rendering time: " + renderTime/10e9); //divide to get seconds
         System.out.println("Ray number: " + width*height); //divide to get seconds
         System.out.println("Triangulation time: " + triangulationTime/10e9);
         System.out.println("Number of ray-triangle tests: " + rayTriangleTests);

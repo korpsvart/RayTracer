@@ -25,5 +25,6 @@ public class Test {
         BezierSpline3 bezierSpline3 = BezierSpline3.CreateC1Spline(l, nodes, cP);
         Vector3f result = bezierSpline3.evaluate((double)1/4);
         System.out.println("aaaa");
+
     }
 }
