@@ -186,4 +186,8 @@ public class Vector3f{
             return this.equals(obj);
         }
     }
+
+    public Vector3f mix(Vector3f v, double t) {
+        return this.mul(1-t).add(v.mul(t));
+    }
 }

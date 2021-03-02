@@ -5,23 +5,29 @@ public class BezierSpline3 {
 
     private int l; //number of bezier curves making up the spline
     private double[] nodes;
-    private double[] deltas;
     private BezierCurve3[] curves;
 
-    public BezierSpline3(int l, double[] nodes, Vector3f[] deBorPoints) {
+    public BezierSpline3(int l, double[] nodes, BezierCurve3[] curves) {
+        this.l = l;
+        this.nodes = nodes;
+        this.curves = curves;
+    }
+
+    public static BezierSpline3 CreateC2Spline(int l, double[] nodes, Vector3f[] deBorPoints) {
+        //NOT WORKING!
+        //create a spline which satisfies C2 linking condition
+
         //check that
         //number of nodes is l+1
         //number of debor points is l + 3
         if (nodes.length != (l+1) || deBorPoints.length != (l+3)) {
             throw new IllegalArgumentException("Invalid array length for one of the arguments");
         }
-        this.l = l;
-        this.deltas = new double[l];
+        double[] deltas = new double[l];
         for (int i = 0; i < l; i++) {
             deltas[i] = nodes[i+1]-nodes[i];
         }
-        this.curves = new BezierCurve3[l];
-        this.nodes = nodes.clone();
+        BezierCurve3[] curves = new BezierCurve3[l];
         Vector3f[] controlPoints = new Vector3f[3*l+1];
         controlPoints[0] = deBorPoints[0];
         controlPoints[1] = deBorPoints[1];
@@ -43,7 +49,7 @@ public class BezierSpline3 {
             controlPoints[i*3] = controlPoints[i*3-1].mul(deltas[i]/denom).
                     add(controlPoints[i*3+1].mul(deltas[i-1]/denom));
             int h = (i-1)*3;
-            this.curves[i-1] = new BezierCurve3(controlPoints[h],
+            curves[i-1] = new BezierCurve3(controlPoints[h],
                     controlPoints[h+1],
                     controlPoints[h+2],
                     controlPoints[h+3]);
@@ -52,6 +58,7 @@ public class BezierSpline3 {
                 controlPoints[3*l-2],
                 controlPoints[3*l-1],
                 controlPoints[3*l]);
+        return new BezierSpline3(l, nodes, curves);
     }
 
     public Vector3f evaluate(double t) {
@@ -62,11 +69,36 @@ public class BezierSpline3 {
             throw new IllegalArgumentException("t is not inside valid range");
         }
         int i;
-        for (i = 1; t <= nodes[i]; i++);
+        for (i = 1; t > nodes[i]; i++);
         double a = nodes[i-1];
         double b = nodes[i];
         //remap over [0,1]
         double u = (t-a) / (b-a);
         return this.curves[i-1].evaluate(u);
+    }
+
+
+    public static BezierSpline3 CreateC1Spline(int l, double[] nodes, Vector3f[] cP) {
+        if (nodes.length != (l+1) || cP.length != (2*l+2)) {
+            throw new IllegalArgumentException("Invalid array lengths");
+        }
+        Vector3f[] finalCP = new Vector3f[l*3+1];
+        BezierCurve3[] curves = new BezierCurve3[l];
+        finalCP[0] = cP[0];
+        finalCP[1] = cP[1];
+        finalCP[2] = cP[2];
+        for (int i = 1; i < l; i++) {
+            double deltaN = nodes[i+1]-nodes[i-1];
+            double deltaD = nodes[i]-nodes[i-1];
+            double inverseT = deltaD / deltaN;
+            finalCP[i*3] = cP[2*i].mix(cP[2*i+1], inverseT);
+            finalCP[i*3+1] = cP[i*2+1];
+            finalCP[i*3+2] = cP[i*2+2];
+        }
+        finalCP[l*3] = cP[2*l+1];
+        for (int i = 0; i < l; i++) {
+            curves[i] = new BezierCurve3(finalCP[i*3], finalCP[i*3+1], finalCP[i*3+2], finalCP[i*3+3]);
+        }
+        return new BezierSpline3(l, nodes, curves);
     }
 }
