@@ -29,8 +29,8 @@ public class BoundingVolume {
     }
 
     public boolean intersect(Line3d ray) {
-        double tNear = Double.POSITIVE_INFINITY;
-        double tFar = Double.NEGATIVE_INFINITY;
+        double tNear = Double.NEGATIVE_INFINITY;
+        double tFar = Double.POSITIVE_INFINITY;
         Vector3f origin = ray.getPoint();
         Vector3f r = ray.getDirection();
         for (int i = 0; i < planeSetNormalNumber; i++) {
@@ -38,12 +38,12 @@ public class BoundingVolume {
             double den = planeSetNormal[i].dotProduct(r);
             double tn = (dNear[i] - num) / den;
             double tf = (dFar[i] - num) / den;
-//            if (den < 0) {
-//                //swap
-//                double temp = tn;
-//                tn = tf;
-//                tf = temp;
-//            }
+            if (den < 0) {
+                //swap
+                double temp = tn;
+                tn = tf;
+                tf = temp;
+            }
             if (tn > tNear) tNear = tn;
             if (tf < tFar) tFar = tf;
             if (tNear > tFar) return false;
