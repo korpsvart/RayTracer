@@ -38,14 +38,14 @@ public class BoundingVolume {
             double den = planeSetNormal[i].dotProduct(r);
             double tn = (dNear[i] - num) / den;
             double tf = (dFar[i] - num) / den;
-            if (den < 0) {
-                //swap
-                double temp = tn;
-                tn = tf;
-                tf = temp;
-            }
-            if (tn < tNear) tNear = tn;
-            if (tf > tFar) tFar = tf;
+//            if (den < 0) {
+//                //swap
+//                double temp = tn;
+//                tn = tf;
+//                tf = temp;
+//            }
+            if (tn > tNear) tNear = tn;
+            if (tf < tFar) tFar = tf;
             if (tNear > tFar) return false;
         }
         return true;
