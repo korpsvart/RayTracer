@@ -21,7 +21,7 @@ public abstract class GeometricObject {
     public Optional<IntersectionData> rayIntersection(Line3d ray) {
         //this is the version which should be always called from outside
         //which always includes the bounding box check
-        if (this.boxCheck(ray)) {
+        if (this.boundingVolumeCheck(ray)) {
             return this.rayIntersection2(ray);
         } else {
             return Optional.empty();
@@ -31,9 +31,14 @@ public abstract class GeometricObject {
     public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
         return null;
     }
+
     public boolean boxCheck(Line3d ray) {
         //default implementation for objects
         //for which box check is overkill
+        return true;
+    }
+
+    public boolean boundingVolumeCheck(Line3d ray) {
         return true;
     }
 

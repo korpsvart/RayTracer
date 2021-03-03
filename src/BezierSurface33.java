@@ -77,8 +77,8 @@ public class BezierSurface33 extends GeometricObject {
                 cPoints[i*4+j]=controlPoints[i][j];
             }
         }
-        BoundingBox boundingBox = new BoundingBox(cPoints);
-        return new TriangleMesh(faceIndex, vertexIndex, vertex, vertexNormal, boundingBox);
+        BoundingVolume boundingVolume = new BoundingVolume(cPoints);
+        return new TriangleMesh(faceIndex, vertexIndex, vertex, vertexNormal, boundingVolume);
 
     }
 

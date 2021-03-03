@@ -95,6 +95,11 @@ public class TriangleMesh {
         }
 
         @Override
+        public boolean boundingVolumeCheck(Line3d ray) {
+            return this.triangleMesh.boundingVolumeCheck(ray);
+        }
+
+        @Override
         public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
             if (!useVertexNormal) {
                 if (this.faceNormal == null) {
@@ -145,6 +150,7 @@ public class TriangleMesh {
     private int numTriangles;
     private int numVertices;
     private BoundingBox boundingBox;
+    private BoundingVolume boundingVolume;
     private Triangle triangles[];
 
     public Triangle[] getTriangles() {
@@ -186,7 +192,9 @@ public class TriangleMesh {
 
         //If bounding box is not given explicitly by caller
         //compute it here from vertices
+        //Same for bounding volume
         boundingBox = new BoundingBox(vertex);
+        boundingVolume = new BoundingVolume(vertex);
 
     }
 
@@ -258,6 +266,45 @@ public class TriangleMesh {
         this.boundingBox = boundingBox;
     }
 
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Vector3f[] vertexNormal, BoundingVolume boundingVolume) {
+        //This is an algorithm I came up with
+        //Don't know if it's correct and how fast it is
+
+        //First loop is only to allocate exact size
+        //for vertexIndex array
+        this.vertex = vertex.clone();
+        this.vertexNormal = vertexNormal.clone();
+        numVertices = 0;
+        numTriangles = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            numTriangles += faceIndex[i]-2;
+        }
+        numVertices = numTriangles*3;
+        this.vertexIndex = new int[numVertices];
+
+        int triPerFace = 0;
+        int localFaceOffset = 0;
+        int polygonFaceOffset = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            triPerFace = faceIndex[i] - 2;
+            for (int j = 0; j < triPerFace; j++) {
+                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
+                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+            }
+            localFaceOffset+=triPerFace*3;
+            polygonFaceOffset+=faceIndex[i];
+        }
+
+        triangles = new Triangle[numTriangles];
+        makeTriangles(true);
+
+        //bounding volume given explicitly (e.g. for bezier surfaces)
+        //(note: there still might be pieces of codes using bounding box check
+        //so there's a chance using this constructor will lead to a null pointer exception)
+        this.boundingVolume = boundingVolume;
+    }
+
     public void makeTriangles(boolean useVertexNormal) {
         if (!useVertexNormal) {
             for (int i = 0; i < numTriangles; i++) {
@@ -284,6 +331,12 @@ public class TriangleMesh {
     public boolean boxCheck(Line3d ray) {
         return this.boundingBox.rayIntersection(ray);
     }
+
+    public boolean boundingVolumeCheck(Line3d ray) {
+        return this.boundingVolume.intersect(ray);
+    }
+
+
 
 
 }

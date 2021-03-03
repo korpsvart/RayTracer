@@ -31,8 +31,8 @@ public class Main {
         //(0, 0, -1)
         //Screen is placed at z=-1
 
-        int width = 1280;
-        int height = 1024;
+        int width = 600;
+        int height = 450;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
@@ -102,7 +102,7 @@ public class Main {
         start = System.nanoTime();
         Diffuse transparentBezier = new Diffuse(bezierSurface);
 //        transparentBezier.setIor(1.5);
-        scene.triangulateAndAddSceneObject(transparentBezier, 10);
+        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         long triangulationTime = System.nanoTime() - start;
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));

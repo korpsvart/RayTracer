@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 
-public class Visualizer extends Frame implements ActionListener {
+public class Visualizer extends Frame implements ActionListener, WindowListener {
 
     private Scene scene;
     private SceneCanvas sceneCanvas;
@@ -18,11 +20,15 @@ public class Visualizer extends Frame implements ActionListener {
         this.sceneCanvas = c;
         c.setBounds(0, 0, sceneToRender.getWidth(), sceneToRender.getHeight());
         add(c);
-        Button b = new CommandButton(this,"right");
-        b.setBounds(sceneToRender.getWidth()+25, sceneToRender.getHeight()/2, 50, 50);
-        add(b);
+        Button rightButton = new CommandButton(this,"right");
+        Button closeButton = new CommandButton(this, "close");
+        rightButton.setBounds(sceneToRender.getWidth()+25, sceneToRender.getHeight()/2, 50, 50);
+        closeButton.setBounds(sceneToRender.getWidth()+25, sceneToRender.getHeight()/2+75, 50, 50);
+        add(rightButton);
+        add(closeButton);
         setLayout(null);
         setVisible(true);
+
     }
 
     @Override
@@ -33,8 +39,48 @@ public class Visualizer extends Frame implements ActionListener {
             this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
             this.scene.render();
             this.sceneCanvas.repaint();
-            System.out.println("Potamocero forense");
+        } else if (e.getActionCommand().equals("close")) {
+            setVisible(false);
+            this.dispose();
+            System.exit(0);
         }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        setVisible(false);
+        this.dispose();
+        System.exit(0);
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
     }
 
     class CommandButton extends Button {
