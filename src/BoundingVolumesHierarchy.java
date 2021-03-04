@@ -27,7 +27,7 @@ public class BoundingVolumesHierarchy {
         octree.build();
     }
 
-    public Optional<IntersectionDataPlusObject> intersect(Line3d ray) {
+    public Optional<IntersectionDataPlusObject> intersect(Line3d ray, RayType rayType) {
         double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);
         PriorityQueue<QueueElement> pQueue = new PriorityQueue<>();
         double tMin = Double.POSITIVE_INFINITY;
@@ -43,7 +43,7 @@ public class BoundingVolumesHierarchy {
                 for (BoundingVolume b :
                         boundingVolumes) {
                     SceneObject sO = b.getSceneObject();
-                    Optional<IntersectionData> t = sO.rayIntersection(ray);
+                    Optional<IntersectionData> t = sO.trace(ray, rayType);
                     if (t.isPresent() && t.get().getT() < tMin) {
                         tMin = t.get().getT();
                         ret = Optional.of(new IntersectionDataPlusObject(t.get(), sO));

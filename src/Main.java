@@ -108,7 +108,7 @@ public class Main {
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 400, new Vector3f(1, 1, -4));
 //        scene.addPointLight(pointLight1);
-//        scene.addPointLight(pointLight2);
+        scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
 
         //calculate render time

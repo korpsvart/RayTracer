@@ -49,8 +49,8 @@ public class BoundingVolume {
     public static BoundingVolume createNullBoundingvolume() {
         BoundingVolume boundingVolume = new BoundingVolume();
         for (int i = 0; i < planeSetNormalNumber; i++) {
-            boundingVolume.dNear[i] = -10e3;
-            boundingVolume.dFar[i] = 10e3;
+            boundingVolume.dNear[i] = -10e8;
+            boundingVolume.dFar[i] = 10e8;
         }
         return boundingVolume;
     }

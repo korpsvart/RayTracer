@@ -99,7 +99,7 @@ public class MirrorTransparent extends SceneObject {
             //incident angle is greater then critical angle:
             //total internal reflection.
             //We don't need to compute refraction direction
-            return currentScene.rayTrace(new Line3d(hitPointRefl, reflectionDir), rayDepth+1);
+            return currentScene.rayTraceWithBVH(new Line3d(hitPointRefl, reflectionDir), rayDepth+1);
         } else {
             double c2 = Math.sqrt(c);
             //compute refraction direction
@@ -112,8 +112,8 @@ public class MirrorTransparent extends SceneObject {
             double fr_parallel = Math.pow((x21-x12)/(x21+x12), 2);
             double fr_perpendicular = Math.pow((x12-x21)/(x12+x21), 2);
             fr = (fr_parallel+fr_perpendicular)/2;
-            Vector3f reflectionColor = currentScene.rayTrace(new Line3d(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
-            Vector3f refractionColor = currentScene.rayTrace(new Line3d(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
+            Vector3f reflectionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
+            Vector3f refractionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
             return reflectionColor.add(refractionColor);
         }
 

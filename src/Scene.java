@@ -33,6 +33,10 @@ public class Scene {
         return pointLights;
     }
 
+    public BoundingVolumesHierarchy getBoundingVolumesHierarchy() {
+        return boundingVolumesHierarchy;
+    }
+
     private ArrayList<SceneObject> sceneObjects;
     private ArrayList<PointLight> pointLights;
 
@@ -132,7 +136,7 @@ public class Scene {
         if (rayDepth > MAX_RAY_DEPTH) {
             return this.backgroundColor;
         }
-        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.boundingVolumesHierarchy.intersect(ray);
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.boundingVolumesHierarchy.intersect(ray, RayType.PRIMARY);
         if (intersectionDataPlusObject.isPresent()) {
             IntersectionData intersectionData = intersectionDataPlusObject.get().getIntersectionData();
             SceneObject objectFound = intersectionDataPlusObject.get().getSceneObject();

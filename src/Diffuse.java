@@ -41,15 +41,16 @@ public class Diffuse extends SceneObject
             Vector3f hitPoint2 = hitPoint.add(lDir.mul(10-3)); //adding depth bias
             Line3d shadowRay = new Line3d(hitPoint2, lDir);
             boolean visibility = true;
-            for (SceneObject sO :
-                    sceneObjects) {
-                    Optional<IntersectionData> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
-                    if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
-                        visibility = false;
-                        break;
-                    }
-            }
-            if (visibility) {
+//            for (SceneObject sO :
+//                    sceneObjects) {
+//                    Optional<IntersectionData> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
+//                    if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
+//                        visibility = false;
+//                        break;
+//                    }
+//            }
+            Optional<IntersectionDataPlusObject> obstacle = currentScene.getBoundingVolumesHierarchy().intersect(shadowRay, RayType.SHADOW);
+            if (!obstacle.isPresent()) {
                 //compute color
                 //(now using square rolloff)
                 double facingRatio = Math.max(0, surfaceNormal.dotProduct(lDir)); //we still need this
