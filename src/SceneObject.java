@@ -34,4 +34,10 @@ public abstract class SceneObject extends GeometricObject {
 
     public abstract void addTrianglesToScene(Scene currentScene, TriangleMesh triangleMesh);
 
+    public BoundingVolume getBoundingVolume() {
+        BoundingVolume b = this.geometricObject.getBoundingVolume();
+        b.setSceneObject(this);
+        return b;
+    }
+
 }

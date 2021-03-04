@@ -23,6 +23,7 @@ public class Scene {
     private final BufferedImage img;
     private final Vector3f cameraPosition;
     private Matrix4D cameraToWorld;
+    private BoundingVolumesHierarchy boundingVolumesHierarchy;
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
@@ -55,7 +56,7 @@ public class Scene {
         this.pointLights = new ArrayList<>();
         this.sceneObjects = new ArrayList<>();
         setCameraToWorld(cameraPosition, new Vector3f(0, 0, -1));
-    }
+}
 
     public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition) {
         this.width = width;
@@ -78,6 +79,11 @@ public class Scene {
         sceneObject.addTrianglesToScene(this, triangleMesh);
     }
 
+    public void setBoundingVolumesHierarchy() {
+        //this should be called for each rendering if the scene is not static
+        this.boundingVolumesHierarchy = new BoundingVolumesHierarchy(this);
+    }
+
     public void render() {
         double aspectRatio = (double)width/height;
         double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
@@ -90,7 +96,7 @@ public class Scene {
                 Vector3f rayDirection = new Vector3f(x,y,-1);
                 Vector3f rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
                 Line3d ray = new Line3d(cameraPositionWorld, rayDirectionWorld);
-                Vector3f color = rayTrace(ray, 0); //default ior is that of air
+                Vector3f color = rayTraceWithBVH(ray, 0); //default ior is that of air
                 //which can be considered as vacuum for simplicity
                 Color color1 = color.vectorToColor();
                 img.setRGB(i,j,color1.getRGB());
@@ -117,6 +123,20 @@ public class Scene {
         if (objectFound != null) {
 //            Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(interceptMin));
             return objectFound.computeColor(intersectionDataMin,ray,rayDepth,this);
+        } else {
+            return backgroundColor;
+        }
+    }
+
+    public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth) {
+        if (rayDepth > MAX_RAY_DEPTH) {
+            return this.backgroundColor;
+        }
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.boundingVolumesHierarchy.intersect(ray);
+        if (intersectionDataPlusObject.isPresent()) {
+            IntersectionData intersectionData = intersectionDataPlusObject.get().getIntersectionData();
+            SceneObject objectFound = intersectionDataPlusObject.get().getSceneObject();
+            return objectFound.computeColor(intersectionData,ray,rayDepth,this);
         } else {
             return backgroundColor;
         }

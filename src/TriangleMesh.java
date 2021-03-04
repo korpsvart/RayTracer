@@ -100,6 +100,11 @@ public class TriangleMesh {
         }
 
         @Override
+        public BoundingVolume getBoundingVolume() {
+            return triangleMesh.boundingVolume;
+        }
+
+        @Override
         public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
             if (!useVertexNormal) {
                 if (this.faceNormal == null) {

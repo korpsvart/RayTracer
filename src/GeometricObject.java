@@ -46,4 +46,10 @@ public abstract class GeometricObject {
         return null;
     }
 
+    public BoundingVolume getBoundingVolume() {
+        //default implementation for objects for which
+        //we don't want to implement bounding volumes
+        return BoundingVolume.createNullBoundingvolume();
+    }
+
 }

@@ -113,6 +113,7 @@ public class Main {
 
         //calculate render time
         //(note that this is a very bad way of benchmarking)
+        scene.setBoundingVolumesHierarchy();
         scene.render();
 
         Visualizer visualizer = new Visualizer(scene);
