@@ -36,8 +36,7 @@ public abstract class SceneObject extends GeometricObject {
 
     public BoundingVolume getBoundingVolume() {
         BoundingVolume b = this.geometricObject.getBoundingVolume();
-        b.setSceneObject(this);
-        return b;
+        return BoundingVolume.linkToObject(b, this);
     }
 
 }

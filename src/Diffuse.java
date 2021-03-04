@@ -65,12 +65,9 @@ public class Diffuse extends SceneObject
 
     @Override
     public void addTrianglesToScene(Scene currentScene, TriangleMesh triangleMesh) {
-//        for (TriangleMesh.Triangle triangle :
-//                triangleMesh.getTriangles()) {
-//            currentScene.addSceneObject(new Diffuse(triangle));
-//        }
-        for (int i = 0; i < triangleMesh.getTriangles().length-8; i++) {
-            currentScene.addSceneObject(new Diffuse(triangleMesh.getTriangles()[i]));
+        for (TriangleMesh.Triangle triangle :
+                triangleMesh.getTriangles()) {
+            currentScene.addSceneObject(new Diffuse(triangle));
         }
     }
 

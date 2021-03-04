@@ -36,6 +36,16 @@ public class BoundingVolume {
         }
     }
 
+    public static BoundingVolume linkToObject(BoundingVolume boundingVolume, SceneObject sceneObject) {
+        //create new bounding volume from existing one,
+        //linking it to a particular object
+        BoundingVolume b = new BoundingVolume();
+        b.dNear = boundingVolume.getdNear();
+        b.dFar = boundingVolume.getdFar();
+        b.sceneObject = sceneObject;
+        return b;
+    }
+
     public static BoundingVolume createNullBoundingvolume() {
         BoundingVolume boundingVolume = new BoundingVolume();
         for (int i = 0; i < planeSetNormalNumber; i++) {
@@ -127,7 +137,7 @@ public class BoundingVolume {
     public void extendBy(BoundingVolume b) {
         for (int i = 0; i < planeSetNormalNumber; i++) {
             if (this.dNear[i] > b.dNear[i]) this.dNear[i] = b.dNear[i];
-            if (this.dFar[i] < b.dNear[i]) this.dFar[i] = b.dFar[i];
+            if (this.dFar[i] < b.dFar[i]) this.dFar[i] = b.dFar[i];
         }
     }
 
