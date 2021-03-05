@@ -100,7 +100,7 @@ public class Scene {
                 Vector3f rayDirection = new Vector3f(x,y,-1);
                 Vector3f rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
                 Line3d ray = new Line3d(cameraPositionWorld, rayDirectionWorld);
-                Vector3f color = rayTraceWithBVH(ray, 0); //default ior is that of air
+                Vector3f color = rayTraceWithBVH(ray, 0);
                 //which can be considered as vacuum for simplicity
                 Color color1 = color.vectorToColor();
                 img.setRGB(i,j,color1.getRGB());

@@ -37,6 +37,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener 
             Matrix4D currentCTW = scene.getCameraToWorld();
             Vector3f c = currentCTW.getC();
             this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
+            this.scene.setBoundingVolumesHierarchy();
             this.scene.render();
             this.sceneCanvas.repaint();
         } else if (e.getActionCommand().equals("close")) {

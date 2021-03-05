@@ -3,7 +3,7 @@ import java.util.Optional;
 public class BoundingVolume {
 
     private static final int planeSetNormalNumber = 7;
-    private static final Vector3f[] planeSetNormal = {
+    private static Vector3f[] planeSetNormal = {
             new Vector3f(1, 0, 0),
             new Vector3f(0, 1, 0),
             new Vector3f(0, 0, 1),
