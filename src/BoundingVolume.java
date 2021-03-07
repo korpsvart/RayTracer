@@ -15,6 +15,7 @@ public class BoundingVolume {
 
     private double dNear[] = new double[planeSetNormalNumber];
     private double dFar[] = new double[planeSetNormalNumber];
+    private Vector3f centroid;
 
 
 
@@ -158,5 +159,17 @@ public class BoundingVolume {
             res[i][1] = planeSetNormal[i].dotProduct(r); //second element is denominator
         }
         return res;
+    }
+
+    public Vector3f getCentroid() {
+        if (centroid==null) {
+            centroid = new Vector3f(
+                    dNear[0]+dFar[0],
+                    dNear[1]+dFar[1],
+                    dNear[2]+dFar[2]
+            ).mul(2);
+
+        }
+        return centroid;
     }
 }

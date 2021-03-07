@@ -2,6 +2,7 @@ public class BoundingBox {
 
     private Vector3f min;
     private Vector3f max;
+    private Vector3f centroid;
 
     public BoundingBox(Vector3f min, Vector3f max) {
         this.min = min;
@@ -91,6 +92,18 @@ public class BoundingBox {
         //for now I will just return true
 
         return true;
+
+    }
+
+    public Vector3f getCentroid() {
+        if (centroid == null) {
+            centroid = new Vector3f(
+                    min.add(max).getX()/2,
+                    min.add(max).getY()/2,
+                    min.add(max).getZ()/2
+            );
+        }
+        return centroid;
 
     }
 
