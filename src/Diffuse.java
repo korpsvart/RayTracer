@@ -49,7 +49,7 @@ public class Diffuse extends SceneObject
 //                        break;
 //                    }
 //            }
-            Optional<IntersectionDataPlusObject> obstacle = currentScene.getBoundingVolumesHierarchy().intersect(shadowRay, RayType.SHADOW);
+            Optional<IntersectionDataPlusObject> obstacle = currentScene.getBVH().intersect(shadowRay, RayType.SHADOW);
             if (!obstacle.isPresent()) {
                 //compute color
                 //(now using square rolloff)

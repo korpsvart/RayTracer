@@ -4,19 +4,19 @@ import java.util.PriorityQueue;
 public class BVH {
 
     private Scene scene;
-    OctreeV2 octree;
+    Octree octree;
 
     public BVH(Scene scene, Vector3f minBound, Vector3f maxBound) {
         this.scene = scene;
-        this.octree = new OctreeV2(minBound, maxBound);
+        this.octree = new Octree(minBound, maxBound);
         for (SceneObject object :
-                scene.getSceneObjects()) {
+                scene.getSceneObjectsBVH()) {
             octree.insert(object);
         }
         octree.build();
     }
 
-    Optional<IntersectionDataPlusObject> rayIntersect(Line3d ray, RayType rayType) {
+    Optional<IntersectionDataPlusObject> intersect(Line3d ray, RayType rayType) {
         double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);
         Optional<IntersectionDataPlusObject> ret = Optional.empty();
         IntersectionData intersectionDataMin = null;
@@ -25,7 +25,7 @@ public class BVH {
         PriorityQueue<QueueElement> pQueue = new PriorityQueue<>();
         pQueue.add(new QueueElement(octree.getRoot(), 0));
         while(!pQueue.isEmpty() && pQueue.peek().getT() < tMin) {
-            OctreeV2.OctreeNode octreeNode = pQueue.poll().getOctreeNode();
+            Octree.OctreeNode octreeNode = pQueue.poll().getOctreeNode();
             if (octreeNode.isLeaf()) {
                 for (SceneObject sceneObject :
                         octreeNode.getObjects()) {
@@ -36,7 +36,7 @@ public class BVH {
                     }
                 }
             } else {
-                OctreeV2.OctreeNode[] child = octreeNode.getChild();
+                Octree.OctreeNode[] child = octreeNode.getChild();
                 for (int i = 0; i < 8; i++) {
                     if (child[i]!=null) {
                         Optional<Double> t = child[i].rayIntersection(ray, precalculated);

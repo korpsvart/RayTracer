@@ -3,7 +3,7 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class BoundingVolumesHierarchy {
+public class BoundingVolumesHierarchy_old {
 
     Scene renderingScene;
     BoundingVolume sceneExtent;

@@ -16,6 +16,10 @@ public abstract class SceneObject extends GeometricObject {
         this.useBVH = useBVH;
     }
 
+    public boolean isUseBVH() {
+        return useBVH;
+    }
+
     public SceneObject(GeometricObject geometricObject) {
         //wrap the geometric object passed
         this.geometricObject = geometricObject;

@@ -23,7 +23,11 @@ public class Scene {
     private final BufferedImage img;
     private final Vector3f cameraPosition;
     private Matrix4D cameraToWorld;
-    private BoundingVolumesHierarchy boundingVolumesHierarchy;
+    private BVH BVH;
+    private ArrayList<SceneObject> sceneObjects;
+    private ArrayList<SceneObject> nonBVHSceneObjects;
+    private ArrayList<SceneObject> sceneObjectsBVH;
+    private ArrayList<PointLight> pointLights;
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
@@ -33,12 +37,11 @@ public class Scene {
         return pointLights;
     }
 
-    public BoundingVolumesHierarchy getBoundingVolumesHierarchy() {
-        return boundingVolumesHierarchy;
+    public BVH getBVH() {
+        return BVH;
     }
 
-    private ArrayList<SceneObject> sceneObjects;
-    private ArrayList<PointLight> pointLights;
+
 
     public void addPointLight(PointLight pointLight) {
         pointLights.add(pointLight);
@@ -59,6 +62,8 @@ public class Scene {
         this.backgroundColor = backgroundColor;
         this.pointLights = new ArrayList<>();
         this.sceneObjects = new ArrayList<>();
+        this.nonBVHSceneObjects = new ArrayList<>();
+        this.sceneObjectsBVH = new ArrayList<>();
         setCameraToWorld(cameraPosition, new Vector3f(0, 0, -1));
 }
 
@@ -71,11 +76,21 @@ public class Scene {
         this.backgroundColor = new Vector3f(0, 0, 0);
         this.pointLights = new ArrayList<>();
         this.sceneObjects = new ArrayList<>();
+        this.nonBVHSceneObjects = new ArrayList<>();
+        this.sceneObjectsBVH = new ArrayList<>();
         setCameraToWorld(cameraPosition, new Vector3f(0, 0, -1));
     }
 
     public void addSceneObject(SceneObject sceneObject) {
-        sceneObjects.add(sceneObject);
+        if (sceneObject.isUseBVH()) {
+            sceneObjects.add(sceneObject);
+        } else {
+            nonBVHSceneObjects.add(sceneObject);
+        }
+    }
+
+    public ArrayList<SceneObject> getSceneObjectsBVH() {
+        return sceneObjectsBVH;
     }
 
     public void triangulateAndAddSceneObject(SceneObject sceneObject, int divs) {
@@ -83,9 +98,9 @@ public class Scene {
         sceneObject.addTrianglesToScene(this, triangleMesh);
     }
 
-    public void setBoundingVolumesHierarchy() {
+    public void setBVH(Vector3f minBound, Vector3f maxBound) {
         //this should be called for each rendering if the scene is not static
-        this.boundingVolumesHierarchy = new BoundingVolumesHierarchy(this);
+        this.BVH = new BVH(this, minBound, maxBound);
     }
 
     public void render() {
@@ -125,26 +140,46 @@ public class Scene {
             }
         }
         if (objectFound != null) {
-//            Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(interceptMin));
             return objectFound.computeColor(intersectionDataMin,ray,rayDepth,this);
         } else {
             return backgroundColor;
         }
     }
 
+
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth) {
         if (rayDepth > MAX_RAY_DEPTH) {
             return this.backgroundColor;
         }
-        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.boundingVolumesHierarchy.intersect(ray, RayType.PRIMARY);
+        double interceptMin = Double.POSITIVE_INFINITY;
+        SceneObject objectFound = null;
+        IntersectionData intersectionDataMin = null;
+        //intersect using BVH
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.BVH.intersect(ray, RayType.PRIMARY);
         if (intersectionDataPlusObject.isPresent()) {
-            IntersectionData intersectionData = intersectionDataPlusObject.get().getIntersectionData();
-            SceneObject objectFound = intersectionDataPlusObject.get().getSceneObject();
-            return objectFound.computeColor(intersectionData,ray,rayDepth,this);
+            interceptMin = intersectionDataPlusObject.get().getT();
+            objectFound = intersectionDataPlusObject.get().getSceneObject();
+            intersectionDataMin = intersectionDataPlusObject.get().getIntersectionData();
+        }
+        //intersect non-BVH objects
+        for (SceneObject sO :
+                nonBVHSceneObjects) {
+            Optional<IntersectionData> interceptT = sO.trace(ray, RayType.PRIMARY);
+            if (interceptT.isPresent() && (interceptT.get().getT() < interceptMin)) {
+                objectFound = sO;
+                interceptMin = interceptT.get().getT();
+                intersectionDataMin = interceptT.get();
+            }
+        }
+        if (objectFound != null) {
+            return objectFound.computeColor(intersectionDataMin,ray,rayDepth,this);
         } else {
             return backgroundColor;
         }
     }
+
+
+
 
     public void setCameraToWorld(Vector3f from, Vector3f to) {
         Vector3f aux = new Vector3f(0, 1, 0);

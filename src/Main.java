@@ -1,8 +1,5 @@
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
@@ -113,7 +110,7 @@ public class Main {
 
         //calculate render time
         //(note that this is a very bad way of benchmarking)
-        scene.setBoundingVolumesHierarchy();
+        scene.setBVH();
         scene.render();
 
         Visualizer visualizer = new Visualizer(scene);

@@ -1,9 +1,9 @@
 public class QueueElement implements Comparable<QueueElement> {
 
-    private OctreeV2.OctreeNode octreeNode;
+    private Octree.OctreeNode octreeNode;
     private double t;
 
-    public QueueElement(OctreeV2.OctreeNode octreeNode, double t) {
+    public QueueElement(Octree.OctreeNode octreeNode, double t) {
         this.octreeNode = octreeNode;
         this.t = t;
     }
@@ -17,7 +17,7 @@ public class QueueElement implements Comparable<QueueElement> {
         return t;
     }
 
-    public OctreeV2.OctreeNode getOctreeNode() {
+    public Octree.OctreeNode getOctreeNode() {
         return octreeNode;
     }
 }
