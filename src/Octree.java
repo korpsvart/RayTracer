@@ -23,6 +23,7 @@ public class Octree {
             this.minBound = minBound;
             this.maxBound = maxBound;
             this.isLeaf = true;
+            this.objects = new ArrayDeque<>();
             this.extents = new BoundingVolume();
         }
 

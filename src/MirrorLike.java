@@ -27,7 +27,7 @@ public class MirrorLike extends SceneObject{
         Vector3f incident = ray.getDirection();
         Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
         Line3d reflectionRay = new Line3d(hitPoint, reflectionDir);
-        return currentScene.rayTrace(reflectionRay, rayDepth+1).mul(fr);
+        return currentScene.rayTraceWithBVH(reflectionRay, rayDepth+1).mul(fr);
     }
 
     @Override

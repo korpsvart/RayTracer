@@ -8,16 +8,10 @@ public abstract class SceneObject extends GeometricObject {
      */
 
     private GeometricObject geometricObject;
-    private boolean useBVH = false; //set to true if you wish to use bvh to accelerate intersection
-    //1)do not use bvh acceleration with plane
-    //2)it's not recommended for simple object, such as spheres
 
-    public void setUseBVH(boolean useBVH) {
-        this.useBVH = useBVH;
-    }
 
     public boolean isUseBVH() {
-        return useBVH;
+        return geometricObject.isUseBVH();
     }
 
     public SceneObject(GeometricObject geometricObject) {

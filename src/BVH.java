@@ -29,9 +29,10 @@ public class BVH {
             if (octreeNode.isLeaf()) {
                 for (SceneObject sceneObject :
                         octreeNode.getObjects()) {
-                    Optional<IntersectionData> intersectionData = sceneObject.rayIntersection(ray);
+                    Optional<IntersectionData> intersectionData = sceneObject.trace(ray, rayType);
                     if (intersectionData.isPresent() && intersectionData.get().getT() < tMin) {
                         intersectionDataMin = intersectionData.get();
+                        tMin = intersectionData.get().getT();
                         sceneObjectMin = sceneObject;
                     }
                 }
@@ -49,6 +50,36 @@ public class BVH {
             ret = Optional.of(new IntersectionDataPlusObject(intersectionDataMin, sceneObjectMin));
         }
         return ret;
+    }
+
+    public boolean checkVisibility(Line3d ray, double maxDistance) {
+        //simplified version to
+        //check visibility for diffuse objects
+        double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);
+        double tMin = maxDistance;
+        PriorityQueue<QueueElement> pQueue = new PriorityQueue<>();
+        pQueue.add(new QueueElement(octree.getRoot(), 0));
+        while(!pQueue.isEmpty() && pQueue.peek().getT() < tMin) {
+            Octree.OctreeNode octreeNode = pQueue.poll().getOctreeNode();
+            if (octreeNode.isLeaf()) {
+                for (SceneObject sceneObject :
+                        octreeNode.getObjects()) {
+                    Optional<IntersectionData> intersectionData = sceneObject.trace(ray, RayType.SHADOW);
+                    if (intersectionData.isPresent() && intersectionData.get().getT() < tMin) {
+                        return false;
+                    }
+                }
+            } else {
+                Octree.OctreeNode[] child = octreeNode.getChild();
+                for (int i = 0; i < 8; i++) {
+                    if (child[i]!=null) {
+                        Optional<Double> t = child[i].rayIntersection(ray, precalculated);
+                        if (t.isPresent() && t.get() < tMin) pQueue.add(new QueueElement(child[i], t.get()));
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

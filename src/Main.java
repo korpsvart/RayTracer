@@ -108,8 +108,11 @@ public class Main {
         scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
 
-        //calculate render time
-        //(note that this is a very bad way of benchmarking)
+        //create BVH
+        //Set minBound and maxBound to contain whole renderable scene
+
+        Vector3f minBound = new Vector3f(-1000, -1000, -1000);
+        Vector3f maxBound = new Vector3f(1000, 1000, 1000);
         scene.setBVH();
         scene.render();
 

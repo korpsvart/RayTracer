@@ -38,19 +38,10 @@ public class Diffuse extends SceneObject
             Vector3f lDir = hitPoint.moveTo(pLight.getPosition());
             double distance = lDir.magnitude();
             lDir = lDir.normalize();
-            Vector3f hitPoint2 = hitPoint.add(lDir.mul(10-3)); //adding depth bias
+            Vector3f hitPoint2 = hitPoint.add(lDir.mul(10e-3)); //adding depth bias
             Line3d shadowRay = new Line3d(hitPoint2, lDir);
-            boolean visibility = true;
-//            for (SceneObject sO :
-//                    sceneObjects) {
-//                    Optional<IntersectionData> tIntecept = sO.trace(shadowRay, RayType.SHADOW);
-//                    if (tIntecept.isPresent() && tIntecept.get().getT() < distance) {
-//                        visibility = false;
-//                        break;
-//                    }
-//            }
-            Optional<IntersectionDataPlusObject> obstacle = currentScene.getBVH().intersect(shadowRay, RayType.SHADOW);
-            if (!obstacle.isPresent()) {
+            boolean visibility = currentScene.checkVisibility(shadowRay, distance);
+            if (visibility) {
                 //compute color
                 //(now using square rolloff)
                 double facingRatio = Math.max(0, surfaceNormal.dotProduct(lDir)); //we still need this

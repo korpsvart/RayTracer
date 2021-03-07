@@ -8,6 +8,8 @@ import java.util.Optional;
 public class Scene {
 
     private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
+    private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
+    private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
 
     public static double getBias() {
         return bias;
@@ -83,10 +85,11 @@ public class Scene {
 
     public void addSceneObject(SceneObject sceneObject) {
         if (sceneObject.isUseBVH()) {
-            sceneObjects.add(sceneObject);
+            sceneObjectsBVH.add(sceneObject);
         } else {
             nonBVHSceneObjects.add(sceneObject);
         }
+        sceneObjects.add(sceneObject);
     }
 
     public ArrayList<SceneObject> getSceneObjectsBVH() {
@@ -98,9 +101,9 @@ public class Scene {
         sceneObject.addTrianglesToScene(this, triangleMesh);
     }
 
-    public void setBVH(Vector3f minBound, Vector3f maxBound) {
+    public void setBVH() {
         //this should be called for each rendering if the scene is not static
-        this.BVH = new BVH(this, minBound, maxBound);
+        this.BVH = new BVH(this, Scene.MIN_BOUND, Scene.MAX_BOUND);
     }
 
     public void render() {
@@ -151,20 +154,29 @@ public class Scene {
         if (rayDepth > MAX_RAY_DEPTH) {
             return this.backgroundColor;
         }
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = calculateIntersection(ray, RayType.PRIMARY);
+        if (intersectionDataPlusObject.isPresent()) {
+            return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
+        } else {
+            return backgroundColor;
+        }
+    }
+
+    public Optional<IntersectionDataPlusObject> calculateIntersection(Line3d ray, RayType rayType) {
         double interceptMin = Double.POSITIVE_INFINITY;
         SceneObject objectFound = null;
         IntersectionData intersectionDataMin = null;
         //intersect using BVH
-        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.BVH.intersect(ray, RayType.PRIMARY);
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = this.BVH.intersect(ray, rayType);
         if (intersectionDataPlusObject.isPresent()) {
             interceptMin = intersectionDataPlusObject.get().getT();
             objectFound = intersectionDataPlusObject.get().getSceneObject();
             intersectionDataMin = intersectionDataPlusObject.get().getIntersectionData();
         }
         //intersect non-BVH objects
-        for (SceneObject sO :
+        for (SceneObject sO:
                 nonBVHSceneObjects) {
-            Optional<IntersectionData> interceptT = sO.trace(ray, RayType.PRIMARY);
+            Optional<IntersectionData> interceptT = sO.trace(ray, rayType);
             if (interceptT.isPresent() && (interceptT.get().getT() < interceptMin)) {
                 objectFound = sO;
                 interceptMin = interceptT.get().getT();
@@ -172,10 +184,29 @@ public class Scene {
             }
         }
         if (objectFound != null) {
-            return objectFound.computeColor(intersectionDataMin,ray,rayDepth,this);
+            return Optional.of(new IntersectionDataPlusObject(intersectionDataMin, objectFound));
         } else {
-            return backgroundColor;
+            return Optional.empty();
         }
+    }
+
+    public boolean checkVisibility(Line3d ray, double maxDistance) {
+        //similar to calculateIntersection
+        //but used to check visibility for diffuse objects
+        //thus it can be made more efficient by stopping as
+        //soon as we find an object with t < maxDistance
+        //and returning only a boolean value
+        if (!BVH.checkVisibility(ray, maxDistance)) {
+            return false;
+        }
+        for (SceneObject sO :
+                nonBVHSceneObjects) {
+            Optional<IntersectionData> interceptT = sO.trace(ray, RayType.SHADOW);
+            if (interceptT.isPresent() && (interceptT.get().getT() < maxDistance)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

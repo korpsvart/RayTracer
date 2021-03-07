@@ -324,6 +324,7 @@ public class TriangleMesh {
                 Vector3f[] triangleVertexNormal = {vertexNormal[index1], vertexNormal[index2], vertexNormal[index3]};
                 Triangle triangle = new Triangle(vertex[index1], vertex[index2], vertex[index3], this, triangleVertexNormal);
                 triangle.setUseVertexNormal(true);
+                triangle.setUseBVH(true);
                 triangles[i] = triangle;
             }
         }
