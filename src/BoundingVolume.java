@@ -151,7 +151,7 @@ public class BoundingVolume {
     }
 
     public static double[][] precalculateForIntersection(Line3d ray) {
-        Vector3f o = ray.getDirection();
+        Vector3f o = ray.getPoint();
         Vector3f r = ray.getDirection();
         double res[][] = new double[planeSetNormalNumber][2];
         for (int i = 0; i < planeSetNormalNumber; i++) {
