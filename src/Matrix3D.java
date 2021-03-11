@@ -4,6 +4,7 @@ public class Matrix3D {
 
     public static final int ROW_VECTOR = 0;
     public static final int COL_VECTOR = 1;
+    public static final Matrix3D identity = new Matrix3D(identity());
     private double mInternal[][] = new double[3][3];
 
     public Matrix3D(double mInternal[][]) {
@@ -130,6 +131,20 @@ public class Matrix3D {
         //A rotation matrix is an orthogonal matrix
         //Thus we just take the transpose
         return this.transpose();
+    }
+
+    private static double[][] identity() {
+        double m[][] = new double[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i==j) {
+                    m[i][j] = 1;
+                } else {
+                    m[i][j] = 0;
+                }
+            }
+        }
+        return m;
     }
 
 

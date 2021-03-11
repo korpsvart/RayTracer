@@ -3,6 +3,7 @@ public class Matrix4D {
     //A matrix to describe affine transform
     //using homogeneous points
 
+    public static final Matrix4D identity = new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, 0));
 
     private double mInternal[][] = new double[4][4];
     private Matrix3D a;
@@ -117,5 +118,6 @@ public class Matrix4D {
         Matrix3D m = this.getA().invertRotationMatrix();
         return m.get4DMatrix(new Vector3f(0, 0, 0));
     }
+
 
 }

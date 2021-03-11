@@ -95,11 +95,21 @@ public class Main {
                 }
         };
         BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
+        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
+        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
+        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
+//        scene.setCameraToWorld(teaPotCTW);
+        BezierSurface33[] teaPotPatches = teaPotData.getSurfaces(teaPotOTW);
+        for (BezierSurface33 patch :
+                teaPotPatches) {
+            Diffuse diffusePatch = new Diffuse(patch);
+            scene.triangulateAndAddSceneObject(diffusePatch, 5);
+        }
         long start = 0;
         start = System.nanoTime();
-        Diffuse transparentBezier = new Diffuse(bezierSurface);
-//        transparentBezier.setIor(1.5);
-        scene.triangulateAndAddSceneObject(transparentBezier, 5);
+//        Diffuse transparentBezier = new Diffuse(bezierSurface);
+////        transparentBezier.setIor(1.5);
+//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         long triangulationTime = System.nanoTime() - start;
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));

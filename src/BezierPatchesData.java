@@ -7,7 +7,7 @@ public class BezierPatchesData {
 
 
 
-    public BezierPatchesData createTeapot() {
+    public static BezierPatchesData createTeapot() {
         BezierPatchesData teaPot = new BezierPatchesData();
         teaPot.numPatches = 32;
         teaPot.numCP = 306;
@@ -356,15 +356,50 @@ public class BezierPatchesData {
         return teaPot;
     }
 
-    public void triangulateAndAddToScene() {
+    public static Matrix4D getTeapotOTW() {
+        Matrix4D otw = new Matrix4D(new double[][]{
+                {0.3, 0, 0, 1},
+                {0, 0, 0.3, 0},
+                {0, 0.3, 0, -7},
+                {0, 0, 0, 1}
+        });
+        return otw;
+    }
+
+    public static Matrix4D getTeapotCTW() {
+        Matrix4D ctw = new Matrix4D(new double[][] {
+                {0.897258, 0, -0.441506, 0},
+                {-0.288129, 0.757698, -0.585556, 0},
+                {0.334528, 0.652606, 0.679851, 0},
+                {5.439442, 11.080794, 10.381341, 1}
+        });
+        return ctw;
+    }
+
+    public BezierSurface33[] getSurfaces() {
+        BezierSurface33[] patches = new BezierSurface33[numPatches];
         for (int i = 0; i < numPatches; i++) {
             Vector3f controlPoints[] = new Vector3f[16];
             for (int j = 0; j < 16; j++) {
-                controlPoints[i] = new Vector3f(cP[patchesCP[i][j]]);
+                controlPoints[j] = new Vector3f(cP[patchesCP[i][j]-1]);
             }
             BezierSurface33 bSurface = new BezierSurface33(controlPoints);
-            bSurface.
+            patches[i] = bSurface;
         }
+        return patches;
+    }
+
+    public BezierSurface33[] getSurfaces(Matrix4D objectToWorld) {
+        BezierSurface33[] patches = new BezierSurface33[numPatches];
+        for (int i = 0; i < numPatches; i++) {
+            Vector3f controlPoints[] = new Vector3f[16];
+            for (int j = 0; j < 16; j++) {
+                controlPoints[j] = new Vector3f(cP[patchesCP[i][j]-1]);
+            }
+            BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorld);
+            patches[i] = bSurface;
+        }
+        return patches;
     }
 
 }

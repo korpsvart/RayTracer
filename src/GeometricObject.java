@@ -10,6 +10,7 @@ public abstract class GeometricObject {
     You MUST add material properties to be able to render them in the Scene).
      */
 
+    protected Matrix4D objectToWorld = null;
     private boolean useBVH = false;//set to true if you wish to use bvh to accelerate intersection
     //1)do not use bvh acceleration with plane
     //2)it's not recommended for simple object, such as spheres
@@ -20,6 +21,19 @@ public abstract class GeometricObject {
 
     public boolean isUseBVH() {
         return useBVH;
+    }
+
+    public Matrix4D getObjectToWorld() {
+        if (objectToWorld == null) {
+            //return identity affine transform
+            return Matrix4D.identity;
+        } else {
+            return objectToWorld;
+        }
+    }
+
+    public void setObjectToWorld(Matrix4D objectToWorld) {
+        this.objectToWorld = objectToWorld;
     }
 
     public Optional<IntersectionData> rayIntersection2(Line3d ray) {

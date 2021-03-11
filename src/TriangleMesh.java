@@ -22,6 +22,11 @@ public class TriangleMesh {
         }
 
         public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh) {
+            if (this.objectToWorld != null) {
+                v0 = v0.matrixAffineTransform(objectToWorld);
+                v1 = v1.matrixAffineTransform(objectToWorld);
+                v2 = v2.matrixAffineTransform(objectToWorld);
+            }
             this.v0 = v0;
             this.v1 = v1;
             this.v2 = v2;

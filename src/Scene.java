@@ -18,7 +18,7 @@ public class Scene {
     private static final double bias = 10e-6; //bias for shadow acne
     private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = true;
+    private static boolean backFaceCulling = false;
     private final int width;
     private final int height;
     private final double fieldOfView;
@@ -53,6 +53,10 @@ public class Scene {
 
     public static boolean isBackFaceCulling() {
         return backFaceCulling;
+    }
+
+    public void setCameraToWorld(Matrix4D cameraToWorld) {
+        this.cameraToWorld = cameraToWorld;
     }
 
     public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition, Vector3f backgroundColor) {
