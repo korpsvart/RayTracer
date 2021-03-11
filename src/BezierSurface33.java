@@ -10,6 +10,19 @@ public class BezierSurface33 extends GeometricObject {
         this.controlPoints = controlPoints.clone();
     }
 
+    public BezierSurface33(Vector3f controlPoints[]) {
+        //in case the points are given in a single array of 16 points
+        //(we assume the points are ordered going first left to right
+        //and then bottom up
+        this.controlPoints = new Vector3f[4][4];
+        for (int i = 0; i < 4; i++) {
+            this.controlPoints[i][0] = controlPoints[i*4];
+            this.controlPoints[i][1] = controlPoints[i*4+1];
+            this.controlPoints[i][2] = controlPoints[i*4+2];
+            this.controlPoints[i][3] = controlPoints[i*4+3];
+        }
+    }
+
 
     public Vector3f evaluate(double u, double v) {
         //This version is based on the fact
