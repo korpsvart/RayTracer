@@ -15,6 +15,7 @@ public class TriangleMesh {
         private Vector3f faceNormal = null;
         private double area  = -1;
         public Vector3f[] vertexNormal = null;
+        private BoundingVolume boundingVolume;
 
         public void setUseVertexNormal(boolean useVertexNormal) {
             this.useVertexNormal = useVertexNormal;
@@ -25,6 +26,7 @@ public class TriangleMesh {
             this.v1 = v1;
             this.v2 = v2;
             this.triangleMesh = triangleMesh;
+            this.boundingVolume = new BoundingVolume(new Vector3f[]{v0, v1, v2});
         }
 
         public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Vector3f vertexNormal[]) {
@@ -96,12 +98,12 @@ public class TriangleMesh {
 
         @Override
         public boolean boundingVolumeCheck(Line3d ray) {
-            return this.triangleMesh.boundingVolumeCheck(ray);
+            return this.boundingVolume.intersect(ray);
         }
 
         @Override
         public BoundingVolume getBoundingVolume() {
-            return triangleMesh.boundingVolume;
+            return this.boundingVolume;
         }
 
         @Override
