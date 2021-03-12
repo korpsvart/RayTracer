@@ -52,7 +52,7 @@ public class BVH {
         return ret;
     }
 
-    public boolean checkVisibility(Line3d ray, double maxDistance) {
+    public boolean checkVisibility(Line3d ray, double maxDistance, SceneObject caller) {
         //simplified version to
         //check visibility for diffuse objects
         double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);
@@ -64,9 +64,11 @@ public class BVH {
             if (octreeNode.isLeaf()) {
                 for (SceneObject sceneObject :
                         octreeNode.getObjects()) {
-                    Optional<IntersectionData> intersectionData = sceneObject.trace(ray, RayType.SHADOW);
-                    if (intersectionData.isPresent() && intersectionData.get().getT() < tMin) {
-                        return false;
+                    if (sceneObject != caller) {
+                        Optional<IntersectionData> intersectionData = sceneObject.trace(ray, RayType.SHADOW);
+                        if (intersectionData.isPresent() && intersectionData.get().getT() < tMin) {
+                            return false;
+                        }
                     }
                 }
             } else {

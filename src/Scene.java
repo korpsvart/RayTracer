@@ -15,10 +15,10 @@ public class Scene {
         return bias;
     }
 
-    private static final double bias = 10e-2; //bias for shadow acne
+    private static final double bias = 10e-6; //bias for shadow acne
     private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = true;
+    private static boolean backFaceCulling = false;
     private final int width;
     private final int height;
     private final double fieldOfView;
@@ -194,20 +194,22 @@ public class Scene {
         }
     }
 
-    public boolean checkVisibility(Line3d ray, double maxDistance) {
+    public boolean checkVisibility(Line3d ray, double maxDistance, SceneObject caller) {
         //similar to calculateIntersection
         //but used to check visibility for diffuse objects
         //thus it can be made more efficient by stopping as
         //soon as we find an object with t < maxDistance
         //and returning only a boolean value
-        if (!BVH.checkVisibility(ray, maxDistance)) {
+        if (!BVH.checkVisibility(ray, maxDistance, caller)) {
             return false;
         }
         for (SceneObject sO :
                 nonBVHSceneObjects) {
-            Optional<IntersectionData> interceptT = sO.trace(ray, RayType.SHADOW);
-            if (interceptT.isPresent() && (interceptT.get().getT() < maxDistance)) {
-                return false;
+            if (sO != caller) {
+                Optional<IntersectionData> interceptT = sO.trace(ray, RayType.SHADOW);
+                if (interceptT.isPresent() && (interceptT.get().getT() < maxDistance)) {
+                    return false;
+                }
             }
         }
         return true;
