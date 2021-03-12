@@ -39,7 +39,7 @@ public class Diffuse extends SceneObject
             double distance = lDir.magnitude();
             lDir = lDir.normalize();
             Vector3f hitPoint2 = hitPoint.add(lDir.mul(10e-3)); //adding depth bias
-            Line3d shadowRay = new Line3d(hitPoint2, lDir);
+            Line3d shadowRay = new Line3d(hitPoint, lDir);
             boolean visibility = currentScene.checkVisibility(shadowRay, distance, this);
             if (visibility) {
                 //compute color

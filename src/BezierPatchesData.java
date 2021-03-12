@@ -358,7 +358,7 @@ public class BezierPatchesData {
 
     public static Matrix4D getTeapotOTW() {
         Matrix4D otw = new Matrix4D(new double[][]{
-                {-0.3, 0, 0, -0.9},
+                {-0.3, 0, 0, 0},
                 {0, 0, 0.3, 0},
                 {0, 0.3, 0, -5},
                 {0, 0, 0, 1}

@@ -86,16 +86,32 @@ public class BezierSurface33 extends GeometricObject {
 
 
         //store all vertices for polygon mesh
-        for (int i = 0, k = 0; i <= divs; i++) {
-            u=0;
-            for (int j = 0; j <= divs; j++, k++) {
-                Vector3f[] x = this.evaluateAndDerivative(u, v);
-                Vector3f normal = x[1].crossProduct(x[2]).normalize();
-                vertex[k] = x[0];
-                vertexNormal[k] = normal;
-                u+=du;
+        if (DECASTELJAU_DERIVATIVE) {
+            for (int i = 0, k = 0; i <= divs; i++) {
+                u=0;
+                for (int j = 0; j <= divs; j++, k++) {
+                    Vector3f[] x = this.evaluateAndDerivative(u, v);
+                    Vector3f normal = x[1].crossProduct(x[2]).normalize();
+                    vertex[k] = x[0];
+                    vertexNormal[k] = normal;
+                    u+=du;
+                }
+                v+=dv;
             }
-            v+=dv;
+        } else {
+            for (int i = 0, k = 0; i <= divs; i++) {
+                u=0;
+                for (int j = 0; j <= divs; j++, k++) {
+                    Vector3f x = this.evaluate(u, v);
+                    Vector3f derivativeU = this.derivativeU_v2(u, v);
+                    Vector3f derivativeV = this.derivativeV_v2(u, v);
+                    Vector3f normal = derivativeU.crossProduct(derivativeV).normalize();
+                    vertex[k] = x;
+                    vertexNormal[k] = normal;
+                    u+=du;
+                }
+                v+=dv;
+            }
         }
 
         //create connectivity information in CCW order

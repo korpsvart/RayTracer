@@ -28,8 +28,8 @@ public class Main {
         //(0, 0, -1)
         //Screen is placed at z=-1
 
-        int width = 600;
-        int height = 450;
+        int width = 680;
+        int height = 480;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
@@ -94,6 +94,8 @@ public class Main {
                         new Vector3f(0.9, 1.2, -5.8)
                 }
         };
+        long start = 0;
+        start = System.nanoTime();
         BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
         BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
         Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
@@ -105,15 +107,13 @@ public class Main {
             Diffuse diffusePatch = new Diffuse(patch);
             scene.triangulateAndAddSceneObject(diffusePatch, 5);
         }
-        long start = 0;
-        start = System.nanoTime();
-        Diffuse transparentBezier = new Diffuse(bezierSurface);
-//        transparentBezier.setIor(1.5);
-        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         long triangulationTime = System.nanoTime() - start;
+//        Diffuse transparentBezier = new Diffuse(bezierSurface);
+////        transparentBezier.setIor(1.5);
+//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(0, 1, -4));
+        PointLight pointLight3 = new PointLight(color3, 100, new Vector3f(0, 0, -3));
 //        scene.addPointLight(pointLight1);
         scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
