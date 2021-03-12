@@ -1,3 +1,5 @@
+import com.sun.jdi.Mirror;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,7 +45,7 @@ public class Main {
         Color color3 = new Color(0.4f,0.9f,0.1f);
         Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(1,0,-10), 1));
         MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
-        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(-3, 2, -10), 1.6));
+        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 2, -12), 1.2));
         transparentSphere.setIor(1.5);
         Sphere sphere3 = new Sphere(new Vector3f(-2, -2, -7), 0.6);
         Sphere sphere4 = new Sphere(new Vector3f(0, -2, -7), 0.5);
@@ -97,20 +99,20 @@ public class Main {
         long start = 0;
         start = System.nanoTime();
         BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
-        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
-        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
-        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
-//        scene.setCameraToWorld(teaPotCTW);
-        BezierSurface33[] teaPotPatches = teaPotData.getSurfaces(teaPotOTW);
-        for (BezierSurface33 patch :
-                teaPotPatches) {
-            Diffuse diffusePatch = new Diffuse(patch);
-            scene.triangulateAndAddSceneObject(diffusePatch, 5);
-        }
+//        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
+//        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
+//        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
+////        scene.setCameraToWorld(teaPotCTW);
+//        BezierSurface33[] teaPotPatches = teaPotData.getSurfaces(teaPotOTW);
+//        for (BezierSurface33 patch :
+//                teaPotPatches) {
+//            Diffuse diffusePatch = new Diffuse(patch);
+//            scene.triangulateAndAddSceneObject(diffusePatch, 5);
+//        }
         long triangulationTime = System.nanoTime() - start;
-//        Diffuse transparentBezier = new Diffuse(bezierSurface);
-////        transparentBezier.setIor(1.5);
-//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
+        MirrorTransparent transparentBezier = new MirrorTransparent(bezierSurface);
+        transparentBezier.setIor(1.5);
+        scene.triangulateAndAddSceneObject(transparentBezier, 16);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color3, 100, new Vector3f(0, 0, -3));
