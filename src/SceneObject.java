@@ -1,6 +1,6 @@
 import java.util.Optional;
 
-public abstract class SceneObject extends GeometricObject {
+public abstract class SceneObject{
 
     /*Scene Object, decorating (more like wrapping) a GeometricObject,
     adding material properties to them.
@@ -19,17 +19,17 @@ public abstract class SceneObject extends GeometricObject {
         this.geometricObject = geometricObject;
     }
 
-    @Override
+
     public Optional<IntersectionData> rayIntersection(Line3d ray) {
         return geometricObject.rayIntersection(ray);
     }
 
-    @Override
+
     public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
         return geometricObject.getSurfaceNormal(point, u, v);
     }
 
-    @Override
+
     public TriangleMesh triangulate(int divs) {
         return geometricObject.triangulate(divs);
     }

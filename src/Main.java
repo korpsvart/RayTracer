@@ -107,9 +107,9 @@ public class Main {
         }
         long start = 0;
         start = System.nanoTime();
-//        Diffuse transparentBezier = new Diffuse(bezierSurface);
-////        transparentBezier.setIor(1.5);
-//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
+        Diffuse transparentBezier = new Diffuse(bezierSurface);
+//        transparentBezier.setIor(1.5);
+        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         long triangulationTime = System.nanoTime() - start;
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));

@@ -15,10 +15,10 @@ public class Scene {
         return bias;
     }
 
-    private static final double bias = 10e-6; //bias for shadow acne
+    private static final double bias = 10e-2; //bias for shadow acne
     private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = false;
+    private static boolean backFaceCulling = true;
     private final int width;
     private final int height;
     private final double fieldOfView;

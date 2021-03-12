@@ -113,7 +113,7 @@ public class TriangleMesh {
 
         @Override
         public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
-            if (!useVertexNormal) {
+            if (!useVertexNormal || u <0 || v <0) {
                 if (this.faceNormal == null) {
                     //also precompute area for performance reasons
                     Vector3f e1 = v0.moveTo(v1);

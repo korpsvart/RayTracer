@@ -83,6 +83,16 @@ public class BezierCurve3 {
 
     }
 
+    public Vector3f derivative_v2(double t) {
+        //calculate tangent vector
+        //using bernstein polynomial
+        return controlPoints[0].mul(-3 * (1 - t) * (1 - t)).add(
+                controlPoints[1].mul(3 * (1 - t) * (1 - t) - 6 * t * (1 - t))).add(
+                        controlPoints[2].mul((6 * t * (1 - t) - 3 * t * t))).add(
+                                controlPoints[3].mul(3 * t * t)
+        );
+    }
+
     public Vector3f[] evaluateAndDerivative(double t) {
         //Using DeCasteljau algorithm
         //we can evaluate both the original curve
