@@ -2,6 +2,10 @@ public class BezierSurface33 extends GeometricObject {
 
     //Bezier Surface of degree (3,3)
 
+    //if true use decasteljau to take surface derivative
+    //else use bernstein polynomials
+    private static boolean DECASTELJAU_DERIVATIVE = true;
+
 
     private final Vector3f controlPoints[][];
 
@@ -135,6 +139,20 @@ public class BezierSurface33 extends GeometricObject {
         return bezierCurve3.derivative(u);
     }
 
+    public Vector3f derivativeU_v2(double u, double v) {
+        //same as above, but we evaluate the curve derivative using bernstein polynomials
+        BezierCurve3 bezierCurve3;
+        Vector3f curveControlPoints[] = new Vector3f[4];
+        for (int i = 0; i < 4; i++) {
+            bezierCurve3 = new BezierCurve3(controlPoints[i]);
+            curveControlPoints[i] = bezierCurve3.evaluate(v);
+        }
+        bezierCurve3 = new BezierCurve3(curveControlPoints);
+        return bezierCurve3.derivative_v2(u);
+    }
+
+
+
 
     public Vector3f derivativeV(double u, double v) {
         //the idea is the same used for derivativeV
@@ -149,6 +167,18 @@ public class BezierSurface33 extends GeometricObject {
         }
         bezierCurve3 = new BezierCurve3(curveControlPoints);
         return bezierCurve3.derivative(v);
+    }
+
+    public Vector3f derivativeV_v2(double u, double v) {
+        //same as above, but we take the curve derivative using bernstein polynomials
+        BezierCurve3 bezierCurve3;
+        Vector3f curveControlPoints[] = new Vector3f[4];
+        for (int i = 0; i < 4; i++) {
+            bezierCurve3 = new BezierCurve3(controlPoints[0][i], controlPoints[1][i], controlPoints[2][i], controlPoints[3][i]);
+            curveControlPoints[i] = bezierCurve3.evaluate(u);
+        }
+        bezierCurve3 = new BezierCurve3(curveControlPoints);
+        return bezierCurve3.derivative_v2(v);
     }
 
     public Vector3f[] evaluateAndDerivative(double u, double v) {

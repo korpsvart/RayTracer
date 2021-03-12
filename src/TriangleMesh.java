@@ -86,11 +86,17 @@ public class TriangleMesh {
 
             double v = e1.mul(-1).dotProduct(k) / denom;
 
+
             if (v < 0 || (u + v) > 1) {
                 return Optional.empty();
             } else {
-                Main.getRayTriangleIntersections().getAndIncrement();
-                return Optional.of(new IntersectionData(t.dotProduct(h) / denom, u, v));
+                double distance = t.dotProduct(h) / denom;
+                if (distance > 0) {
+                    Main.getRayTriangleIntersections().getAndIncrement();
+                    return Optional.of(new IntersectionData(distance, u, v));
+                } else {
+                    return Optional.empty();
+                }
             }
 
 
