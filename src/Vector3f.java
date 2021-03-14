@@ -190,4 +190,8 @@ public class Vector3f{
     public Vector3f mix(Vector3f v, double t) {
         return this.mul(1-t).add(v.mul(t));
     }
+
+    public Vector3f elementWiseMul(Vector3f v) {
+        return new Vector3f(this.x*v.x, this.y*v.y, this.z*v.z);
+    }
 }

@@ -12,7 +12,11 @@ public class MirrorLike extends SceneObject{
 
     @Override
     public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
-        return this.rayIntersection(ray);
+        if (rayType == RayType.INDIRECT_DIFFUSE) {
+            return Optional.empty();
+        } else {
+            return this.rayIntersection(ray);
+        }
     }
 
 

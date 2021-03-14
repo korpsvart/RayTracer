@@ -7,9 +7,15 @@ import java.util.Optional;
 
 public class Scene {
 
-    private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
+    private static final int MAX_RAY_DEPTH = 3; //max depth of ray tracing recursion
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
+    private static boolean SIMULATE_INDIRECT_DIFFUSE = true;
+    private static boolean USE_ENVIRONMENT_LIGHT = true;
+
+    public static boolean isSimulateIndirectDiffuse() {
+        return SIMULATE_INDIRECT_DIFFUSE;
+    }
 
     public static double getBias() {
         return bias;
@@ -30,6 +36,7 @@ public class Scene {
     private ArrayList<SceneObject> nonBVHSceneObjects;
     private ArrayList<SceneObject> sceneObjectsBVH;
     private ArrayList<PointLight> pointLights;
+    private EnvironmentLight environmentLight = new EnvironmentLight(new Color(1f, 1f, 1f), 0.3f);
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
@@ -163,6 +170,27 @@ public class Scene {
             return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
         } else {
             return backgroundColor;
+        }
+    }
+
+    public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth, RayType rayType) {
+        //same as above but allow caller to specify ray type
+        if (rayDepth > MAX_RAY_DEPTH) {
+            if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
+                return Vector3f.colorToVector(environmentLight.getColor()).mul(environmentLight.getIntensity());
+            } else {
+                return this.backgroundColor;
+            }
+        }
+        Optional<IntersectionDataPlusObject> intersectionDataPlusObject = calculateIntersection(ray, rayType);
+        if (intersectionDataPlusObject.isPresent()) {
+            return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
+        } else {
+            if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
+                return Vector3f.colorToVector(environmentLight.getColor()).mul(environmentLight.getIntensity());
+            } else {
+                return this.backgroundColor;
+            }
         }
     }
 

@@ -43,11 +43,11 @@ public class Main {
         Color color1 = new Color(1f,1f,1f);
         Color color2 = new Color(0.8f,0.6f,0.3f);
         Color color3 = new Color(0.4f,0.9f,0.1f);
-        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(1,0,-10), 1));
+        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(-1,0,-9.5), 1));
         MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
-        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 2, -12), 1.2));
+        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 0.2, -8), 1.2));
         transparentSphere.setIor(1.5);
-        Sphere sphere3 = new Sphere(new Vector3f(-2, -2, -7), 0.6);
+        Sphere sphere3 = new Sphere(new Vector3f(2.5, 0.6, -7), 0.6);
         Sphere sphere4 = new Sphere(new Vector3f(0, -2, -7), 0.5);
         Sphere sphere5 = new Sphere(new Vector3f(0, -2, -4), 0.3);
         Sphere sphere6 = new Sphere(new Vector3f(0, -2, -11), 0.6);
@@ -58,18 +58,19 @@ public class Main {
 
 
         Plane3d plane1 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
-        Plane3d plane2 = new Plane3d(new Vector3f(0, -3, 0), new Vector3f(0, 1, 0));
+        Plane3d plane2 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-//        scene.addSceneObject(diffuseSphere1);
+        scene.addSceneObject(diffuseSphere1);
 //        scene.addSceneObject(transparentSphere);
+        diffuseSphere2.setAlbedo(new Vector3f(0.7, 0, 0));
         scene.addSceneObject(diffuseSphere2);
-//        scene.addSceneObject(diffuseSphere3);
+        scene.addSceneObject(diffuseSphere3);
 //        scene.addSceneObject(diffuseSphere4);
 //        scene.addSceneObject(diffuseSphere5);
 //        scene.addSceneObject(diffuseSphere6);
-        scene.addSceneObject(transparentPlane);
+//        scene.addSceneObject(transparentPlane);
         scene.addSceneObject(diffusePlane);
 //        scene.addSceneObject(triangle1);
         Vector3f[][] controlPoints = {
@@ -110,14 +111,14 @@ public class Main {
 //            scene.triangulateAndAddSceneObject(diffusePatch, 5);
 //        }
         long triangulationTime = System.nanoTime() - start;
-        MirrorTransparent transparentBezier = new MirrorTransparent(bezierSurface);
-        transparentBezier.setIor(1.5);
-        scene.triangulateAndAddSceneObject(transparentBezier, 16);
+//        Diffuse transparentBezier = new Diffuse(bezierSurface);
+////        transparentBezier.setIor(1.5);
+//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color3, 100, new Vector3f(0, 0, -3));
+        PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(-1, 0.7, -7));
 //        scene.addPointLight(pointLight1);
-        scene.addPointLight(pointLight2);
+//        scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);
 
         //create BVH

@@ -31,7 +31,7 @@ public class MirrorTransparent extends SceneObject {
 
     @Override
     public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
-        if (rayType==RayType.SHADOW) {
+        if (rayType==RayType.SHADOW && rayType == RayType.INDIRECT_DIFFUSE) {
             /*Details about the implementation:
             A classic problem is when we are looking at diffuse objects which are
             behind reflection/refraction objects (i.e. objects that have some degree of transparency),

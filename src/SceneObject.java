@@ -19,6 +19,10 @@ public abstract class SceneObject{
         this.geometricObject = geometricObject;
     }
 
+    public Vector3f[] getLocalCartesianSystem(Vector3f point, double u, double v) {
+        return geometricObject.getLocalCartesianSystem(point, u, v);
+    }
+
 
     public Optional<IntersectionData> rayIntersection(Line3d ray) {
         return geometricObject.rayIntersection(ray);

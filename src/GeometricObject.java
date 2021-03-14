@@ -58,6 +58,32 @@ public abstract class GeometricObject {
         return null;
     }
 
+
+    public Vector3f[] getLocalCartesianSystem(Vector3f point, double u, double v) {
+        //get local cartesian coordinate system
+        //Since we only have interpolated normals data
+        //we can't exploit the actual parametric surface tangent and bitangent
+        //(even if we know what kind of parametric surface it is, such as a bezier surface)
+        //Thus we use a different and simple method
+
+        //get normal
+        Vector3f normal = getSurfaceNormal(point, u, v);
+        Vector3f Nt;
+
+        //here we should check that normal doesnt already have same direction as y axis
+        //...
+
+        //check if Ny > Nx
+        if (Math.abs(normal.getX()) > Math.abs(normal.getY())) {
+            Nt = new Vector3f(normal.getZ(), 0, -normal.getX()).normalize();
+        } else {
+            //else consider vector in the plane satisfying x = 0
+            Nt = new Vector3f(0, -normal.getZ(), normal.getY()).normalize();
+        }
+        Vector3f Nb = normal.crossProduct(Nt);
+        return new Vector3f[]{Nt, normal, Nb};
+    }
+
     public boolean boxCheck(Line3d ray) {
         //default implementation for objects
         //for which box check is overkill
