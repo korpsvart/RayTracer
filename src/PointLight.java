@@ -25,5 +25,11 @@ public class PointLight extends LightSource {
         this.position = position;
     }
 
+    public Vector3f illuminate(Vector3f lightDir, double distance, Vector3f surfaceNormal) {
+        double facingRatio = lightDir.dotProduct(surfaceNormal);
+        double intensity = this.getIntensity()*facingRatio/(4*Math.PI*Math.pow(distance, 2));
+        return Vector3f.colorToVector(this.getColor()).mul(intensity);
+    }
+
 
 }

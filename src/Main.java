@@ -44,10 +44,11 @@ public class Main {
         Color color2 = new Color(0.8f,0.6f,0.3f);
         Color color3 = new Color(0.4f,0.9f,0.1f);
         Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(-1,0,-9.5), 1));
+        diffuseSphere1.setAlbedo(new Vector3f(0, 0.2, 0.9));
         MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
         Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 0.2, -8), 1.2));
         transparentSphere.setIor(1.5);
-        Sphere sphere3 = new Sphere(new Vector3f(2.5, 0.6, -7), 0.6);
+        Sphere sphere3 = new Sphere(new Vector3f(2.6, 0.3, -7), 0.6);
         Sphere sphere4 = new Sphere(new Vector3f(0, -2, -7), 0.5);
         Sphere sphere5 = new Sphere(new Vector3f(0, -2, -4), 0.3);
         Sphere sphere6 = new Sphere(new Vector3f(0, -2, -11), 0.6);
@@ -116,7 +117,7 @@ public class Main {
 //        scene.triangulateAndAddSceneObject(transparentBezier, 5);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color3, 200, new Vector3f(-1, 0.7, -7));
+        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(-1, 0.7, -7));
 //        scene.addPointLight(pointLight1);
 //        scene.addPointLight(pointLight2);
         scene.addPointLight(pointLight3);

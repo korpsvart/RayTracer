@@ -16,6 +16,10 @@ public class DistantLight extends LightSource {
         direction = v.matrixLinearTransform(lightToWorld.getA());
     }
 
+    public Vector3f illuminate(double distance) {
+        return Vector3f.colorToVector(this.getColor()).mul(this.getIntensity());
+    }
+
 
 
 

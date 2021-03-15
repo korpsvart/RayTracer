@@ -34,7 +34,7 @@ public class Diffuse extends SceneObject
         Vector3f hitPoint2 = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //adding normal bias
         Vector3f finalColor = new Vector3f(0f,0f,0f);
         Vector3f directDiffuse = new Vector3f(0, 0, 0);
-        for (PointLight pLight:
+        for (LightSource pLight:
                 pointLights) {
             Vector3f lDir = hitPoint2.moveTo(pLight.getPosition());
             double distance = lDir.magnitude();
