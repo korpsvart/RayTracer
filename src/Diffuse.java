@@ -20,7 +20,7 @@ public class Diffuse extends SceneObject
 
     @Override
     public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
-        ArrayList<PointLight> pointLights = currentScene.getPointLights();
+        ArrayList<LightSource> lightSources = currentScene.getLightSources();
         ArrayList<SceneObject> sceneObjects = currentScene.getSceneObjects();
         Double t = intersectionData.getT();
         Double u = intersectionData.getU();
@@ -34,11 +34,11 @@ public class Diffuse extends SceneObject
         Vector3f hitPoint2 = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //adding normal bias
         Vector3f finalColor = new Vector3f(0f,0f,0f);
         Vector3f directDiffuse = new Vector3f(0, 0, 0);
-        for (PointLight pLight:
-                pointLights) {
-            Vector3f lDir = hitPoint2.moveTo(pLight.getPosition());
-            double distance = lDir.magnitude();
-            lDir = lDir.normalize();
+        for (LightSource lightSource:
+                lightSources) {
+            LightSource.LightInfo lightInfo = lightSource.getDirectionAndDistance(hitPoint2);
+            Vector3f lDir = lightInfo.getLightDir();
+            double distance = lightInfo.getDistance();
             Vector3f hitPoint3 = hitPoint2.add(lDir.mul(10e-3)); //adding depth bias
             Line3d shadowRay = new Line3d(hitPoint3, lDir);
             boolean visibility = currentScene.checkVisibility(shadowRay, distance, this);
@@ -46,15 +46,13 @@ public class Diffuse extends SceneObject
                 //compute color
                 //(now using square rolloff)
                 double facingRatio = Math.max(0, surfaceNormal.dotProduct(lDir)); //we still need this
-                Vector3f lightColor = Vector3f.colorToVector(pLight.getColor());
-                double intensity = pLight.getIntensity() * facingRatio / Math.pow(distance, 2);
-                lightColor = lightColor.mul(intensity);
+                Vector3f lightColor = lightSource.illuminate(distance).mul(facingRatio);
                 directDiffuse = directDiffuse.add(lightColor);
             }
         }
-        //we already divide by pi here instead of later
-        //this includes both square rolloff and BRDF
-        directDiffuse = directDiffuse.mul(1/(4*Math.pow(Math.PI, 2)));
+        //brdf for purely diffuse objects is albedo/pi
+        //we don't divide indirectDiffuse by pi cause we didnt multiply it before by the pdf
+        directDiffuse = directDiffuse.mul(1/Math.PI);
         if (currentScene.isSimulateIndirectDiffuse()) {
             Vector3f[] lcs = this.getLocalCartesianSystem(hitPoint, u, v);
             Vector3f indirectDiffuse = MonteCarloSampling.calculateIndirectDiffuse(currentScene, hitPoint2, lcs, rayDepth);

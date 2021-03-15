@@ -118,9 +118,16 @@ public class Main {
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(-1, 0.7, -7));
+        Matrix3D lightRotation = new Matrix3D(new double[][] {
+            {0,0,-1},
+            {0,0,1},
+            {0, 0,-1}
+        });
+        DistantLight distantLight1 = new DistantLight(color1, 10, new Matrix4D(lightRotation, new Vector3f(0, 0, 0)));
 //        scene.addPointLight(pointLight1);
 //        scene.addPointLight(pointLight2);
-        scene.addPointLight(pointLight3);
+//        scene.addPointLight(pointLight3);
+        scene.addLightSource(distantLight1);
 
         //create BVH
         //Set minBound and maxBound to contain whole renderable scene

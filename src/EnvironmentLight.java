@@ -12,4 +12,8 @@ public class EnvironmentLight extends LightSource {
     public EnvironmentLight(Color color, float intensity) {
         super(color, intensity, Matrix4D.identity);
     }
+
+    public Vector3f illuminate(double distance) {
+        return Vector3f.colorToVector(this.getColor()).mul(this.getIntensity());
+    }
 }

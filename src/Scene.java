@@ -35,15 +35,15 @@ public class Scene {
     private ArrayList<SceneObject> sceneObjects;
     private ArrayList<SceneObject> nonBVHSceneObjects;
     private ArrayList<SceneObject> sceneObjectsBVH;
-    private ArrayList<PointLight> pointLights;
+    private ArrayList<LightSource> lightSources;
     private EnvironmentLight environmentLight = new EnvironmentLight(new Color(1f, 1f, 1f), 0.3f);
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
     }
 
-    public ArrayList<PointLight> getPointLights() {
-        return pointLights;
+    public ArrayList<LightSource> getLightSources() {
+        return lightSources;
     }
 
     public BVH getBVH() {
@@ -52,8 +52,8 @@ public class Scene {
 
 
 
-    public void addPointLight(PointLight pointLight) {
-        pointLights.add(pointLight);
+    public void addLightSource(LightSource lightSource) {
+        lightSources.add(lightSource);
     }
 
     private final Vector3f backgroundColor; //default to black
@@ -73,7 +73,7 @@ public class Scene {
         this.img = img;
         this.cameraPosition = cameraPosition;
         this.backgroundColor = backgroundColor;
-        this.pointLights = new ArrayList<>();
+        this.lightSources = new ArrayList<LightSource>();
         this.sceneObjects = new ArrayList<>();
         this.nonBVHSceneObjects = new ArrayList<>();
         this.sceneObjectsBVH = new ArrayList<>();
@@ -87,7 +87,7 @@ public class Scene {
         this.img = img;
         this.cameraPosition = cameraPosition;
         this.backgroundColor = new Vector3f(0, 0, 0);
-        this.pointLights = new ArrayList<>();
+        this.lightSources = new ArrayList<LightSource>();
         this.sceneObjects = new ArrayList<>();
         this.nonBVHSceneObjects = new ArrayList<>();
         this.sceneObjectsBVH = new ArrayList<>();

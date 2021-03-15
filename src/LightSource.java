@@ -12,6 +12,8 @@ public abstract class LightSource {
         return intensity;
     }
 
+    public abstract Vector3f illuminate(double distance);
+
 
 
     protected LightSource(Color color, float intensity, Matrix4D lightToWorld) {
@@ -23,6 +25,29 @@ public abstract class LightSource {
 
     public Color getColor() {
         return color;
+    }
+
+    public LightInfo getDirectionAndDistance(Vector3f hitPoint) {
+        return null;
+    }
+
+    class LightInfo {
+
+        Vector3f lightDir;
+        double distance;
+
+        public LightInfo(Vector3f lightDir, double distance) {
+            this.lightDir = lightDir;
+            this.distance = distance;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
+
+        public Vector3f getLightDir() {
+            return lightDir;
+        }
     }
 
 }

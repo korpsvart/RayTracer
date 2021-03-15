@@ -13,14 +13,15 @@ public class DistantLight extends LightSource {
     protected DistantLight(Color color, float intensity, Matrix4D lightToWorld) {
         super(color, intensity, lightToWorld);
         Vector3f v = new Vector3f(0, 0, -1);
-        direction = v.matrixLinearTransform(lightToWorld.getA());
+        direction = v.matrixLinearTransform(lightToWorld.getA()).normalize(); //normalize just to be sure
     }
 
     public Vector3f illuminate(double distance) {
         return Vector3f.colorToVector(this.getColor()).mul(this.getIntensity());
     }
 
-
-
-
+    @Override
+    public LightInfo getDirectionAndDistance(Vector3f hitPoint) {
+        return new LightInfo(direction.mul(-1), Double.POSITIVE_INFINITY);
+    }
 }
