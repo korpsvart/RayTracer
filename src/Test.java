@@ -26,23 +26,35 @@ public class Test {
 //        Vector3f result = bezierSpline3.evaluate((double)1/4);
 //        System.out.println("aaaa");
 
-        Vector3f dataPoints[] = new Vector3f[]{
-                new Vector3f(0, 0, 0),
-                new Vector3f(2, 2, 0),
-                new Vector3f(3, 1, 0),
-                new Vector3f(4, 1.5, 0)
-        };
-        Vector3f tangents[] = new Vector3f[] {
-                new Vector3f(1, 1, 0),
-                new Vector3f(2, -1, 0),
-                new Vector3f(2, 1, 0),
-                new Vector3f(3, -1, 0)
-        };
-        BezierSpline3 spline = BezierSpline3.piecewiseCubicInterpolation(dataPoints, tangents);
-        Vector3f derivativeTest = spline.getCurves()[0].derivative(0);
-        //check C1 continuity
-        boolean c1Continuity = spline.getCurves()[0].checkC1(spline.getCurves()[1]);
-        System.out.println("aaaaa");
+//        Vector3f dataPoints[] = new Vector3f[]{
+//                new Vector3f(0, 0, 0),
+//                new Vector3f(2, 2, 0),
+//                new Vector3f(3, 1, 0),
+//                new Vector3f(4, 1.5, 0)
+//        };
+//        Vector3f tangents[] = new Vector3f[] {
+//                new Vector3f(1, 1, 0),
+//                new Vector3f(2, -1, 0),
+//                new Vector3f(2, 1, 0),
+//                new Vector3f(3, -1, 0)
+//        };
+//        BezierSpline3 spline = BezierSpline3.piecewiseCubicInterpolation(dataPoints, tangents);
+//        Vector3f derivativeTest = spline.getCurves()[0].derivative(0);
+//        //check C1 continuity
+//        boolean c1Continuity = spline.getCurves()[0].checkC1(spline.getCurves()[1]);
+//        System.out.println("aaaaa");
 
+        Vector3f[] dataPoints1 = new Vector3f[]{
+                new Vector3f(0, 0, -5),
+                new Vector3f(2, 0.5, -5),
+                new Vector3f(4, 0.3, -5)
+        };
+        Vector3f[] dataPoints2 = new Vector3f[] {
+                new Vector3f(0.3, 3, -6),
+                new Vector3f(2.2, 2.8, -6),
+                new Vector3f(4.2, 3.1, -6)
+        };
+
+        BezierSpline3
     }
 }
