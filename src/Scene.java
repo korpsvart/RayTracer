@@ -10,7 +10,7 @@ public class Scene {
     private static final int MAX_RAY_DEPTH = 3; //max depth of ray tracing recursion
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
-    private static boolean SIMULATE_INDIRECT_DIFFUSE = true;
+    private static boolean SIMULATE_INDIRECT_DIFFUSE = false;
     private static boolean USE_ENVIRONMENT_LIGHT = true;
 
     public static boolean isSimulateIndirectDiffuse() {

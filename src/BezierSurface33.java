@@ -224,6 +224,55 @@ public class BezierSurface33 extends GeometricObject {
 
     }
 
+    public static BezierSurface33 fillWithCoons(BezierCurve3[] bezierCurve3) {
+        //this version accepts directly 4 degree 3 bezier curves (boundary curves)
+        //its assumed that bezierCurve3[0] contains lower u curve
+        //[1] contains upper u curve
+        //[2] contains left v curve
+        //[3] contains right v curve
+        //The function returns a complete patch by filling the missing internal points
+        //using coons method (Coons patches)
+        Vector3f[][] controlPoints = new Vector3f[4][4];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 4; j++) {
+                controlPoints[j][i*3] = bezierCurve3[i].getControlPoints()[j];
+            }
+            controlPoints[i*3] = bezierCurve3[i+2].getControlPoints();
+        }
+        return fillWithCoons(controlPoints);
+    }
+
+    public static BezierSurface33 fillWithCoons(Vector3f[][] cP) {
+        //same as above but accent controlPoints matrix with missing values
+        //clone the matrix in case the original matrix already contains the missing values
+        //and we are just experimenting
+        Vector3f[][] controlPoints = cP.clone();
+        Vector3f ruledU, ruledV, bilinear;
+        for (int i = 1; i < 3; i++) {
+            for (int j = 1; j < 3; j++) {
+                ruledU = getRuledSurfaceValueU(controlPoints, i, j);
+                ruledV = getRuledSurfaceValueU(controlPoints, i, j);
+                bilinear = getBilinearInterpolant(controlPoints, i, j);
+                controlPoints[i][j] = ruledU.add(ruledV).add(bilinear.mul(-1));
+            }
+        }
+        return new BezierSurface33(controlPoints);
+    }
+
+    private static Vector3f getBilinearInterpolant(Vector3f[][] controlPoints, int i, int j) {
+        Vector3f c1 = controlPoints[0][0].mix(controlPoints[3][0],(double)j/3);
+        Vector3f c2 = controlPoints[0][3].mix(controlPoints[3][3],(double)j/3);
+        return c1.mix(c2, (double)i/3);
+    }
+
+    private static Vector3f getRuledSurfaceValueU(Vector3f[][] controlPoints,int i, int j) {
+        return controlPoints[0][j].mix(controlPoints[3][j],(double)i/3);
+    }
+
+    private static Vector3f getRuledSurfaceValueV(Vector3f[][] controlPoints,int i, int j) {
+        return controlPoints[i][0].mix(controlPoints[i][3],(double)j/3);
+    }
+
 
 
 }

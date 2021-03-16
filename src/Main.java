@@ -30,13 +30,13 @@ public class Main {
         //(0, 0, -1)
         //Screen is placed at z=-1
 
-        int width = 680;
-        int height = 480;
+        int width = 1200;
+        int height = 1200;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
 
-        Scene scene = new Scene(width, height, fieldOfView, img, cameraPosition, new Vector3f(0.7f, 0.3f, 0.8f));
+        Scene scene = new Scene(width, height, fieldOfView, img, cameraPosition, new Vector3f(0.1f, 0.3f, 0.6f));
 
 
         //Sample sphere
@@ -63,11 +63,11 @@ public class Main {
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-        scene.addSceneObject(diffuseSphere1);
+//        scene.addSceneObject(diffuseSphere1);
 //        scene.addSceneObject(transparentSphere);
         diffuseSphere2.setAlbedo(new Vector3f(0.7, 0, 0));
-        scene.addSceneObject(diffuseSphere2);
-        scene.addSceneObject(diffuseSphere3);
+//        scene.addSceneObject(diffuseSphere2);
+//        scene.addSceneObject(diffuseSphere3);
 //        scene.addSceneObject(diffuseSphere4);
 //        scene.addSceneObject(diffuseSphere5);
 //        scene.addSceneObject(diffuseSphere6);
@@ -100,7 +100,8 @@ public class Main {
         };
         long start = 0;
         start = System.nanoTime();
-        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
+//        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
+        BezierSurface33 bezierSurface = BezierSurface33.fillWithCoons(controlPoints);
 //        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
 //        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
 //        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
@@ -109,15 +110,17 @@ public class Main {
 //        for (BezierSurface33 patch :
 //                teaPotPatches) {
 //            Diffuse diffusePatch = new Diffuse(patch);
-//            scene.triangulateAndAddSceneObject(diffusePatch, 5);
+//            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
+//            scene.triangulateAndAddSceneObject(diffusePatch, 16);
 //        }
         long triangulationTime = System.nanoTime() - start;
-//        Diffuse transparentBezier = new Diffuse(bezierSurface);
-////        transparentBezier.setIor(1.5);
-//        scene.triangulateAndAddSceneObject(transparentBezier, 5);
+        Diffuse transparentBezier = new Diffuse(bezierSurface);
+        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
+//        transparentBezier.setIor(1.5);
+        scene.triangulateAndAddSceneObject(transparentBezier, 16);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(-1, 0.7, -7));
+        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(1, 1, -4));
         Matrix3D lightRotation = new Matrix3D(new double[][] {
             {0,0,-1},
             {0,0,1},
@@ -126,8 +129,8 @@ public class Main {
         DistantLight distantLight1 = new DistantLight(color1, 10, new Matrix4D(lightRotation, new Vector3f(0, 0, 0)));
 //        scene.addPointLight(pointLight1);
 //        scene.addPointLight(pointLight2);
-//        scene.addPointLight(pointLight3);
-        scene.addLightSource(distantLight1);
+        scene.addLightSource(pointLight3);
+//        scene.addLightSource(distantLight1);
 
         //create BVH
         //Set minBound and maxBound to contain whole renderable scene

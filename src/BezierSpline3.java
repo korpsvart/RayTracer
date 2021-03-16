@@ -70,11 +70,8 @@ public class BezierSpline3 {
         }
         int i;
         for (i = 1; t > nodes[i]; i++);
-        double a = nodes[i-1];
-        double b = nodes[i];
-        //remap over [0,1]
-        double u = (t-a) / (b-a);
-        return this.curves[i-1].evaluate(u);
+        //remapping is done inside the curve
+        return this.curves[i-1].evaluate(t);
     }
 
 
@@ -97,8 +94,62 @@ public class BezierSpline3 {
         }
         finalCP[l*3] = cP[2*l+1];
         for (int i = 0; i < l; i++) {
-            curves[i] = new BezierCurve3(finalCP[i*3], finalCP[i*3+1], finalCP[i*3+2], finalCP[i*3+3]);
+            curves[i] = new BezierCurve3(finalCP[i*3], finalCP[i*3+1], finalCP[i*3+2], finalCP[i*3+3], nodes[i], nodes[i+1]);
         }
         return new BezierSpline3(l, nodes, curves);
+    }
+
+
+    public static BezierSpline3 piecewiseCubicInterpolation(Vector3f[] dataPoints, Vector3f[] tangents) {
+        //check that the arrays have same number of elements
+        int l = dataPoints.length;
+        if (l != tangents.length) {
+            throw new IllegalArgumentException("Arrays must have same length");
+        }
+
+        //tangents must be normalized
+        //actually its not really necessary
+        //but if we want to guarantee exact tangent equivalence at junction points
+        //we should divide every tangent by 3 (as we did for the second and second to last point)
+        for (int i = 0; i < tangents.length; i++) {
+            tangents[i] = tangents[i].normalize();
+        }
+        double[] alfa = new double[l-1];
+        double[] beta = new double[l-1];
+        double[] pointDeltas = new double[l];
+        for (int i = 0; i < l-1; i++) {
+            pointDeltas[i] = dataPoints[i].moveTo(dataPoints[i+1]).magnitude();
+        }
+        for (int i = 0; i < l-1; i++) {
+            alfa[i]=beta[i]=0.4*pointDeltas[i]; //farin heuristic
+        }
+        double nodes[] = new double[l];
+        nodes[0] = 0; //arbitrary
+        nodes[1] = nodes[0]+beta[0];
+        for (int i = 2; i < l; i++) {
+            nodes[i] = nodes[i-1]+alfa[i-1];
+        }
+        BezierCurve3[] curves = new BezierCurve3[l-1];
+        Vector3f[] controlPoints = new Vector3f[(l-1)*3+1];
+        for (int i = 0; i < l; i++) {
+            controlPoints[3*i] = dataPoints[i];
+        }
+        controlPoints[1] = controlPoints[0].add(tangents[0].mul(alfa[0]/3));
+        controlPoints[(l-1)*3-1] = controlPoints[(l-1)*3].add(tangents[l-1].mul(-beta[l-2]/3));
+        for (int i = 1; i < l-1; i++) {
+            controlPoints[i*3+1] = controlPoints[3*i].add(tangents[i].mul(alfa[i]));
+            controlPoints[i*3-1] = controlPoints[3*i].add(tangents[i].mul(-beta[i-1]));
+        }
+        for (int i = 0; i < l - 1; i++) {
+            curves[i] = new BezierCurve3(controlPoints[i*3], controlPoints[i*3+1], controlPoints[i*3+2], controlPoints[i*3+3], nodes[i], nodes[i+1]);
+        }
+
+        return new BezierSpline3(l-1, nodes, curves);
+    }
+
+
+
+    public BezierCurve3[] getCurves() {
+        return curves;
     }
 }

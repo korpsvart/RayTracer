@@ -67,7 +67,9 @@ public class Diffuse extends SceneObject
     public void addTrianglesToScene(Scene currentScene, TriangleMesh triangleMesh) {
         for (TriangleMesh.Triangle triangle :
                 triangleMesh.getTriangles()) {
-            currentScene.addSceneObject(new Diffuse(triangle));
+            Diffuse diffuse = new Diffuse(triangle);
+            diffuse.setAlbedo(this.albedo);
+            currentScene.addSceneObject(diffuse);
         }
     }
 

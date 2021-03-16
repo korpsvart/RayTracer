@@ -4,6 +4,13 @@ public class BezierCurve3 {
     //Coded explicitly for performance reasons
     private final Vector3f[] controlPoints;
 
+    //generalized range endpoints
+    private double a = 0;
+    private double b = 1;
+
+    private boolean generalized = false;
+
+
 
     public BezierCurve3(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3) {
         controlPoints = new Vector3f[4];
@@ -13,6 +20,22 @@ public class BezierCurve3 {
         controlPoints[3] = p3;
     }
 
+    public BezierCurve3(Vector3f p0, Vector3f p1, Vector3f p2, Vector3f p3, double a, double b) {
+        controlPoints = new Vector3f[4];
+        controlPoints[0] = p0;
+        controlPoints[1] = p1;
+        controlPoints[2] = p2;
+        controlPoints[3] = p3;
+        this.a = a;
+        this.b = b;
+        this.generalized = true;
+    }
+
+    private double remap(double u) {
+        //remap generalized domain to [0, 1]
+        return (u-a)/(b-a);
+    }
+
     public BezierCurve3(Vector3f[] controlPoints) {
         //we should check it contains 4 elements
         this.controlPoints = controlPoints.clone();
@@ -20,6 +43,10 @@ public class BezierCurve3 {
 
     public Vector3f evaluate(double t) {
         //Using DeCasteljau algorithm
+
+        if (generalized) {
+            t = remap(t);
+        }
 
         //Level 1
         Vector3f p10 = controlPoints[0].mul(1-t).add(controlPoints[1].mul(t));
@@ -79,18 +106,20 @@ public class BezierCurve3 {
         Vector3f p1 = c1.evaluate(t);
         Vector3f p2 = c2.evaluate(t);
 
-        return p1.add(p2.mul(-1)).mul(3); //n is the degree, 3 in this case
+        return generalized ? p1.add(p2.mul(-1)).mul(3/(b-a)) : p1.add(p2.mul(-1)).mul(3); //n is the degree, 3 in this case
 
     }
 
     public Vector3f derivative_v2(double t) {
         //calculate tangent vector
         //using bernstein polynomial
-        return controlPoints[0].mul(-3 * (1 - t) * (1 - t)).add(
+        Vector3f derivative = controlPoints[0].mul(-3 * (1 - t) * (1 - t)).add(
                 controlPoints[1].mul(3 * (1 - t) * (1 - t) - 6 * t * (1 - t))).add(
                         controlPoints[2].mul((6 * t * (1 - t) - 3 * t * t))).add(
                                 controlPoints[3].mul(3 * t * t)
+
         );
+        return generalized ? derivative.mul(1/(b-a)) : derivative;
     }
 
     public Vector3f[] evaluateAndDerivative(double t) {
@@ -112,7 +141,7 @@ public class BezierCurve3 {
 
         //Tangent vector is given by
         //n*(P21 - P20)
-        Vector3f tangent = p21.add(p20.mul(-1)).mul(3);
+        Vector3f tangent = generalized ? p21.add(p20.mul(-1)).mul(3/(b-a)) : p21.add(p20.mul(-1)).mul(3);
 
         return new Vector3f[]{p30, tangent};
 
@@ -133,5 +162,39 @@ public class BezierCurve3 {
         return last.normalize().equals(first.normalize());
     }
 
+    public boolean checkC1(BezierCurve3 bezierCurve3) {
+        //we check collinearity and ratios
+        if (checkG0(bezierCurve3) && checkG1(bezierCurve3)) {
+            double pointsRatio = getRatio(this.controlPoints[2], this.controlPoints[3], bezierCurve3.controlPoints[1]);
+            //we should also ensure that the domains are adjacent, but we dont for the moment
+            double domainRatio = getRatio(this.a, this.b, bezierCurve3.b);
+            return Math.abs(pointsRatio-domainRatio) < 10e-5;
+        }
+        return false;
+    }
 
+    public double getRatio(Vector3f p1, Vector3f p2, Vector3f p3) {
+        //assuming its already known that the points are collinear
+        //we can project them onto the x or y axis (if not on perpendicular to them)
+        //and calculate the ratios using scalar values
+        Vector3f xAxis = new Vector3f(1, 0, 0);
+        double p1s = p1.dotProduct(xAxis);
+        double p2s = p2.dotProduct(xAxis);
+        double p3s = p3.dotProduct(xAxis);
+
+        //if you wish you can check this is equal to doing
+//        double r1 = p1.moveTo(p2).magnitude();
+//        double r2 = p2.moveTo(p3).magnitude();
+//        double ratio = r1/r2;
+
+        return getRatio(p1s, p2s, p3s);
+    }
+
+    public double getRatio(double a, double b, double c) {
+        return (b-a)/(c-b);
+    }
+
+    public Vector3f[] getControlPoints() {
+        return controlPoints;
+    }
 }
