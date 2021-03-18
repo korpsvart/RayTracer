@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class Test {
 
+
     public static void main(String[] args) {
 //        int l = 4;
 //        double z = -5;
@@ -54,7 +55,39 @@ public class Test {
                 new Vector3f(2.2, 2.8, -6),
                 new Vector3f(4.2, 3.1, -6)
         };
+        Vector3f[] tangent = new Vector3f[] {
+                new Vector3f(1, 1, 0),
+                new Vector3f(1, 0, 0),
+                new Vector3f(1, -1, 0)
+        };
+        Vector3f[] tangent2 = new Vector3f[] {
+                new Vector3f(1, 2, 0),
+                new Vector3f(1, -1, 0),
+                new Vector3f(1, -2, 0)
+        };
 
-        BezierSpline3
+        Vector3f[] tangent3 = new Vector3f[]{
+                new Vector3f(-0.2, 1, 0),
+                new Vector3f(0.3, 1, 0)
+        };
+
+        BezierSpline3 spline1 = BezierSpline3.piecewiseCubicInterpolation(dataPoints1, tangent);
+        BezierSpline3 spline2 = BezierSpline3.piecewiseCubicInterpolation(dataPoints2, tangent2);
+        BezierSpline3 spline3 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[0], dataPoints2[0]}, tangent3);
+        BezierSpline3 spline4 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[1], dataPoints2[1]}, tangent3);
+        BezierSpline3 spline5 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[2], dataPoints2[2]}, tangent3);
+        BezierSurface33 surface1 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+                spline1.getCurves()[0],
+                spline2.getCurves()[0],
+                spline3.getCurves()[0],
+                spline4.getCurves()[0]
+        });
+        BezierSurface33 surface2 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+                spline1.getCurves()[1],
+                spline2.getCurves()[1],
+                spline4.getCurves()[0],
+                spline5.getCurves()[0]
+        });
+
     }
 }

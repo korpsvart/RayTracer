@@ -274,5 +274,27 @@ public class BezierSurface33 extends GeometricObject {
     }
 
 
+    public boolean checkC1(BezierSurface33 b) {
+        boolean c1 = true;
+        BezierCurve3 curve1, curve2;
+        for (int i = 0; i < 4; i++) {
+            curve1 = new BezierCurve3(this.controlPoints[0][i], this.controlPoints[1][i], this.controlPoints[2][i], this.controlPoints[3][i]);
+            curve2 = new BezierCurve3(b.controlPoints[0][i], b.controlPoints[1][i], b.controlPoints[2][i], b.controlPoints[3][i]);
+            c1 = c1 && curve1.checkC1(curve2);
+        }
+        return c1;
+    }
+
+    public boolean checkG1(BezierSurface33 b) {
+        boolean g1 = true;
+        BezierCurve3 curve1, curve2;
+        for (int i = 0; i < 4; i++) {
+            curve1 = new BezierCurve3(this.controlPoints[0][i], this.controlPoints[1][i], this.controlPoints[2][i], this.controlPoints[3][i]);
+            curve2 = new BezierCurve3(b.controlPoints[0][i], b.controlPoints[1][i], b.controlPoints[2][i], b.controlPoints[3][i]);
+            g1 = g1 && curve1.checkG1(curve2);
+        }
+        return g1;
+    }
+
 
 }

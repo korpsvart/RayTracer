@@ -21,6 +21,54 @@ public class Main {
     private static AtomicLong rayTriangleTests = new AtomicLong(0);
     private static AtomicLong rayTriangleIntersections = new AtomicLong(0);
 
+    private static BezierSurface33[] testC1Patches() {
+        Vector3f[] dataPoints1 = new Vector3f[]{
+                new Vector3f(0, 0, -5),
+                new Vector3f(0.5, 0.3, -5),
+                new Vector3f(1, 0.1, -5)
+        };
+        Vector3f[] dataPoints2 = new Vector3f[] {
+                new Vector3f(0.2, 1.3, -5.2),
+                new Vector3f(0.5, 1.1, -5.2),
+                new Vector3f(1, 1.3, -5.2)
+        };
+        Vector3f[] tangent = new Vector3f[] {
+                new Vector3f(1, 1, 0),
+                new Vector3f(1, 0, 0),
+                new Vector3f(1, -1, 0)
+        };
+        Vector3f[] tangent2 = new Vector3f[] {
+                new Vector3f(1, -2, 0),
+                new Vector3f(1, 1, 0),
+                new Vector3f(1, -2, 0)
+        };
+
+        Vector3f[] tangent3 = new Vector3f[]{
+                new Vector3f(-0.2, 1, 0),
+                new Vector3f(0.3, 1, 0)
+        };
+
+        BezierSpline3 spline1 = BezierSpline3.piecewiseCubicInterpolation(dataPoints1, tangent);
+        BezierSpline3 spline2 = BezierSpline3.piecewiseCubicInterpolation(dataPoints2, tangent2);
+        BezierSpline3 spline3 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[0], dataPoints2[0]}, tangent3);
+        BezierSpline3 spline4 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[1], dataPoints2[1]}, tangent3);
+        BezierSpline3 spline5 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[2], dataPoints2[2]}, tangent3);
+        BezierSurface33 surface1 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+                spline1.getCurves()[0],
+                spline2.getCurves()[0],
+                spline3.getCurves()[0],
+                spline4.getCurves()[0]
+        });
+        BezierSurface33 surface2 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+                spline1.getCurves()[1],
+                spline2.getCurves()[1],
+                spline4.getCurves()[0],
+                spline5.getCurves()[0]
+        });
+        boolean g1 = surface1.checkG1(surface2);
+        return new BezierSurface33[]{surface1, surface2};
+    }
+
 
     public static void main(String[] args) throws Exception {
 
@@ -101,7 +149,7 @@ public class Main {
         long start = 0;
         start = System.nanoTime();
 //        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
-        BezierSurface33 bezierSurface = BezierSurface33.fillWithCoons(controlPoints);
+//        BezierSurface33 bezierSurface = BezierSurface33.fillWithCoons(controlPoints);
 //        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
 //        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
 //        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
@@ -114,10 +162,17 @@ public class Main {
 //            scene.triangulateAndAddSceneObject(diffusePatch, 16);
 //        }
         long triangulationTime = System.nanoTime() - start;
-        Diffuse transparentBezier = new Diffuse(bezierSurface);
-        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
-//        transparentBezier.setIor(1.5);
-        scene.triangulateAndAddSceneObject(transparentBezier, 16);
+//        Diffuse transparentBezier = new Diffuse(bezierSurface);
+//        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
+////        transparentBezier.setIor(1.5);
+//        scene.triangulateAndAddSceneObject(transparentBezier, 16);
+        BezierSurface33[] patches = testC1Patches();
+        for (BezierSurface33 patch :
+                patches) {
+            Diffuse diffusePatch = new Diffuse(patch);
+            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
+            scene.triangulateAndAddSceneObject(diffusePatch, 16);
+        }
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(1, 1, -4));
@@ -148,5 +203,7 @@ public class Main {
         System.out.println("Number of ray-triangle intersections: " + rayTriangleIntersections);
         System.out.println("Hit-ratio: " + (double)rayTriangleIntersections.longValue()/rayTriangleTests.longValue()*100); //hit ratio as percentage
     }
+
+
 
 }

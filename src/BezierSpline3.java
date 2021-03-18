@@ -121,7 +121,7 @@ public class BezierSpline3 {
             pointDeltas[i] = dataPoints[i].moveTo(dataPoints[i+1]).magnitude();
         }
         for (int i = 0; i < l-1; i++) {
-            alfa[i]=beta[i]=0.4*pointDeltas[i]; //farin heuristic
+            alfa[i]=beta[i]=0.9*pointDeltas[i]; //farin heuristic
         }
         double nodes[] = new double[l];
         nodes[0] = 0; //arbitrary
@@ -137,8 +137,8 @@ public class BezierSpline3 {
         controlPoints[1] = controlPoints[0].add(tangents[0].mul(alfa[0]/3));
         controlPoints[(l-1)*3-1] = controlPoints[(l-1)*3].add(tangents[l-1].mul(-beta[l-2]/3));
         for (int i = 1; i < l-1; i++) {
-            controlPoints[i*3+1] = controlPoints[3*i].add(tangents[i].mul(alfa[i]));
-            controlPoints[i*3-1] = controlPoints[3*i].add(tangents[i].mul(-beta[i-1]));
+            controlPoints[i*3+1] = controlPoints[3*i].add(tangents[i].mul(alfa[i]/3));
+            controlPoints[i*3-1] = controlPoints[3*i].add(tangents[i].mul(-beta[i-1]/3));
         }
         for (int i = 0; i < l - 1; i++) {
             curves[i] = new BezierCurve3(controlPoints[i*3], controlPoints[i*3+1], controlPoints[i*3+2], controlPoints[i*3+3], nodes[i], nodes[i+1]);

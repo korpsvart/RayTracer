@@ -30,7 +30,10 @@ public class BezierSplineSurface {
 //        }
 //    }
 //
-//    private Vector3f adiniTwist()
+//    private Vector3f adiniTwist(BezierSurface33[][] patches, int i, int j) {
 //
 //
-//}
+//    }
+//
+//
+}
