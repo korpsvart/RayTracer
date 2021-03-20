@@ -1,5 +1,19 @@
 public class BezierCurve {
 
+    private Vector3f[] controlPoints;
+    private int degree;
+
+    public BezierCurve(Vector3f[] controlPoints, int degree) {
+        this.controlPoints = controlPoints;
+        this.degree = degree;
+    }
+
+    public BezierCurve3 getBezier3() {
+        if (degree==3) {
+            return new BezierCurve3(this.controlPoints[0], this.controlPoints[1],
+                    this.controlPoints[2], this.controlPoints[3]);
+        }
+    }
 
     public static Vector3f deCasteljau(Vector3f[] controlPoints, int degree, double t) {
         //Generic degree Bezier Curve evaluation with DeCasteljau algorithm
