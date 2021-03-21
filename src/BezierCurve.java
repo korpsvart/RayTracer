@@ -8,11 +8,8 @@ public class BezierCurve {
         this.degree = degree;
     }
 
-    public BezierCurve3 getBezier3() {
-        if (degree==3) {
-            return new BezierCurve3(this.controlPoints[0], this.controlPoints[1],
-                    this.controlPoints[2], this.controlPoints[3]);
-        }
+    public boolean isCubic() {
+        return (degree == 3);
     }
 
     public static Vector3f deCasteljau(Vector3f[] controlPoints, int degree, double t) {

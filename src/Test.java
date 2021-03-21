@@ -45,49 +45,61 @@ public class Test {
 //        boolean c1Continuity = spline.getCurves()[0].checkC1(spline.getCurves()[1]);
 //        System.out.println("aaaaa");
 
-        Vector3f[] dataPoints1 = new Vector3f[]{
-                new Vector3f(0, 0, -5),
-                new Vector3f(2, 0.5, -5),
-                new Vector3f(4, 0.3, -5)
-        };
-        Vector3f[] dataPoints2 = new Vector3f[] {
-                new Vector3f(0.3, 3, -6),
-                new Vector3f(2.2, 2.8, -6),
-                new Vector3f(4.2, 3.1, -6)
-        };
-        Vector3f[] tangent = new Vector3f[] {
-                new Vector3f(1, 1, 0),
-                new Vector3f(1, 0, 0),
-                new Vector3f(1, -1, 0)
-        };
-        Vector3f[] tangent2 = new Vector3f[] {
-                new Vector3f(1, 2, 0),
-                new Vector3f(1, -1, 0),
-                new Vector3f(1, -2, 0)
-        };
+//        Vector3f[] dataPoints1 = new Vector3f[]{
+//                new Vector3f(0, 0, -5),
+//                new Vector3f(2, 0.5, -5),
+//                new Vector3f(4, 0.3, -5)
+//        };
+//        Vector3f[] dataPoints2 = new Vector3f[] {
+//                new Vector3f(0.3, 3, -6),
+//                new Vector3f(2.2, 2.8, -6),
+//                new Vector3f(4.2, 3.1, -6)
+//        };
+//        Vector3f[] tangent = new Vector3f[] {
+//                new Vector3f(1, 1, 0),
+//                new Vector3f(1, 0, 0),
+//                new Vector3f(1, -1, 0)
+//        };
+//        Vector3f[] tangent2 = new Vector3f[] {
+//                new Vector3f(1, 2, 0),
+//                new Vector3f(1, -1, 0),
+//                new Vector3f(1, -2, 0)
+//        };
+//
+//        Vector3f[] tangent3 = new Vector3f[]{
+//                new Vector3f(-0.2, 1, 0),
+//                new Vector3f(0.3, 1, 0)
+//        };
+//
+//        BezierSpline3 spline1 = BezierSpline3.piecewiseCubicInterpolation(dataPoints1, tangent);
+//        BezierSpline3 spline2 = BezierSpline3.piecewiseCubicInterpolation(dataPoints2, tangent2);
+//        BezierSpline3 spline3 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[0], dataPoints2[0]}, tangent3);
+//        BezierSpline3 spline4 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[1], dataPoints2[1]}, tangent3);
+//        BezierSpline3 spline5 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[2], dataPoints2[2]}, tangent3);
+//        BezierSurface33 surface1 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+//                spline1.getCurves()[0],
+//                spline2.getCurves()[0],
+//                spline3.getCurves()[0],
+//                spline4.getCurves()[0]
+//        });
+//        BezierSurface33 surface2 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
+//                spline1.getCurves()[1],
+//                spline2.getCurves()[1],
+//                spline4.getCurves()[0],
+//                spline5.getCurves()[0]
+//        });
 
-        Vector3f[] tangent3 = new Vector3f[]{
-                new Vector3f(-0.2, 1, 0),
-                new Vector3f(0.3, 1, 0)
+
+        //testing spline evaluation
+        double knots[] = new double[]{
+                0, 2, 4, 6
         };
-
-        BezierSpline3 spline1 = BezierSpline3.piecewiseCubicInterpolation(dataPoints1, tangent);
-        BezierSpline3 spline2 = BezierSpline3.piecewiseCubicInterpolation(dataPoints2, tangent2);
-        BezierSpline3 spline3 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[0], dataPoints2[0]}, tangent3);
-        BezierSpline3 spline4 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[1], dataPoints2[1]}, tangent3);
-        BezierSpline3 spline5 = BezierSpline3.piecewiseCubicInterpolation(new Vector3f[]{dataPoints1[2], dataPoints2[2]}, tangent3);
-        BezierSurface33 surface1 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
-                spline1.getCurves()[0],
-                spline2.getCurves()[0],
-                spline3.getCurves()[0],
-                spline4.getCurves()[0]
-        });
-        BezierSurface33 surface2 = BezierSurface33.fillWithCoons(new BezierCurve3[]{
-                spline1.getCurves()[1],
-                spline2.getCurves()[1],
-                spline4.getCurves()[0],
-                spline5.getCurves()[0]
-        });
-
+        Vector3f controlPoints[] = new Vector3f[]{
+                new Vector3f(0, 0, 0),
+                new Vector3f(8, 8, 0),
+                new Vector3f(8, 0, 0)
+        };
+        BSplines bspline = new BSplines(controlPoints, knots, 2);
+        System.out.println(bspline.evaluate(3));
     }
 }
