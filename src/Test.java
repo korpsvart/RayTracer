@@ -91,6 +91,7 @@ public class Test {
 
 
         //testing spline evaluation
+        //correct
         double knots[] = new double[]{
                 0, 2, 4, 6
         };
@@ -101,5 +102,17 @@ public class Test {
         };
         BSplines bspline = new BSplines(controlPoints, knots, 2);
         System.out.println(bspline.evaluate(3));
+
+        //testing knot insertion
+        //using the spline above, we try to insert a new node at u=3
+        //correct
+        BSplines bspline2 = bspline.knotInsertion(3);
+
+        //testing extracting bezier from the above bspline
+        //there's only one bezier curve contained
+        //and its the one that covers [2,4]
+        //i.e. i=1 is the number of the interval
+        BezierCurve extracted = bspline.extractBezier(1);
+        System.out.println(extracted);
     }
 }
