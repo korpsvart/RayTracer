@@ -112,7 +112,56 @@ public class Test {
         //there's only one bezier curve contained
         //and its the one that covers [2,4]
         //i.e. i=1 is the number of the interval
+        //correct
         BezierCurve extracted = bspline.extractBezier(1);
         System.out.println(extracted);
+
+
+        //testing clamped quadratic bspline
+        //with i=2 it should give the same result as the above bspline
+        //i=1 and i=3 should be valid ranges too
+        //Correct!
+        controlPoints = new Vector3f[]{
+                new Vector3f(-3, -2, 0),
+                new Vector3f(0, 0, 0),
+                new Vector3f(8, 8, 0),
+                new Vector3f(8, 0, 0),
+                new Vector3f(10, -2, 0)
+        };
+        knots = new double[] {
+                0, 0, 0, 2, 4, 6, 6, 6
+        };
+        BSplines clampedQuadratic = new BSplines(controlPoints, knots, 2);
+        clampedQuadratic.setClamped(true);
+        extracted = clampedQuadratic.extractBezier(1);
+        System.out.println("aaaa");
+
+
+        //another test for clamped bsplines
+        //in this case we use a bspline of degree 3
+        //with 5 control points
+        //this should contain two bezier curves, for i=0,1
+        //We could make this a lot more efficient by noting that the
+        //same knot insertion routine already gives us the control points for both bezier curves
+        //in this case. Also, we could improve performance even more by writing a specific more efficient
+        //routine which handles knot insertion for already existing multiple knots (which don't requires
+        //any control point replacement, but a simple interpolation!)
+        BSplines cubicBSpline;
+        controlPoints = new Vector3f[]{
+                new Vector3f(0, 0, 0),
+                new Vector3f(4, 0, 0),
+                new Vector3f(5, -1, 0),
+                new Vector3f(3, -2, 0),
+                new Vector3f(-1, -2, 0)
+        };
+        knots = new double[]{
+                0,0,0,0,2,4,4,4,4
+        };
+        cubicBSpline = new BSplines(controlPoints, knots, 3);
+        cubicBSpline.setClamped(true);
+        BezierCurve b1 = cubicBSpline.extractBezier(0);
+        BezierCurve b2 = cubicBSpline.extractBezier(1);
+        System.out.println("aaaa");
+
     }
 }

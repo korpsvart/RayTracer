@@ -15,7 +15,20 @@ public class BSplines {
         this.degree = degree;
     }
 
+
+    public void setClamped(boolean clamped) {
+        this.clamped = clamped;
+    }
+
     public BezierCurve extractBezier(int i) {
+        if (clamped) {
+            return this.extractBezierClamped(i);
+        } else {
+            return this.extractBezierNonClamped(i);
+        }
+    }
+
+    public BezierCurve extractBezierNonClamped(int i) {
         //i is the interval on which is defined the bezier curve
         //First approach: by knot insertion
         //Example: suppose the bezier curve is degree n=3
@@ -29,7 +42,14 @@ public class BSplines {
         //we get new DeBoor points for the spline,
         //which correspond to bezier control points
 
-        //First, we have to check if the request interval is valid
+
+        //First, check if the interval is not empty
+        //if it is, keep incrementing i
+        while(knots[i]==knots[i+1]) {
+            i++;
+        }
+
+        //Then, we have to check if the request interval is valid
         //for general non-clamped curves, only certain intervals are valid
         //and are those inside the spline domain, i.e. [u_p-1, u_n]
         //where p is the degree and n is the number of control points-1
@@ -42,15 +62,66 @@ public class BSplines {
             //insert both u0 and u1 p-1 times
             BSplines newSpline = this;
             for (int j = 0; j < degree - 1; j++) {
-                newSpline = newSpline.knotInsertion(u0).knotInsertion(u1);
+                    newSpline = newSpline.knotInsertion(u0).knotInsertion(u1);
             }
             //the bezier points are given by Pi, Pi+1,...,Pi+p
             Vector3f[] cp = new Vector3f[degree+1];
             for (int j = 0; j < degree + 1; j++) {
-                cp[j] = newSpline.controlPoints[i+j];
+                    cp[j] = newSpline.controlPoints[i+j];
             }
+
             return new BezierCurve(cp, degree);
         }
+    }
+
+    public BezierCurve extractBezierClamped(int i) {
+        //only works for clamped bsplines
+
+        i+=degree;
+        while(knots[i]==knots[i+1]) {
+            i++;
+        }
+        //for clamped bsplines
+        //we simply ask that i is inside {degree,...,L}
+        //(i.e. inside {0, L-degree} for original i before we increment it by degree)
+        //where L is number of control points - 1
+        if (i < degree || i >= controlPoints.length) {
+            throw new IllegalArgumentException("There's no Bezier Curve for the specified range");
+        }
+        double u0 = knots[i];
+        double u1 = knots[i+1];
+        int c = 0;
+        //insert both u0 and u1 p-1 times
+        BSplines newSpline = this;
+        if (i==degree) {
+            //only need to insert u1
+            //Unfortunately it's not only more efficient
+            //but its actually needed because my code is very messy
+            //and if we don't handle these two corner cases separately
+            //we'll get an out of bound exception
+            for (int j = 0; j < degree - 1; j++) {
+                newSpline = newSpline.knotInsertion2(u1);
+                c++;
+            }
+        } else if (i==(controlPoints.length-1)){
+            //only need to insert u0
+            for (int j = 0; j < degree - 1; j++) {
+                newSpline = newSpline.knotInsertion2(u0);
+                c++;
+            }
+        } else {
+            for (int j = 0; j < degree - 1; j++) {
+                newSpline = newSpline.knotInsertion2(u0).knotInsertion2(u1);
+                c+=2;
+            }
+        }
+        //the bezier points are given by Pi-1, Pi,...,Pi+p-1
+        Vector3f[] cp = new Vector3f[degree+1];
+        for (int j = 0; j < degree + 1; j++) {
+            cp[j] = newSpline.controlPoints[(i-degree)*degree+j];
+        }
+        return new BezierCurve(cp, degree);
+
     }
 
     public Vector3f evaluate(int u) {
@@ -134,7 +205,7 @@ public class BSplines {
         }
         for (int i = I-degree+1; i <= I; i++) {
             double a = (u-knots[i])/(knots[i+degree]-knots[i]);
-            newCP[i] = controlPoints[i-i].mix(controlPoints[i], a);
+            newCP[i] = controlPoints[i-1].mix(controlPoints[i], a);
         }
         for (int i = I+1; i < newCP.length; i++) {
             newCP[i] = controlPoints[i-1];
