@@ -1,6 +1,3 @@
-import java.util.Scanner;
-
-
 public class Test {
 
 
@@ -100,13 +97,13 @@ public class Test {
                 new Vector3f(8, 8, 0),
                 new Vector3f(8, 0, 0)
         };
-        BSplines bspline = new BSplines(controlPoints, knots, 2);
+        BSpline bspline = new BSpline(controlPoints, knots, 2);
         System.out.println(bspline.evaluate(3));
 
         //testing knot insertion
         //using the spline above, we try to insert a new node at u=3
         //correct
-        BSplines bspline2 = bspline.knotInsertion(3);
+        BSpline bspline2 = bspline.knotInsertion(3);
 
         //testing extracting bezier from the above bspline
         //there's only one bezier curve contained
@@ -131,7 +128,7 @@ public class Test {
         knots = new double[] {
                 0, 0, 0, 2, 4, 6, 6, 6
         };
-        BSplines clampedQuadratic = new BSplines(controlPoints, knots, 2);
+        BSpline clampedQuadratic = new BSpline(controlPoints, knots, 2);
         clampedQuadratic.setClamped(true);
         extracted = clampedQuadratic.extractBezier(1);
         System.out.println("aaaa");
@@ -146,7 +143,7 @@ public class Test {
         //in this case. Also, we could improve performance even more by writing a specific more efficient
         //routine which handles knot insertion for already existing multiple knots (which don't requires
         //any control point replacement, but a simple interpolation!)
-        BSplines cubicBSpline;
+        BSpline cubicBSpline;
         controlPoints = new Vector3f[]{
                 new Vector3f(0, 0, 0),
                 new Vector3f(4, 0, 0),
@@ -157,7 +154,7 @@ public class Test {
         knots = new double[]{
                 0,0,0,0,2,4,4,4,4
         };
-        cubicBSpline = new BSplines(controlPoints, knots, 3);
+        cubicBSpline = new BSpline(controlPoints, knots, 3);
         cubicBSpline.setClamped(true);
         BezierCurve b1 = cubicBSpline.extractBezier(0);
         BezierCurve b2 = cubicBSpline.extractBezier(1);

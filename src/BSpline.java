@@ -1,4 +1,4 @@
-public class BSplines {
+public class BSpline {
 
     //Class for BSplines
 
@@ -8,7 +8,7 @@ public class BSplines {
     private boolean clamped = false;
 
 
-    public BSplines(Vector3f[] controlPoints, double[] knots, int degree) {
+    public BSpline(Vector3f[] controlPoints, double[] knots, int degree) {
         //check that length(controlPoints)=length(knots)-n+1
         this.controlPoints = controlPoints;
         this.knots = knots;
@@ -60,7 +60,7 @@ public class BSplines {
             double u0 = knots[i];
             double u1 = knots[i+1];
             //insert both u0 and u1 p-1 times
-            BSplines newSpline = this;
+            BSpline newSpline = this;
             for (int j = 0; j < degree - 1; j++) {
                     newSpline = newSpline.knotInsertion(u0).knotInsertion(u1);
             }
@@ -92,7 +92,7 @@ public class BSplines {
         double u1 = knots[i+1];
         int c = 0;
         //insert both u0 and u1 p-1 times
-        BSplines newSpline = this;
+        BSpline newSpline = this;
         if (i==degree) {
             //only need to insert u1
             //Unfortunately it's not only more efficient
@@ -148,7 +148,7 @@ public class BSplines {
         return localPoints[0];
     }
 
-    public BSplines knotInsertion(double u) {
+    public BSpline knotInsertion(double u) {
         //perform knot insertion
         //based on Bohem's algorithm
         //Return new spline with new knot vectors
@@ -182,11 +182,11 @@ public class BSplines {
                 newCP[i] = controlPoints[i - 1].mix(controlPoints[i], a);
             }
         }
-        return new BSplines(newCP, newKnots, degree);
+        return new BSpline(newCP, newKnots, degree);
 
     }
 
-    public BSplines knotInsertion2(double u) {
+    public BSpline knotInsertion2(double u) {
         //only works on clamped bsplines
         //where first and last knots have degree+1 multiplicity
         Vector3f[] newCP = new Vector3f[controlPoints.length+1];
@@ -210,14 +210,48 @@ public class BSplines {
         for (int i = I+1; i < newCP.length; i++) {
             newCP[i] = controlPoints[i-1];
         }
-        return new BSplines(newCP, newKnots, degree);
+        return new BSpline(newCP, newKnots, degree);
     }
 
-
-    //    public BezierCurve extractBezier2(int i) {
-//        //second version
-//        //by evaluating spline and using linear interpolation
+//    public BSpline c2CubicSplineInterpolation(Vector3f[] dataPoints, double[] knots) {
+//
 //    }
+
+
+    public BSpline multipleKnotInsertion(double t, int h) {
+        //perform multiple knot insertion more efficiently
+        //than calling single knot insertion repeatedly
+        //Works for clamped bsplines, don't know if it works for the general case
+        //Insert node t h times
+
+        int s=0; //t knot multiplicity
+        int k;
+        //find relevant knot span and multiplicity
+        for(k=0; knots[k+1]<=t; k++) {
+            if (knots[k+1]==t) s++;
+        }
+        int p = degree; //only for simplicity
+        //we only need a vector of length (p+1)-s
+        Vector3f[] newPoints = new Vector3f[p+1-s];
+        for (int i = 0; i < p+1-s; i++) {
+            newPoints[i] = controlPoints[k-p+i];
+        }
+        for (int r = 1; r < h; r++) {
+            for (int i = k-p+r; i < k - s; i++) {
+                double a = (t-knots[i])/(knots[i+p-r+1]-knots[i]);
+                int j = i - k + p;
+                newPoints[j] = newPoints[j-1].mix(newPoints[j], a);
+            }
+        }
+        Vector3f[] newControlPoints = new Vector3f[controlPoints.length+h];
+        for (int i = 0; i <= k - p; i++) {
+            newControlPoints[i] = controlPoints[i];
+        }
+        for (int i = k-p+1; i < ; i++) {
+
+        }
+
+    }
 
 
 }
