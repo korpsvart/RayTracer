@@ -90,7 +90,6 @@ public class BSpline {
         }
         double u0 = knots[i];
         double u1 = knots[i+1];
-        int c = 0;
         //insert both u0 and u1 p-1 times
         BSpline newSpline = this;
         if (i==degree) {
@@ -101,18 +100,15 @@ public class BSpline {
             //we'll get an out of bound exception
             for (int j = 0; j < degree - 1; j++) {
                 newSpline = newSpline.knotInsertion2(u1);
-                c++;
             }
         } else if (i==(controlPoints.length-1)){
             //only need to insert u0
             for (int j = 0; j < degree - 1; j++) {
                 newSpline = newSpline.knotInsertion2(u0);
-                c++;
             }
         } else {
             for (int j = 0; j < degree - 1; j++) {
                 newSpline = newSpline.knotInsertion2(u0).knotInsertion2(u1);
-                c+=2;
             }
         }
         //the bezier points are given by Pi-1, Pi,...,Pi+p-1
@@ -218,40 +214,63 @@ public class BSpline {
 //    }
 
 
-    public BSpline multipleKnotInsertion(double t, int h) {
-        //perform multiple knot insertion more efficiently
-        //than calling single knot insertion repeatedly
-        //Works for clamped bsplines, don't know if it works for the general case
-        //Insert node t h times
-
-        int s=0; //t knot multiplicity
-        int k;
-        //find relevant knot span and multiplicity
-        for(k=0; knots[k+1]<=t; k++) {
-            if (knots[k+1]==t) s++;
-        }
-        int p = degree; //only for simplicity
-        //we only need a vector of length (p+1)-s
-        Vector3f[] newPoints = new Vector3f[p+1-s];
-        for (int i = 0; i < p+1-s; i++) {
-            newPoints[i] = controlPoints[k-p+i];
-        }
-        for (int r = 1; r < h; r++) {
-            for (int i = k-p+r; i < k - s; i++) {
-                double a = (t-knots[i])/(knots[i+p-r+1]-knots[i]);
-                int j = i - k + p;
-                newPoints[j] = newPoints[j-1].mix(newPoints[j], a);
-            }
-        }
-        Vector3f[] newControlPoints = new Vector3f[controlPoints.length+h];
-        for (int i = 0; i <= k - p; i++) {
-            newControlPoints[i] = controlPoints[i];
-        }
-        for (int i = k-p+1; i < ; i++) {
-
-        }
-
-    }
+//    public BSpline multipleKnotInsertion(double t, int h) {
+//        //perform multiple knot insertion more efficiently
+//        //than calling single knot insertion repeatedly
+//        //Works for clamped bsplines, don't know if it works for the general case
+//        //Insert node t h times
+//
+//        //NOT WORKING
+//        //it's not strictly necessary
+//        //so i'm gonna skip it for now cause it's kinda difficult to implement
+//
+//        int s=0; //t knot multiplicity
+//        int k;
+//        double[] newKnots = new double[knots.length+h];
+//        //find relevant knot span and multiplicity
+//        for(k=0; knots[k+1]<=t; k++) {
+//            if (knots[k+1]==t) s++;
+//            newKnots[k] = knots[k];
+//        }
+//        newKnots[k]=knots[k];
+//        for (int i = 0; i < h; i++) {
+//            newKnots[k+1+i] = t;
+//        }
+//        for (int i = k+h+1; i < newKnots.length; i++) {
+//            newKnots[i]=knots[i-h];
+//        }
+//        int p = degree; //only for simplicity
+//        Vector3f[][] newPoints = new Vector3f[p+1-s][h+1];
+//        for (int i = 0; i < p+1-s; i++) {
+//            newPoints[i][0] = controlPoints[k-p+i];
+//        }
+//        for (int r = 1; r <= h; r++) {
+//            for (int i = k-p+r; i <= k - s; i++) {
+//                double a = (t-knots[i])/(knots[i+p-r+1]-knots[i]);
+//                int j = i - k + p;
+//                newPoints[j][r] = newPoints[j-1][r-1].mix(newPoints[j][r-1], a);
+//            }
+//        }
+//        Vector3f[] newControlPoints = new Vector3f[controlPoints.length+h];
+//        for (int i = 0; i < k - p; i++) {
+//            newControlPoints[i] = controlPoints[i];
+//        }
+//        int i,j;
+//        for (i = k-p, j=0; j<=h; i++, j++) {
+//            newControlPoints[i] = newPoints[j][j];
+//        }
+//        j--;
+//        for (int l=0, f=j; l < p-h-s; i++, l++) {
+//            newControlPoints[i] = newPoints[f++][j];
+//        }
+//        while(j >=0) {
+//            newControlPoints[i++] = newPoints[j++][j--];
+//        }
+//        for (j = k-s+1; j < controlPoints.length; j++,i++) {
+//            newControlPoints[i] = controlPoints[j];
+//        }
+//        return new BSpline(newControlPoints, newKnots, degree);
+//    }
 
 
 }

@@ -160,5 +160,8 @@ public class Test {
         BezierCurve b2 = cubicBSpline.extractBezier(1);
         System.out.println("aaaa");
 
+        //testing the new multiple knot insertion routine
+
+
     }
 }
