@@ -323,6 +323,46 @@ public class TriangleMesh {
         this.boundingVolume = boundingVolume;
     }
 
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Vector3f[] vertexNormal) {
+        //This is an algorithm I came up with
+        //Don't know if it's correct and how fast it is
+
+        //First loop is only to allocate exact size
+        //for vertexIndex array
+        this.vertex = vertex.clone();
+        this.vertexNormal = vertexNormal.clone();
+        numVertices = 0;
+        numTriangles = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            numTriangles += faceIndex[i]-2;
+        }
+        numVertices = numTriangles*3;
+        this.vertexIndex = new int[numVertices];
+
+        int triPerFace = 0;
+        int localFaceOffset = 0;
+        int polygonFaceOffset = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            triPerFace = faceIndex[i] - 2;
+            for (int j = 0; j < triPerFace; j++) {
+                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
+                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+            }
+            localFaceOffset+=triPerFace*3;
+            polygonFaceOffset+=faceIndex[i];
+        }
+
+        triangles = new Triangle[numTriangles];
+        makeTriangles(true);
+
+        //this version is most likely the one that should always be used now
+        //We don't need a bounding volume cause in the bounding volume hierarchy
+        //we calculate the bounding volume per single triangle, not for the whole triangle mesh!
+        //(It's not even needed as an "upper-level" bounding volume, since the BVH
+        //automatically calculates the necessary upper levels)
+    }
+
     public void makeTriangles(boolean useVertexNormal) {
         if (!useVertexNormal) {
             for (int i = 0; i < numTriangles; i++) {

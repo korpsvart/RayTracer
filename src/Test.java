@@ -98,6 +98,7 @@ public class Test {
                 new Vector3f(8, 0, 0)
         };
         BSpline bspline = new BSpline(controlPoints, knots, 2);
+        bspline.setClamped(false);
         System.out.println(bspline.evaluate(3));
 
         //testing knot insertion
@@ -158,10 +159,66 @@ public class Test {
         cubicBSpline.setClamped(true);
         BezierCurve b1 = cubicBSpline.extractBezier(0);
         BezierCurve b2 = cubicBSpline.extractBezier(1);
+        Vector3f evaluation = cubicBSpline.evaluateClamped(3);
         System.out.println("aaaa");
-
         //testing the new multiple knot insertion routine
 
 
+
+        //B-spline surface test
+        int p = 3;
+        int q = 3;
+        Vector3f[][] controlPointsSurface = {
+                {
+                    new Vector3f(-1, -1, -4),
+                        new Vector3f(-0.9, -0.8, -4.2),
+                        new Vector3f(-0.8, -0.6, -4.2),
+                        new Vector3f(-0.8, -0.2, -4.3),
+                        new Vector3f(-0.7, 0, -4.2)
+                },
+                {
+                        new Vector3f(-0.5, -1.2, -4.5),
+                        new Vector3f(-0.4, -0.9, -4.6),
+                        new Vector3f(-0.43, -0.7, -4.6),
+                        new Vector3f(-0.38, -0.3, -4.5),
+                        new Vector3f(-0.34, -0.1, -4.7)
+                },
+                {
+                        new Vector3f(-0.2, -1, -4.1),
+                        new Vector3f(-0.25, -0.8, -4.9),
+                        new Vector3f(-0.27, -0.5, -4.7),
+                        new Vector3f(-0.21, -0.4, -4.9),
+                        new Vector3f(-0.18, -0.2, -5)
+                },
+                {
+                        new Vector3f(0, -1, -4.5),
+                        new Vector3f(0.1, -0.7, -4.6),
+                        new Vector3f(-0.1, -0.5, -4.2),
+                        new Vector3f(0, -0.2, -4.1),
+                        new Vector3f(0.1, 0, -4.3)
+                },
+                {
+                        new Vector3f(0.3, -1.3, -4.2),
+                        new Vector3f(0.4, -1, -4.8),
+                        new Vector3f(0.4, -0.8, -4.3),
+                        new Vector3f(0.6, -0.5, -4.0),
+                        new Vector3f(0.5, -0.2, -4.1)
+                },
+        };
+        double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
+        double[] knotsV = knotsU.clone();
+        Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1, 0));
+        BSurface bSurface = new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
+        Vector3f evaluationSurface = bSurface.evaluate(0, 0);
+        System.out.println("aaaaaaa");
+
+        //derivative test
+        Vector3f der = cubicBSpline.derivative(0);
+        System.out.println("aaaa");
+
+        //U-derivative for surface test
+        Vector3f derU = bSurface.derivativeV(0, 0);
+        Vector3f derV = bSurface.derivativeU(0, 0);
+        System.out.println("aaaa");
     }
 }

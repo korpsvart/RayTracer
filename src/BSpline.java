@@ -5,7 +5,7 @@ public class BSpline {
     private Vector3f[] controlPoints;
     private double[] knots;
     private int degree;
-    private boolean clamped = false;
+    private boolean clamped = true;
 
 
     public BSpline(Vector3f[] controlPoints, double[] knots, int degree) {
@@ -77,6 +77,10 @@ public class BSpline {
     public BezierCurve extractBezierClamped(int i) {
         //only works for clamped bsplines
 
+        //might rewrite this later to clean up the code
+        //This is equivalent to to subdivide the bspline
+        //at its knot u_i
+
         i+=degree;
         while(knots[i]==knots[i+1]) {
             i++;
@@ -98,18 +102,12 @@ public class BSpline {
             //but its actually needed because my code is very messy
             //and if we don't handle these two corner cases separately
             //we'll get an out of bound exception
-            for (int j = 0; j < degree - 1; j++) {
-                newSpline = newSpline.knotInsertion2(u1);
-            }
+            newSpline = newSpline.multipleKnotInsertion(u1, degree-1);
         } else if (i==(controlPoints.length-1)){
             //only need to insert u0
-            for (int j = 0; j < degree - 1; j++) {
-                newSpline = newSpline.knotInsertion2(u0);
-            }
+            newSpline = newSpline.multipleKnotInsertion(u0, degree-1);
         } else {
-            for (int j = 0; j < degree - 1; j++) {
-                newSpline = newSpline.knotInsertion2(u0).knotInsertion2(u1);
-            }
+            newSpline = newSpline.multipleKnotInsertion(u0, degree-1).multipleKnotInsertion(u1, degree-1);
         }
         //the bezier points are given by Pi-1, Pi,...,Pi+p-1
         Vector3f[] cp = new Vector3f[degree+1];
@@ -120,7 +118,7 @@ public class BSpline {
 
     }
 
-    public Vector3f evaluate(int u) {
+    public Vector3f evaluateNonClamped(double u) {
         //check u is inside spline domain
         if (u < knots[degree-1] || u > knots[controlPoints.length-1]) {
             throw new IllegalArgumentException("Parameter value outside of spline domain");
@@ -128,7 +126,7 @@ public class BSpline {
         //find relevant interval
         int I;
         int r = 0; //multiplicity
-        for(I=0; knots[I+1]<=u; I++) {
+        for(I=0; (I+1) < knots.length && knots[I+1]<=u; I++) {
             if (knots[I+1]==u) r++;
         }
         Vector3f[] localPoints = new Vector3f[degree+1];
@@ -151,7 +149,7 @@ public class BSpline {
         //and new control points
         double[] newKnots = new double[knots.length+1];
         int I;
-        for(I=0; knots[I+1]<=u; I++) {
+        for(I=0; (I+1) < knots.length && knots[I+1]<=u; I++) {
             newKnots[I]=knots[I];
         }
         newKnots[I]=knots[I];
@@ -182,13 +180,13 @@ public class BSpline {
 
     }
 
-    public BSpline knotInsertion2(double u) {
+    public BSpline knotInsertionClamped(double u) {
         //only works on clamped bsplines
         //where first and last knots have degree+1 multiplicity
         Vector3f[] newCP = new Vector3f[controlPoints.length+1];
         double[] newKnots = new double[knots.length+1];
         int I;
-        for(I=0; knots[I+1]<=u; I++) {
+        for(I=0; (I+1) < knots.length && knots[I+1]<=u; I++) {
             newKnots[I]=knots[I];
         }
         newKnots[I]=knots[I];
@@ -209,68 +207,147 @@ public class BSpline {
         return new BSpline(newCP, newKnots, degree);
     }
 
-//    public BSpline c2CubicSplineInterpolation(Vector3f[] dataPoints, double[] knots) {
-//
-//    }
+
+    public BSpline multipleKnotInsertion(double t, int h) {
+        double[] v = new double[knots.length+h];
+        int k = 0; //index of knot span
+        int s = 0; //multiplicity
+        while(k < knots.length && knots[k]<=t) {
+            if (knots[k]==t) s++;
+            v[k] = knots[k];
+            k++;
+        }
+        for (int i = 0; i < h; i++) {
+            v[k+i] = t; //insert new knots
+        }
+        for (int i = k+h; i < knots.length+h; i++) {
+            v[i] = knots[i-h]; //copy remaining knots after the newly inserted one(s)
+        }
+        k=k-1; //correct knot span index
+        Vector3f[] newPoints = new Vector3f[controlPoints.length+h];
+        int p = degree; //only for simplicity
+        Vector3f[][] aux = new Vector3f[p+1-s][h+1];
+        for (int i = 0; i < p + 1 - s; i++) {
+            aux[i][0] = controlPoints[i+(k-p)];
+        }
+        //calculate new points
+        for (int r = 1; r <= h; r++) {
+            for (int i = r; i < p+1-s; i++) {
+                int j = i+(k-p); //"real" index in global knots indexing
+                double a = (t-knots[j])/(knots[j+p-r+1]-knots[j]);
+                aux[i][r] = aux[i-1][r-1].mix(aux[i][r-1], a);
+            }
+        }
+        //get the new control points
+        for (int i = 0; i < k - p; i++) {
+            newPoints[i] = controlPoints[i];
+        }
+        int i = k-p;
+        for (int j = 0; j <= h; j++) {
+            newPoints[i++] = aux[j][j];
+        }
+        for (int j = h+1; j <p+1-s; j++) {
+            newPoints[i++] = aux[p-s][j];
+        }
+        while(i < newPoints.length) {
+            newPoints[i] = controlPoints[i-h];
+            i++;
+        }
+        return new BSpline(newPoints, v, degree);
+    }
+
+    public Vector3f evaluateClamped(double u) {
+        //new version, for clamped bsplines
+        //based on the principle of knot insertion
+        //In this case, we can use a single vector instead of a matrix
+        int k = 0; //index of knot span
+        int s = 0; //multiplicity
+        while(k < knots.length && knots[k]<=u) {
+            if (knots[k]==u) s++;
+            k++;
+        }
+        int p = degree;
+        k=k-1;
+        if (p < s) {
+            //we have to tackle this problem explicitly
+            //This happens when multiplicity is greater than degree
+            //and going further would give us a zero length vector.
+            //Ideally, this should never happen by insertion of new knots,
+            //but it will surely happen if we evaluate at the domain limits
+            //since those always have p+1 multiplicity in clamped B-Splines.
+            //This problem is particularly annoying, since the formula k-s does work
+            //for internal knots and if the parameter is equal to the last knot,
+            //but it doesnt work if it's equal to the first knot.
+            //in that case we need to add 1.
+            //I think this problem comes from the fact that our convention use p+1 multiplicity
+            //at first and last knot, while p alone would be sufficient. In fact, if we use p multiplicity
+            //we can use k-s in every situation, but the code should also work without any explicit check
+            //on the relationship between p and s. We would simply have a length 1 vector with only the necessary point
+            //(that is already a control point for the B-Spline)
+            return u==knots[0] ? controlPoints[0] : controlPoints[k-s];
+        }
+        //insert u only (p-s) times
+        Vector3f[] aux = new Vector3f[p+1-s];
+        for (int i = 0; i < p + 1 - s; i++) {
+            aux[i] = controlPoints[i+(k-p)];
+        }
+        for (int r = 1; r <= p-s; r++) {
+            for (int i = r; i < p+1-s; i++) {
+                int j = i+(k-p); //"real" index in global knots indexing
+                double a = (u-knots[j])/(knots[j+p-r+1]-knots[j]);
+                aux[i-r] = aux[i-r].mix(aux[i-r+1], a);
+            }
+        }
+        return aux[0];
+    }
+
+    public static Vector3f deBoor(Vector3f[] cp, double knots[], double u, int s, int p, int k) {
+        //u is the parameter at which we want to evaluate the B-Spline
+        //p is degree
+        //s is knot multiplicity (multiplicity is defined to be zero if parameter is not a knot)
+        //k is index of knot span containing parameter of evaluation
+        //This routine assumes that the caller has already chosen the significant control points
+        //necessary for evaluation
+        if (cp.length == 1) return cp[0];
+        Vector3f[] aux = cp.clone(); //to avoid modifying the array passed
+        for (int r = 1; r <= p-s; r++) {
+            for (int i = r; i < p+1-s; i++) {
+                int j = i+(k-p); //"real" index in global knots indexing
+                double a = (u-knots[j])/(knots[j+p-r+1]-knots[j]);
+                aux[i-r] = aux[i-r].mix(aux[i-r+1], a);
+            }
+        }
+        return aux[0];
+    }
 
 
-//    public BSpline multipleKnotInsertion(double t, int h) {
-//        //perform multiple knot insertion more efficiently
-//        //than calling single knot insertion repeatedly
-//        //Works for clamped bsplines, don't know if it works for the general case
-//        //Insert node t h times
-//
-//        //NOT WORKING
-//        //it's not strictly necessary
-//        //so i'm gonna skip it for now cause it's kinda difficult to implement
-//
-//        int s=0; //t knot multiplicity
-//        int k;
-//        double[] newKnots = new double[knots.length+h];
-//        //find relevant knot span and multiplicity
-//        for(k=0; knots[k+1]<=t; k++) {
-//            if (knots[k+1]==t) s++;
-//            newKnots[k] = knots[k];
-//        }
-//        newKnots[k]=knots[k];
-//        for (int i = 0; i < h; i++) {
-//            newKnots[k+1+i] = t;
-//        }
-//        for (int i = k+h+1; i < newKnots.length; i++) {
-//            newKnots[i]=knots[i-h];
-//        }
-//        int p = degree; //only for simplicity
-//        Vector3f[][] newPoints = new Vector3f[p+1-s][h+1];
-//        for (int i = 0; i < p+1-s; i++) {
-//            newPoints[i][0] = controlPoints[k-p+i];
-//        }
-//        for (int r = 1; r <= h; r++) {
-//            for (int i = k-p+r; i <= k - s; i++) {
-//                double a = (t-knots[i])/(knots[i+p-r+1]-knots[i]);
-//                int j = i - k + p;
-//                newPoints[j][r] = newPoints[j-1][r-1].mix(newPoints[j][r-1], a);
-//            }
-//        }
-//        Vector3f[] newControlPoints = new Vector3f[controlPoints.length+h];
-//        for (int i = 0; i < k - p; i++) {
-//            newControlPoints[i] = controlPoints[i];
-//        }
-//        int i,j;
-//        for (i = k-p, j=0; j<=h; i++, j++) {
-//            newControlPoints[i] = newPoints[j][j];
-//        }
-//        j--;
-//        for (int l=0, f=j; l < p-h-s; i++, l++) {
-//            newControlPoints[i] = newPoints[f++][j];
-//        }
-//        while(j >=0) {
-//            newControlPoints[i++] = newPoints[j++][j--];
-//        }
-//        for (j = k-s+1; j < controlPoints.length; j++,i++) {
-//            newControlPoints[i] = controlPoints[j];
-//        }
-//        return new BSpline(newControlPoints, newKnots, degree);
-//    }
+    public Vector3f evaluate(double u) {
+        if (clamped) {
+            return this.evaluateClamped(u);
+        } else {
+            return this.evaluateNonClamped(u);
+        }
+    }
+
+
+    public Vector3f derivative(double u) {
+        //calculate derivative at u
+        //by creating a new p-1 curve and evaluating that curve
+        Vector3f[] points = new Vector3f[controlPoints.length-1];
+        double[] newKnots = new double[knots.length-1];
+        for (int i = 0; i < newKnots.length; i++) {
+            newKnots[i] = knots[i+1];
+        }
+        for (int i = 0; i < points.length; i++) {
+            double h = degree/(knots[i+degree+1]-knots[i+1]);
+            points[i] = controlPoints[i+1].add(controlPoints[i].mul(-1));
+            points[i] = points[i].mul(h);
+        }
+        BSpline der = new BSpline(points, newKnots, degree-1);
+        return der.evaluate(u);
+
+
+    }
 
 
 }

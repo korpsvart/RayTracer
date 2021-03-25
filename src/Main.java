@@ -69,6 +69,52 @@ public class Main {
         return new BezierSurface33[]{surface1, surface2};
     }
 
+    public static BSurface testBSSurface() {
+        int p = 3;
+        int q = 3;
+        Vector3f[][] controlPointsSurface = {
+                {
+                        new Vector3f(-1, -1, -4),
+                        new Vector3f(-0.9, -0.8, -4.2),
+                        new Vector3f(-0.8, -0.6, -4.2),
+                        new Vector3f(-0.8, -0.2, -4.3),
+                        new Vector3f(-0.7, 0, -4.2)
+                },
+                {
+                        new Vector3f(-0.5, -1.2, -4.5),
+                        new Vector3f(-0.4, -0.9, -4.6),
+                        new Vector3f(-0.43, -0.7, -4.6),
+                        new Vector3f(-0.38, -0.3, -4.5),
+                        new Vector3f(-0.34, -0.1, -4.7)
+                },
+                {
+                        new Vector3f(-0.2, -1, -4.1),
+                        new Vector3f(-0.25, -0.8, -4.9),
+                        new Vector3f(-0.27, -0.5, -4.7),
+                        new Vector3f(-0.21, -0.4, -4.9),
+                        new Vector3f(-0.18, -0.2, -5)
+                },
+                {
+                        new Vector3f(0, -1, -4.5),
+                        new Vector3f(0.1, -0.7, -4.6),
+                        new Vector3f(-0.1, -0.5, -4.2),
+                        new Vector3f(0, -0.2, -4.1),
+                        new Vector3f(0.1, 0, -4.3)
+                },
+                {
+                        new Vector3f(0.3, -1.3, -4.2),
+                        new Vector3f(0.4, -1, -4.8),
+                        new Vector3f(0.4, -0.8, -4.3),
+                        new Vector3f(0.6, -0.5, -4.0),
+                        new Vector3f(0.5, -0.2, -4.1)
+                },
+        };
+        double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
+        double[] knotsV = knotsU.clone();
+        Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, 0));
+        return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
+    }
+
 
     public static void main(String[] args) throws Exception {
 
@@ -120,7 +166,7 @@ public class Main {
 //        scene.addSceneObject(diffuseSphere5);
 //        scene.addSceneObject(diffuseSphere6);
 //        scene.addSceneObject(transparentPlane);
-        scene.addSceneObject(diffusePlane);
+//        scene.addSceneObject(diffusePlane);
 //        scene.addSceneObject(triangle1);
         Vector3f[][] controlPoints = {
                 new Vector3f[] { new Vector3f(0, 0, -5),
@@ -166,13 +212,18 @@ public class Main {
 //        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
 ////        transparentBezier.setIor(1.5);
 //        scene.triangulateAndAddSceneObject(transparentBezier, 16);
-        BezierSurface33[] patches = testC1Patches();
-        for (BezierSurface33 patch :
-                patches) {
-            Diffuse diffusePatch = new Diffuse(patch);
-            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
-            scene.triangulateAndAddSceneObject(diffusePatch, 16);
-        }
+//        BezierSurface33[] patches = testC1Patches();
+//        for (BezierSurface33 patch :
+//                patches) {
+//            Diffuse diffusePatch = new Diffuse(patch);
+//            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
+//            scene.triangulateAndAddSceneObject(diffusePatch, 16);
+//        }
+        //Testing B-Spline surfaces
+        BSurface bSurface = testBSSurface();
+        Diffuse diffuseSurface = new Diffuse(bSurface);
+        diffuseSurface.setAlbedo(new Vector3f(0.3, 0, 0.51));
+        scene.triangulateAndAddSceneObject(diffuseSurface, 16);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(1, 1, -4));
