@@ -252,7 +252,7 @@ public class BezierSurface33 extends GeometricObject {
             for (int j = 1; j < 3; j++) {
                 ruledU = getRuledSurfaceValueU(controlPoints, i, j);
                 ruledV = getRuledSurfaceValueU(controlPoints, i, j);
-                bilinear = getBilinearInterpolant(controlPoints, i, j);
+                bilinear = getBilinearInterpolant(controlPoints, j, i);
                 controlPoints[i][j] = ruledU.add(ruledV).add(bilinear.mul(-1));
             }
         }
