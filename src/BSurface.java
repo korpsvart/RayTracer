@@ -129,8 +129,8 @@ public class BSurface extends GeometricObject {
                 faceIndex[k] = 4;
                 vertexIndex[k*4]=(divs+1)*i+j;
                 vertexIndex[k*4+1]=(divs+1)*i+j+1;
-                vertexIndex[k*4+2]=(divs+1)*(i+1)+j+1;
-                vertexIndex[k*4+3]=(i+1)*(divs+1)+j;
+                vertexIndex[k*4+2]=(divs+1)*(i+1)+j;
+                vertexIndex[k*4+3]=(i+1)*(divs+1)+j+1;
             }
         }
 

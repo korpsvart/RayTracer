@@ -223,10 +223,10 @@ public class Main {
         BSurface bSurface = testBSSurface();
         Diffuse diffuseSurface = new Diffuse(bSurface);
         diffuseSurface.setAlbedo(new Vector3f(0.3, 0, 0.51));
-        scene.triangulateAndAddSceneObject(diffuseSurface, 16);
+        scene.triangulateAndAddSceneObject(diffuseSurface, 24);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(1, 1, -4));
+        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(-0.7, 0, -3));
         Matrix3D lightRotation = new Matrix3D(new double[][] {
             {0,0,-1},
             {0,0,1},

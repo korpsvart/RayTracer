@@ -138,7 +138,7 @@ public class TriangleMesh {
                 //If u=1 then we are on vertex B
                 //If v =1 then we are on vertex C
                 double w = 1-u-v;
-                return vertexNormal[0].mul(w).add(vertexNormal[1].mul(u).add(vertexNormal[2].mul(v)));
+                return vertexNormal[0].mul(w).add(vertexNormal[1].mul(u).add(vertexNormal[2].mul(v))).normalize();
             }
         }
 
@@ -197,9 +197,15 @@ public class TriangleMesh {
         for (int i = 0; i < faceIndex.length; i++) {
             triPerFace = faceIndex[i] - 2;
             for (int j = 0; j < triPerFace; j++) {
-                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
-                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
-                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
             }
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
@@ -234,9 +240,15 @@ public class TriangleMesh {
         for (int i = 0; i < faceIndex.length; i++) {
             triPerFace = faceIndex[i] - 2;
             for (int j = 0; j < triPerFace; j++) {
-                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
-                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
-                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
             }
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
@@ -270,9 +282,15 @@ public class TriangleMesh {
         for (int i = 0; i < faceIndex.length; i++) {
             triPerFace = faceIndex[i] - 2;
             for (int j = 0; j < triPerFace; j++) {
-                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
-                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
-                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
             }
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
@@ -306,9 +324,15 @@ public class TriangleMesh {
         for (int i = 0; i < faceIndex.length; i++) {
             triPerFace = faceIndex[i] - 2;
             for (int j = 0; j < triPerFace; j++) {
-                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
-                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
-                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
             }
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
@@ -345,9 +369,15 @@ public class TriangleMesh {
         for (int i = 0; i < faceIndex.length; i++) {
             triPerFace = faceIndex[i] - 2;
             for (int j = 0; j < triPerFace; j++) {
-                this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset];
-                this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
-                this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
             }
             localFaceOffset+=triPerFace*3;
             polygonFaceOffset+=faceIndex[i];
