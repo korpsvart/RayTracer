@@ -2,7 +2,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Optional;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class Scene {
@@ -122,6 +124,7 @@ public class Scene {
         double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
         Vector3f cameraPositionWorld = this.cameraToWorld.transformVector(cameraPosition);
         Matrix3D cTWForVectors = cameraToWorld.getA();
+
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
@@ -137,6 +140,61 @@ public class Scene {
         }
     }
 
+
+    public void render(int divs) {
+        //employs screen subdivision parallelism
+        double aspectRatio = (double)width/height;
+        double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
+        Vector3f cameraPositionWorld = this.cameraToWorld.transformVector(cameraPosition);
+        Matrix3D cTWForVectors = cameraToWorld.getA();
+
+        ExecutorService executor = Executors.newCachedThreadPool();
+
+        int stepX = Math.floorDiv(width, divs);
+        int stepY = Math.floorDiv(height, divs);
+        for (int i = 0; i < divs; i++) {
+            for (int j = 0; j < divs; j++) {
+                int x = i*stepX;
+                int y = j*stepY;
+                BufferedImage subImg = img.getSubimage(x, y, stepX, stepY);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                });
+            }
+            if (height % divs != 0) {
+                int x = i*stepX;
+                int y = divs*stepY;
+                BufferedImage subImg = img.getSubimage(x, y, stepX, height%divs);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                });
+            }
+        }
+        if (width % divs != 0) {
+            for (int j = 0; j < divs; j++) {
+                int x = stepX*divs;
+                int y = j*divs;
+                BufferedImage subImg = img.getSubimage(x, y, width%divs, stepY);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                });
+            }
+            if (height % divs != 0) {
+                int x = stepX*divs;
+                int y = stepY*divs;
+                BufferedImage subImg = img.getSubimage(stepX * divs, stepY*divs, width % divs, height%divs);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                });
+            }
+        }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(20, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     public Vector3f rayTrace(Line3d ray, int rayDepth) {
         if (rayDepth > MAX_RAY_DEPTH) {
             return this.backgroundColor;
@@ -264,5 +322,37 @@ public class Scene {
 
     public Matrix4D getCameraToWorld() {
         return cameraToWorld;
+    }
+
+    protected static void screenAreaRendering(BufferedImage img, int startX, int startY, int w, int h, double aspectRatio, double scale, Vector3f cameraPositionWorld, Matrix3D cTWForVectors,
+                                              Scene currentScene) {
+
+        int width = currentScene.width;
+        int height = currentScene.height;
+        for (int i = startX; i < w+startX; i++) {
+            for (int j = startY; j < h+startY; j++) {
+                double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
+                double y = (1-2*(j+0.5)/height)*scale;
+                Vector3f rayDirection = new Vector3f(x,y,-1);
+                Vector3f rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
+                Line3d ray = new Line3d(cameraPositionWorld, rayDirectionWorld);
+                Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
+                //which can be considered as vacuum for simplicity
+                Color color1 = color.vectorToColor();
+                img.setRGB(i-startX,j-startY,color1.getRGB());
+            }
+        }
+    }
+
+
+    class RenderThread implements Runnable {
+
+
+        private BufferedImage img;
+
+        @Override
+        public void run() {
+
+        }
     }
 }

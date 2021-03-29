@@ -111,7 +111,7 @@ public class Main {
         };
         double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
         double[] knotsV = knotsU.clone();
-        Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, 0));
+        Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -1));
         return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
     }
 
@@ -124,8 +124,8 @@ public class Main {
         //(0, 0, -1)
         //Screen is placed at z=-1
 
-        int width = 1200;
-        int height = 1200;
+        int width = 1024;
+        int height = 768;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
@@ -137,7 +137,7 @@ public class Main {
         Color color1 = new Color(1f,1f,1f);
         Color color2 = new Color(0.8f,0.6f,0.3f);
         Color color3 = new Color(0.4f,0.9f,0.1f);
-        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(-1,0,-9.5), 1));
+        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(0.3,0,-4), 0.2));
         diffuseSphere1.setAlbedo(new Vector3f(0, 0.2, 0.9));
         MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
         Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 0.2, -8), 1.2));
@@ -157,7 +157,7 @@ public class Main {
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-//        scene.addSceneObject(diffuseSphere1);
+        scene.addSceneObject(diffuseSphere1);
 //        scene.addSceneObject(transparentSphere);
         diffuseSphere2.setAlbedo(new Vector3f(0.7, 0, 0));
 //        scene.addSceneObject(diffuseSphere2);
@@ -192,8 +192,7 @@ public class Main {
                         new Vector3f(0.9, 1.2, -5.8)
                 }
         };
-        long start = 0;
-        start = System.nanoTime();
+
 //        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
 //        BezierSurface33 bezierSurface = BezierSurface33.fillWithCoons(controlPoints);
 //        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
@@ -207,7 +206,6 @@ public class Main {
 //            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
 //            scene.triangulateAndAddSceneObject(diffusePatch, 16);
 //        }
-        long triangulationTime = System.nanoTime() - start;
 //        Diffuse transparentBezier = new Diffuse(bezierSurface);
 //        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
 ////        transparentBezier.setIor(1.5);
@@ -223,10 +221,10 @@ public class Main {
         BSurface bSurface = testBSSurface();
         Diffuse diffuseSurface = new Diffuse(bSurface);
         diffuseSurface.setAlbedo(new Vector3f(0.3, 0, 0.51));
-        scene.triangulateAndAddSceneObject(diffuseSurface, 24);
+        scene.triangulateAndAddSceneObject(diffuseSurface, 12);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color1, 200, new Vector3f(-0.7, 0, -3));
+        PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0.7, 0, -3));
         Matrix3D lightRotation = new Matrix3D(new double[][] {
             {0,0,-1},
             {0,0,1},
@@ -244,12 +242,16 @@ public class Main {
         Vector3f minBound = new Vector3f(-1000, -1000, -1000);
         Vector3f maxBound = new Vector3f(1000, 1000, 1000);
         scene.setBVH();
-        scene.render();
+        long start = 0;
+        start = System.nanoTime();
+        scene.render(20);
+        long renderTime = System.nanoTime() - start;
+
 
         Visualizer visualizer = new Visualizer(scene);
 
         System.out.println("Ray number: " + width*height); //divide to get seconds
-        System.out.println("Triangulation time: " + triangulationTime/10e9);
+        System.out.println("Rendering time: " + renderTime/10e9);
         System.out.println("Number of ray-triangle tests: " + rayTriangleTests);
         System.out.println("Number of ray-triangle intersections: " + rayTriangleIntersections);
         System.out.println("Hit-ratio: " + (double)rayTriangleIntersections.longValue()/rayTriangleTests.longValue()*100); //hit ratio as percentage
