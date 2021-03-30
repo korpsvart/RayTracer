@@ -7,6 +7,10 @@ public class BSpline {
     private int degree;
     private boolean clamped = true;
 
+    public enum ParameterMethod {
+        UNIFORM, CHORD_LENGTH, BARYCENTRIC, UNIVERSAL
+    };
+
 
     public BSpline(Vector3f[] controlPoints, double[] knots, int degree) {
         //check that length(controlPoints)=length(knots)-n+1
@@ -348,6 +352,53 @@ public class BSpline {
 
 
     }
+
+    public static double[] findParameters(ParameterMethod method, Vector3f[] dataPoints, double a, double b) {
+        int n = dataPoints.length;
+        double[] t = new double[n];
+        if (method==ParameterMethod.CHORD_LENGTH || true) {
+            //implement more methods later
+            t[0] = 0;
+            double[] d = new double[n];
+            d[0] = 0;
+            for (int i = 1; i < n; i++) {
+                d[i] += dataPoints[i].distance(dataPoints[i-1])+d[i-1];
+            }
+            double l = d[n-1];
+            for (int i = 1; i < n-1; i++) {
+                t[i] = a + (b-a)*d[i]/l;
+            }
+            t[n-1] = b;
+        }
+        return t;
+    }
+
+    public static double[] generateKnots(double t[], int p) {
+        int n = t.length;
+        double[] knots = new double[n+p];
+        for (int i = 0; i <= p; i++) {
+            knots[i] = 0;
+            knots[n+p-1-i] = 1;
+        }
+        for (int j = 1; j < n - p; j++) {
+            for (int i = j; i < j+p; i++) {
+                knots[j+p]+=t[i];
+            }
+            knots[j+p]/=p;
+        }
+        return knots;
+    }
+
+
+    public BSpline interpolate(Vector3f[] dataPoints, int p) {
+        int n = dataPoints.length;
+        double[] t = findParameters(ParameterMethod.CHORD_LENGTH,dataPoints, 0, 1);
+        double[] knots = generateKnots(t, p);
+        //implement function to calcualte B-Spline coefficients
+        return null;
+    }
+
+
 
 
 }

@@ -233,6 +233,25 @@ public class Test {
                 {5,2}
         };
         double[][] result = MatrixUtilities.solve(a, b);
+
+
+
+
+        //test arc length parameters generation
+        Vector3f dataPoints[] = new Vector3f[]{
+                new Vector3f(0, 0, 0),
+                new Vector3f(1, 2, 0),
+                new Vector3f(3, 4, 0),
+                new Vector3f(4, 0, 0)
+        };
+        double[] t = BSpline.findParameters(BSpline.ParameterMethod.CHORD_LENGTH, dataPoints, 0, 1);
         System.out.println("aaa");
+
+        //testing knot vector generation
+        double[] t2 = new double[]{
+                0,1/4f,1/3f,2/3f,3/4f,1
+        };
+        double[] knots = BSpline.generateKnots(t2, 3);
+        System.out.println("aaaa");
     }
 }

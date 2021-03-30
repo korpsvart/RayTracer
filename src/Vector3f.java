@@ -195,4 +195,9 @@ public class Vector3f{
         return new Vector3f(this.x*v.x, this.y*v.y, this.z*v.z);
     }
 
+
+    public double distance(Vector3f point) {
+        return this.add(point.mul(-1)).magnitude();
+    }
+
 }
