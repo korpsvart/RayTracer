@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class BSpline {
 
     //Class for BSplines
@@ -6,6 +8,12 @@ public class BSpline {
     private double[] knots;
     private int degree;
     private boolean clamped = true;
+    private double[] t; //interpolation parameters, only for interpolant bsplines and for debugging purposes
+
+
+    public double[] getT() {
+        return t;
+    }
 
     public enum ParameterMethod {
         UNIFORM, CHORD_LENGTH, BARYCENTRIC, UNIVERSAL
@@ -375,10 +383,10 @@ public class BSpline {
 
     public static double[] generateKnots(double t[], int p) {
         int n = t.length;
-        double[] knots = new double[n+p];
+        double[] knots = new double[n+p+1];
         for (int i = 0; i <= p; i++) {
             knots[i] = 0;
-            knots[n+p-1-i] = 1;
+            knots[n+p-i] = 1;
         }
         for (int j = 1; j < n - p; j++) {
             for (int i = j; i < j+p; i++) {
@@ -390,12 +398,61 @@ public class BSpline {
     }
 
 
-    public BSpline interpolate(Vector3f[] dataPoints, int p) {
+    public static double[] getSplineBasis(int n, int p, double u, double[] knots) {
+        //given u, a vector of m+1 knots (where m satisfies m=n+p+1)
+        //n (number of control points aka number of basis functions)
+        //and degree p
+        //returns the n+1 basis function of degree p evaluated at u
+
+        int m = knots.length;
+        double[] b = new double[n];
+        if (u==knots[0]) {
+            b[0] = 1;
+            return b;
+        } else if (u==knots[m-1]) {
+            b[n-1] = 1;
+            return b;
+        }
+
+        //find index of knot span
+        int k = 0; //index of knot span
+        while(k < knots.length && knots[k+1]<=u) {
+            k++;
+        }
+        b[k]=1;
+        for (int d = 1; d <= p; d++) {
+            b[k-d] = b[k-d+1]*(knots[k+1]-u)/(knots[k+1]-knots[k-d+1]);
+            for (int i = k-d+1; i < k; i++) {
+                b[i] = b[i]*(u-knots[i])/(knots[i+d]-knots[i])+b[i+1]*(knots[i+d+1]-u)/(knots[i+d+1]-knots[i+1]);
+            }
+            b[k] = b[k]*(u-knots[k])/(knots[k+d]-knots[k]);
+        }
+        return b;
+    }
+
+
+    public static BSpline interpolate(Vector3f[] dataPoints, int p) {
         int n = dataPoints.length;
         double[] t = findParameters(ParameterMethod.CHORD_LENGTH,dataPoints, 0, 1);
         double[] knots = generateKnots(t, p);
-        //implement function to calcualte B-Spline coefficients
-        return null;
+        //Calculate B-Spline coefficients (basis functions)
+        double[][] N = new double[n][n]; //matrix of b spline coefficients
+        double[][] D = new double[n][3]; //matrix of data points (3 is because we work in 3d space)
+        double[][] P = new double[n][3]; //matrix of control points (solution)
+        for (int i = 0; i < n; i++) {
+            N[i] = getSplineBasis(n,p,t[i], knots);
+            D[i] = dataPoints[i].getArray();
+        }
+        //get control points
+        P = MatrixUtilities.solve(N, D);
+        Vector3f[] controlPoints = new Vector3f[n];
+        for (int i = 0; i < n; i++) {
+            controlPoints[i] = new Vector3f(P[i]);
+        }
+        //build B-Spline
+        BSpline interpolant = new BSpline(controlPoints, knots, p);
+        interpolant.t = t;
+        return interpolant;
     }
 
 

@@ -253,5 +253,26 @@ public class Test {
         };
         double[] knots = BSpline.generateKnots(t2, 3);
         System.out.println("aaaa");
+
+
+        //testing b-spline coefficients computation
+
+
+        //test B-SPline interpolation
+        Vector3f[] dp = new Vector3f[] {
+                new Vector3f(0, 0, -5),
+                new Vector3f(0.8, 0.3, -5.2),
+                new Vector3f(1.2, 0.6, -5.4),
+                new Vector3f(1.5, 0.2, -5)
+        };
+        BSpline interpolant = BSpline.interpolate(dp, 2);
+        double[] params = interpolant.getT();
+        //verify the spline interpolates the points
+        //by evaluating it at the corresponding parameters
+        for (int i = 0; i < dp.length; i++) {
+            Vector3f value = interpolant.evaluate(params[i]);
+            System.out.println(dp[i].equals(value));
+        }
+        System.out.println("aaaa");
     }
 }

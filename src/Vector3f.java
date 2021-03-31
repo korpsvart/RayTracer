@@ -92,6 +92,9 @@ public class Vector3f{
         return v.mul(c);
     }
 
+    public double[] getArray() {
+        return new double[]{x,y,z};
+    }
     public Vector3f matrixLinearTransform(Matrix3D m) {
         return m.transformVector(this);
     }
