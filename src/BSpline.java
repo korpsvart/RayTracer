@@ -381,6 +381,51 @@ public class BSpline {
         return t;
     }
 
+    public static double[] findParameters(Vector3f[] dataPoints, double a, double b) {
+        //if not specified, use arc length as method for parameter selection
+        int n = dataPoints.length;
+        double[] t = new double[n];
+        //implement more methods later
+        t[0] = 0;
+        double[] d = new double[n];
+        d[0] = 0;
+        for (int i = 1; i < n; i++) {
+            d[i] += dataPoints[i].distance(dataPoints[i-1])+d[i-1];
+        }
+        double l = d[n-1];
+        for (int i = 1; i < n-1; i++) {
+            t[i] = a + (b-a)*d[i]/l;
+        }
+        t[n-1] = b;
+        return t;
+    }
+
+    public static double[] findParameters(Vector3f[][] dataPoints, double a, double b) {
+        //if multiple rows are given, take an average of the parameters for each row
+        //(just experimenting, no idea if this will work out nicely)
+        int n = dataPoints[0].length;
+        double[] t = new double[n];
+        for (int k=0; k<dataPoints.length; k++) {
+            //implement more methods later
+            t[0] = 0;
+            double[] d = new double[n];
+            d[0] = 0;
+            for (int i = 1; i < n; i++) {
+                d[i] += dataPoints[k][i].distance(dataPoints[k][i-1])+d[i-1];
+            }
+            double l = d[n-1];
+            for (int i = 1; i < n-1; i++) {
+                t[i] += a + (b-a)*d[i]/l;
+            }
+            t[n-1] = b;
+        }
+        for (int i = 1; i < n-1; i++) {
+            t[i] /= dataPoints.length;
+        }
+        return t;
+    }
+
+
     public static double[] generateKnots(double t[], int p) {
         int n = t.length;
         double[] knots = new double[n+p+1];

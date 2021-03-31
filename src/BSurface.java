@@ -196,4 +196,67 @@ public class BSurface extends GeometricObject {
         }
         return BSpline.deBoor(auxV, knotsV, v, s, q, c);
     }
+
+
+    public static BSurface interpolate(Vector3f[][] dataPoints, int p, int q) {
+        //find parameters and knot in u direction
+        int m = dataPoints.length;
+        int n = dataPoints[0].length;
+        double[] s = BSpline.findParameters(dataPoints, 0, 1);
+        double[] u = BSpline.generateKnots(s, p);
+        //find parameters in the v direction
+        Vector3f[][] dPTransposed = MatrixUtilities.transpose2(dataPoints);
+        double[] t = BSpline.findParameters(dPTransposed, 0, 1);
+        double[] v = BSpline.generateKnots(t, q);
+        //LUP-decompose first N matrix (to find intermediate control points)
+        //First build the matrix
+        double[][] N = new double[m][m];
+        for (int i = 0; i < m; i++) {
+            N[i] = BSpline.getSplineBasis(m, p, s[i],u);
+        }
+        //decompose
+        double[][][] lup = MatrixUtilities.lu(N);
+        //calculate intermediate control points Q by spline curve interpolation
+        //we can use original dataPoints matrix if we don't care about preserving it
+        for (int i = 0; i < n; i++) {
+            //setup datapoints column
+            double[][] b = new double[m][3];
+            for (int j = 0; j < m; j++) {
+                b[j] = dataPoints[j][i].getArray();
+            }
+            //solve
+            b = MatrixUtilities.backForwardSubstitution(lup[0], lup[1],lup[2],b);
+            //substitute in original dataPoints vector
+            for (int j = 0; j < m; j++) {
+                dataPoints[j][i] = new Vector3f(b[j]);
+            }
+        }
+
+        //do something similar but now interpolate by row
+        //to get final control ponts
+
+        //build new N matrix
+        N = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            N[i] = BSpline.getSplineBasis(n, q, t[i],v);
+        }
+        //decompose
+        lup = MatrixUtilities.lu(N);
+        for (int i = 0; i < n; i++) {
+            double[][] b = new double[n][3];
+            for (int j = 0; j < n; j++) {
+                b[j] = dataPoints[i][j].getArray();
+            }
+            //solve
+            b = MatrixUtilities.backForwardSubstitution(lup[0], lup[1],lup[2],b);
+            //substitute in original
+            for (int j = 0; j < n; j++) {
+                dataPoints[i][j] = new Vector3f(b[j]);
+            }
+        }
+
+        //build surface
+        return new BSurface(MatrixUtilities.transpose2(dataPoints), u, v, p, q, Matrix4D.identity);
+
+    }
 }

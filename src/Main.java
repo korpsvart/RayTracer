@@ -218,8 +218,37 @@ public class Main {
 //            scene.triangulateAndAddSceneObject(diffusePatch, 16);
 //        }
         //Testing B-Spline surfaces
-        BSurface bSurface = testBSSurface();
-        Diffuse diffuseSurface = new Diffuse(bSurface);
+//        BSurface bSurface = testBSSurface();
+        //Testing B-Surface interpolation
+        //testing B-spline interpolating surface
+        Vector3f[][] dataPointsSurface = {
+                {
+                        new Vector3f(-1, -1, -4),
+                        new Vector3f(-0.6, -0.8, -4.2),
+                        new Vector3f(-0.4, -0.9, -4.2),
+                        new Vector3f(-0.3, -0.8, -4.3),
+                },
+                {
+                        new Vector3f(-1, -0.7, -4.5),
+                        new Vector3f(-0.6, -0.6, -4.6),
+                        new Vector3f(-0.4, -0.7, -4.6),
+                        new Vector3f(-0.2, -0.6, -4.5),
+                },
+                {
+                        new Vector3f(-1.2, -0.4, -4.1),
+                        new Vector3f(-0.8, -0.5, -4.9),
+                        new Vector3f(-0.7, -0.4, -4.7),
+                        new Vector3f(-0.5, -0.5, -4.9),
+                },
+                {
+                        new Vector3f(-0.9, -0.2, -4.5),
+                        new Vector3f(-0.7, -0.1, -4.6),
+                        new Vector3f(-0.6, -0.2, -4.2),
+                        new Vector3f(-0.4, -0, -4.1),
+                }
+        };
+        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 2, 2);
+        Diffuse diffuseSurface = new Diffuse(interpolantSurface);
         diffuseSurface.setAlbedo(new Vector3f(0.3, 0, 0.51));
         scene.triangulateAndAddSceneObject(diffuseSurface, 12);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));

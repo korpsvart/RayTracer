@@ -224,17 +224,15 @@ public class Test {
         //testing equation solver using LU decomposition
         double[][] a = new double[][]{
                 {3, 2, 1},
-                {1,2,3},
-                {2,1,3}
+                {1, 2, 3},
+                {2, 1, 3}
         };
         double[][] b = new double[][]{
-                {3,6},
-                {4,1},
-                {5,2}
+                {3, 6},
+                {4, 1},
+                {5, 2}
         };
         double[][] result = MatrixUtilities.solve(a, b);
-
-
 
 
         //test arc length parameters generation
@@ -249,7 +247,7 @@ public class Test {
 
         //testing knot vector generation
         double[] t2 = new double[]{
-                0,1/4f,1/3f,2/3f,3/4f,1
+                0, 1 / 4f, 1 / 3f, 2 / 3f, 3 / 4f, 1
         };
         double[] knots = BSpline.generateKnots(t2, 3);
         System.out.println("aaaa");
@@ -259,7 +257,7 @@ public class Test {
 
 
         //test B-SPline interpolation
-        Vector3f[] dp = new Vector3f[] {
+        Vector3f[] dp = new Vector3f[]{
                 new Vector3f(0, 0, -5),
                 new Vector3f(0.8, 0.3, -5.2),
                 new Vector3f(1.2, 0.6, -5.4),
@@ -274,5 +272,36 @@ public class Test {
             System.out.println(dp[i].equals(value));
         }
         System.out.println("aaaa");
+
+
+        //testing B-spline interpolating surface
+        Vector3f[][] dataPointsSurface = {
+                {
+                        new Vector3f(-1, -1, -4),
+                        new Vector3f(-0.6, -0.8, -4.2),
+                        new Vector3f(-0.4, -0.9, -4.2),
+                        new Vector3f(-0.3, -0.8, -4.3),
+                },
+                {
+                        new Vector3f(-1, -0.7, -4.5),
+                        new Vector3f(-0.6, -0.6, -4.6),
+                        new Vector3f(-0.4, -0.7, -4.6),
+                        new Vector3f(-0.2, -0.6, -4.5),
+                },
+                {
+                        new Vector3f(-1.2, -0.4, -4.1),
+                        new Vector3f(-0.8, -0.5, -4.9),
+                        new Vector3f(-0.7, -0.4, -4.7),
+                        new Vector3f(-0.5, -0.5, -4.9),
+                },
+                {
+                        new Vector3f(-0.9, -0.2, -4.5),
+                        new Vector3f(-0.7, -0.1, -4.6),
+                        new Vector3f(-0.6, -0.2, -4.2),
+                        new Vector3f(-0.4, -0, -4.1),
+                }
+        };
+        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 2, 2);
+        System.out.println("aaaeoeo");
     }
 }

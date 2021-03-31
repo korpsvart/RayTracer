@@ -4,6 +4,9 @@ public class MatrixUtilities {
 
 
 
+
+
+
     static double dotProduct(double[] a, double[] b) {
         return range(0, a.length).mapToDouble(i -> a[i] * b[i]).sum();
     }
@@ -14,6 +17,28 @@ public class MatrixUtilities {
                 m[i][j] = m[j][i];
             }
         }
+    }
+
+    static double[][] transpose2(double[][] m) {
+        //not in place
+        double[][] t = new double[m[0].length][m.length];
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                t[i][j] = m[j][i];
+            }
+        }
+        return t;
+    }
+
+    static Vector3f[][] transpose2(Vector3f[][] m) {
+        //not in place
+        Vector3f[][] t = new Vector3f[m[0].length][m.length];
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                t[i][j] = m[j][i];
+            }
+        }
+        return t;
     }
 
     public static double[][] matrixMult(double[][] m1, double[][] m2) {
@@ -113,8 +138,19 @@ public class MatrixUtilities {
         //if we dont care about preserving the b matrix, we can use it
         //for both the intermediate y matrix and the final x matrix
 
+       return backForwardSubstitution(l, u, p, b);
+
+    }
+
+    public static double[][] backForwardSubstitution(double[][] l, double[][] u, double[][] p, double[][] b) {
+        //solve systems of linear equations from already available LUP decomposition
+        //(Useful when we can pre-compute a decomposition and re-use it for multiple computations)
+
+
         //forward substitution
         //we use b as auxiliary matrix y
+        int n = l.length; //need adjustment if we want to handle non-square matrices?
+        int h = b[0].length;
         for (int j = 0; j < h; j++) {
             b[0][j] /= l[0][0];
             for (int i = 1; i < n; i++) {
@@ -129,13 +165,13 @@ public class MatrixUtilities {
         //backward substitution
         //y values get replaced with final x solution values
         for (int j = 0; j <h; j++) {
-            b[n-1][j] /= u[n-1][n-1];
-            for (int i = n-2; i >=0; i--) {
+            b[n - 1][j] /= u[n - 1][n - 1];
+            for (int i = n - 2; i >= 0; i--) {
                 double c = 0;
-                for (int k = i+1; k < n; k++) {
-                    c+=u[i][k]*b[k][j];
+                for (int k = i + 1; k < n; k++) {
+                    c += u[i][k] * b[k][j];
                 }
-                b[i][j] = (b[i][j]-c)/u[i][i];
+                b[i][j] = (b[i][j] - c) / u[i][i];
             }
         }
 
@@ -143,8 +179,6 @@ public class MatrixUtilities {
         //(i.e. transpose)
         transpose(p);
         return matrixMult(p, b);
-
-
     }
 
 
