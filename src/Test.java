@@ -301,7 +301,7 @@ public class Test {
                         new Vector3f(-0.4, -0, -4.1),
                 }
         };
-        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 2, 2);
+        BSurface interpolantSurface = BSurface.interpolate(MatrixUtilities.transpose2(dataPointsSurface), 2, 2, Matrix4D.identity);
         System.out.println("aaaeoeo");
     }
 }

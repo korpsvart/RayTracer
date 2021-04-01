@@ -198,15 +198,15 @@ public class BSurface extends GeometricObject {
     }
 
 
-    public static BSurface interpolate(Vector3f[][] dataPoints, int p, int q) {
+    public static BSurface interpolate(Vector3f[][] dataPoints, int p, int q, Matrix4D objectToWorld) {
         //find parameters and knot in u direction
         int m = dataPoints.length;
         int n = dataPoints[0].length;
-        double[] s = BSpline.findParameters(dataPoints, 0, 1);
+        Vector3f[][] dPTransposed = MatrixUtilities.transpose2(dataPoints);
+        double[] s = BSpline.findParameters(dPTransposed, 0, 1);
         double[] u = BSpline.generateKnots(s, p);
         //find parameters in the v direction
-        Vector3f[][] dPTransposed = MatrixUtilities.transpose2(dataPoints);
-        double[] t = BSpline.findParameters(dPTransposed, 0, 1);
+        double[] t = BSpline.findParameters(dataPoints, 0, 1);
         double[] v = BSpline.generateKnots(t, q);
         //LUP-decompose first N matrix (to find intermediate control points)
         //First build the matrix
@@ -256,7 +256,7 @@ public class BSurface extends GeometricObject {
         }
 
         //build surface
-        return new BSurface(MatrixUtilities.transpose2(dataPoints), u, v, p, q, Matrix4D.identity);
+        return new BSurface(dataPoints, u, v, p, q, objectToWorld);
 
     }
 }

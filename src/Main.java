@@ -221,36 +221,37 @@ public class Main {
 //        BSurface bSurface = testBSSurface();
         //Testing B-Surface interpolation
         //testing B-spline interpolating surface
-        Vector3f[][] dataPointsSurface = {
-                {
-                        new Vector3f(-1, -1, -4),
-                        new Vector3f(-0.6, -0.8, -4.2),
-                        new Vector3f(-0.4, -0.9, -4.2),
-                        new Vector3f(-0.3, -0.8, -4.3),
-                },
-                {
-                        new Vector3f(-1, -0.7, -4.5),
-                        new Vector3f(-0.6, -0.6, -4.6),
-                        new Vector3f(-0.4, -0.7, -4.6),
-                        new Vector3f(-0.2, -0.6, -4.5),
-                },
-                {
-                        new Vector3f(-1.2, -0.4, -4.1),
-                        new Vector3f(-0.8, -0.5, -4.9),
-                        new Vector3f(-0.7, -0.4, -4.7),
-                        new Vector3f(-0.5, -0.5, -4.9),
-                },
-                {
-                        new Vector3f(-0.9, -0.2, -4.5),
-                        new Vector3f(-0.7, -0.1, -4.6),
-                        new Vector3f(-0.6, -0.2, -4.2),
-                        new Vector3f(-0.4, -0, -4.1),
-                }
-        };
-        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 2, 2);
+//        Vector3f[][] dataPointsSurface = {
+//                {
+//                        new Vector3f(-1, -1, -4.5),
+//                        new Vector3f(-0.8, -0.9, -4.2),
+//                        new Vector3f(-0.6, -0.9, -4.2),
+//                },
+//                {
+//                        new Vector3f(-1, -0.7, -4.5),
+//                        new Vector3f(-0.8, -0.6, -4.6),
+//                        new Vector3f(-0.44, -0.7, -4.6),
+//                },
+//                {
+//                        new Vector3f(-0.9, -0.4, -4.1),
+//                        new Vector3f(-0.8, -0.5, -4.5),
+//                        new Vector3f(-0.66, -0.4, -4.2),
+//                }
+//        };
+        Vector3f[][] dataPointsSurface = Samples.getInterpolationSurfaceSample1();
+        //note that depending on the order in which we gave the data points,
+        //it could be necessary to transpose the data points matrix
+        //my function assumes that the u direction increases with the row index
+        //while it usually comes more natural to write the points manually with u increasing with column index
+        Matrix4D objectToWorld = new Matrix4D(new Matrix3D(new double[][]{
+                {0, 1, 0},
+                {-1, 0, 0},
+                {0, 0, 1}
+        }), new Vector3f(-1, 1, -6));
+        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 6, 6, objectToWorld);
         Diffuse diffuseSurface = new Diffuse(interpolantSurface);
-        diffuseSurface.setAlbedo(new Vector3f(0.3, 0, 0.51));
-        scene.triangulateAndAddSceneObject(diffuseSurface, 12);
+        diffuseSurface.setAlbedo(new Vector3f(0.1, 0.7, 0.31));
+        scene.triangulateAndAddSceneObject(diffuseSurface, 30);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0.7, 0, -3));
