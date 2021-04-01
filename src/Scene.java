@@ -195,6 +195,8 @@ public class Scene {
             e.printStackTrace();
         }
     }
+
+
     public Vector3f rayTrace(Line3d ray, int rayDepth) {
         if (rayDepth > MAX_RAY_DEPTH) {
             return this.backgroundColor;

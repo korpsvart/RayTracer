@@ -251,7 +251,7 @@ public class Main {
         BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 6, 6, objectToWorld);
         Diffuse diffuseSurface = new Diffuse(interpolantSurface);
         diffuseSurface.setAlbedo(new Vector3f(0.1, 0.7, 0.31));
-        scene.triangulateAndAddSceneObject(diffuseSurface, 30);
+        scene.triangulateAndAddSceneObject(diffuseSurface, 10);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0.7, 0, -3));

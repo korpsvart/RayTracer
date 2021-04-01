@@ -1,11 +1,9 @@
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class Visualizer extends Frame implements ActionListener, WindowListener {
+public class Visualizer extends Frame implements ActionListener, WindowListener, KeyListener, AWTEventListener {
 
     private Scene scene;
     private SceneCanvas sceneCanvas;
@@ -26,6 +24,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener 
         closeButton.setBounds(sceneToRender.getWidth()+25, sceneToRender.getHeight()/2+75, 50, 50);
         add(rightButton);
         add(closeButton);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(true);
+        this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         setLayout(null);
         setVisible(true);
 
@@ -38,7 +39,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener 
             Vector3f c = currentCTW.getC();
             this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
             this.scene.setBVH();
-            this.scene.render();
+            this.scene.render(20);
             this.sceneCanvas.repaint();
         } else if (e.getActionCommand().equals("close")) {
             setVisible(false);
@@ -82,6 +83,84 @@ public class Visualizer extends Frame implements ActionListener, WindowListener 
     @Override
     public void windowDeactivated(WindowEvent e) {
 
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        System.out.println("blip blop");
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println("blip blop");
+        if (e.getExtendedKeyCode()==KeyEvent.VK_RIGHT) {
+            Matrix4D currentCTW = scene.getCameraToWorld();
+            Vector3f c = currentCTW.getC();
+            this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
+            this.scene.setBVH();
+            this.scene.render(20);
+            this.sceneCanvas.repaint();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println("blip blop");
+    }
+
+    @Override
+    public void eventDispatched(AWTEvent event) {
+        if (event instanceof KeyEvent) {
+            KeyEvent key = (KeyEvent) event;
+            if (key.getID() == KeyEvent.KEY_PRESSED) { //Handle key presses
+                if (key.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(+0.1, 0, 0)), c.add(new Vector3f(+0.1, 0, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                } else if (key.getExtendedKeyCode() == KeyEvent.VK_LEFT) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(-0.1, 0, 0)), c.add(new Vector3f(-0.1, 0, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                } else if (key.getExtendedKeyCode() == KeyEvent.VK_UP) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0.1, 0)), c.add(new Vector3f(0, 0.1, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                } else if (key.getExtendedKeyCode() == KeyEvent.VK_DOWN) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(0, -0.1, 0)), c.add(new Vector3f(0, -0.1, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }
+                else if (key.getExtendedKeyCode() == KeyEvent.VK_W) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0, -0.1)), c.add(new Vector3f(0, 0, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }
+                else if (key.getExtendedKeyCode() == KeyEvent.VK_S) {
+                    Matrix4D currentCTW = scene.getCameraToWorld();
+                    Vector3f c = currentCTW.getC();
+                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0, 0.1)), c.add(new Vector3f(0, 0, -1)));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }
+                key.consume();
+            }
+        }
     }
 
     class CommandButton extends Button {
