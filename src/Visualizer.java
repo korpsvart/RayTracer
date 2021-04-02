@@ -114,46 +114,54 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             KeyEvent key = (KeyEvent) event;
             if (key.getID() == KeyEvent.KEY_PRESSED) { //Handle key presses
                 if (key.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(+0.1, 0, 0)), c.add(new Vector3f(+0.1, 0, -1)));
+                    scene.getCamera().translate(new Vector3f(0.1, 0, 0));
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_LEFT) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(-0.1, 0, 0)), c.add(new Vector3f(-0.1, 0, -1)));
+                    scene.getCamera().translate(new Vector3f(-0.1, 0, 0));
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_UP) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0.1, 0)), c.add(new Vector3f(0, 0.1, -1)));
+                    scene.getCamera().translate(new Vector3f(0, 0.1, 0));
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_DOWN) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(0, -0.1, 0)), c.add(new Vector3f(0, -0.1, -1)));
+                    scene.getCamera().translate(new Vector3f(0, -0.1, 0));
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_W) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0, -0.1)), c.add(new Vector3f(0, 0, -1)));
+                    scene.getCamera().translate(new Vector3f(0, 0, 0.1));
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_S) {
-                    Matrix4D currentCTW = scene.getCameraToWorld();
-                    Vector3f c = currentCTW.getC();
-                    this.scene.setCameraToWorld(c.add(new Vector3f(0, 0, 0.1)), c.add(new Vector3f(0, 0, -1)));
+                    scene.getCamera().translate(new Vector3f(0, 0, -0.1));
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                } else if (key.getExtendedKeyCode() == KeyEvent.VK_Q) {
+                    scene.getCamera().rotateY(-2); //degrees
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }else if (key.getExtendedKeyCode() == KeyEvent.VK_E) {
+                    scene.getCamera().rotateY(2); //degrees
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }else if (key.getExtendedKeyCode() == KeyEvent.VK_R) {
+                    scene.getCamera().rotateX(2); //degrees
+                    this.scene.setBVH();
+                    this.scene.render(20);
+                    this.sceneCanvas.repaint();
+                }else if (key.getExtendedKeyCode() == KeyEvent.VK_F) {
+                    scene.getCamera().rotateX(-2); //degrees
                     this.scene.setBVH();
                     this.scene.render(20);
                     this.sceneCanvas.repaint();

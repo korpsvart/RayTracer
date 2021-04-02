@@ -31,7 +31,12 @@ public class Scene {
     private final int height;
     private final double fieldOfView;
     private final BufferedImage img;
+    private final Camera camera;
     private final Vector3f cameraPosition;
+    //we save last camera orientation. Rays are always generated with default position and orientation and then
+    //transformed. However, we need to store the last camera orientation to handle successive inputs
+    //asking for camera orientation change
+    private  Vector3f cameraOrientation = new Vector3f(0, 0, -1); //default orientation
     private Matrix4D cameraToWorld;
     private BVH BVH;
     private ArrayList<SceneObject> sceneObjects;
@@ -79,7 +84,8 @@ public class Scene {
         this.sceneObjects = new ArrayList<>();
         this.nonBVHSceneObjects = new ArrayList<>();
         this.sceneObjectsBVH = new ArrayList<>();
-        setCameraToWorld(cameraPosition, new Vector3f(0, 0, -1));
+        this.camera = new Camera();
+        setCameraToWorld(cameraPosition, cameraOrientation);
 }
 
     public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition) {
@@ -93,7 +99,8 @@ public class Scene {
         this.sceneObjects = new ArrayList<>();
         this.nonBVHSceneObjects = new ArrayList<>();
         this.sceneObjectsBVH = new ArrayList<>();
-        setCameraToWorld(cameraPosition, new Vector3f(0, 0, -1));
+        this.camera = new Camera();
+        setCameraToWorld(cameraPosition, cameraOrientation);
     }
 
     public void addSceneObject(SceneObject sceneObject) {
@@ -145,8 +152,6 @@ public class Scene {
         //employs screen subdivision parallelism
         double aspectRatio = (double)width/height;
         double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
-        Vector3f cameraPositionWorld = this.cameraToWorld.transformVector(cameraPosition);
-        Matrix3D cTWForVectors = cameraToWorld.getA();
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -158,7 +163,7 @@ public class Scene {
                 int y = j*stepY;
                 BufferedImage subImg = img.getSubimage(x, y, stepX, stepY);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, this, camera);
                 });
             }
             if (height % divs != 0) {
@@ -166,7 +171,7 @@ public class Scene {
                 int y = divs*stepY;
                 BufferedImage subImg = img.getSubimage(x, y, stepX, height%divs);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, this, camera);
                 });
             }
         }
@@ -176,7 +181,7 @@ public class Scene {
                 int y = j*divs;
                 BufferedImage subImg = img.getSubimage(x, y, width%divs, stepY);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, this, camera);
                 });
             }
             if (height % divs != 0) {
@@ -184,7 +189,7 @@ public class Scene {
                 int y = stepY*divs;
                 BufferedImage subImg = img.getSubimage(stepX * divs, stepY*divs, width % divs, height%divs);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, cameraPositionWorld, cTWForVectors, this);
+                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, this, camera);
                 });
             }
         }
@@ -308,13 +313,13 @@ public class Scene {
 
     public void setCameraToWorld(Vector3f from, Vector3f to) {
         Vector3f aux = new Vector3f(0, 1, 0);
-
         Vector3f forward = from.add(to.mul(-1)).normalize();
         Vector3f right = aux.normalize().crossProduct(forward);
         Vector3f up = forward.crossProduct(right);
         Vector3f translation = from;
 
         this.cameraToWorld = new Matrix4D(new Matrix3D(new Vector3f[]{right, up, forward}, Matrix3D.COL_VECTOR), translation);
+        cameraOrientation = to;
 
     }
 
@@ -326,8 +331,8 @@ public class Scene {
         return cameraToWorld;
     }
 
-    protected static void screenAreaRendering(BufferedImage img, int startX, int startY, int w, int h, double aspectRatio, double scale, Vector3f cameraPositionWorld, Matrix3D cTWForVectors,
-                                              Scene currentScene) {
+    protected static void screenAreaRendering(BufferedImage img, int startX, int startY, int w, int h, double aspectRatio, double scale,
+                                              Scene currentScene, Camera camera) {
 
         int width = currentScene.width;
         int height = currentScene.height;
@@ -335,9 +340,9 @@ public class Scene {
             for (int j = startY; j < h+startY; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
                 double y = (1-2*(j+0.5)/height)*scale;
-                Vector3f rayDirection = new Vector3f(x,y,-1);
-                Vector3f rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
-                Line3d ray = new Line3d(cameraPositionWorld, rayDirectionWorld);
+                Vector3f rayDirection = new Vector3f(x,y,1);
+                Vector3f rayDirectionWorld = camera.convertToFixedSystem(rayDirection).normalize();
+                Line3d ray = new Line3d(camera.getPosition(), rayDirectionWorld);
                 Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
                 //which can be considered as vacuum for simplicity
                 Color color1 = color.vectorToColor();
@@ -356,5 +361,13 @@ public class Scene {
         public void run() {
 
         }
+    }
+
+    public Vector3f getCameraOrientation() {
+        return cameraOrientation;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

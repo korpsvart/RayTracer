@@ -303,5 +303,18 @@ public class Test {
         };
         BSurface interpolantSurface = BSurface.interpolate(MatrixUtilities.transpose2(dataPointsSurface), 2, 2, Matrix4D.identity);
         System.out.println("aaaeoeo");
+
+
+        //test camera rotation
+        //seems to be working, ignoring some floating point error
+        Camera camera = new Camera();
+        camera.rotateX(90);
+        System.out.println("aaaa");
+        //test translation after rotation
+        //according to local coordinate system!
+        //ok, its working
+        camera.translate(new Vector3f(0, 0, 4));
+        System.out.println("eeeoo");
+
     }
 }
