@@ -94,6 +94,16 @@ public class Matrix3D {
         return new Matrix3D(new Vector3f[]{c1, c2, c3}, COL_VECTOR);
     }
 
+    public static Matrix3D rotationAroundArbitraryAxis(double angle, Vector3f axis) {
+        double theta = Math.toRadians(angle);
+        Vector3f c1 = new Vector3f(Math.cos(theta)+Math.pow(axis.getX(),2)*(1-Math.cos(theta)),
+                axis.getY()*axis.getX()*(1-Math.cos(theta))+axis.getZ()*Math.sin(theta),
+                axis.getZ()*axis.getX()*(1-Math.cos(theta))-axis.getY()+Math.sin(theta));
+        Vector3f c2 = new Vector3f(axis.getX()*axis.getY()*(1-Math.cos(theta))-axis.getZ()*Math.sin(theta),
+
+
+    }
+
     public Matrix4D get4DMatrix(Vector3f c) {
         //Add c vector column for affine transform
         //last row defaults to [0 0 0 1]
