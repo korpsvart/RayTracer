@@ -18,6 +18,46 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         this.sceneCanvas = c;
         c.setBounds(0, 0, sceneToRender.getWidth(), sceneToRender.getHeight());
         add(c);
+        MenuBar menuBar = new MenuBar();
+        Menu menu = new Menu("Options");
+        Menu addFigureSubMenu = new Menu("Add figure...");
+        MenuItem removeFigureMenuItem = new MenuItem("Remove figure");
+        removeFigureMenuItem.setActionCommand("remove");
+        MenuItem sphereMenuItem = new MenuItem("Sphere");
+        sphereMenuItem.setActionCommand("add_sphere");
+        MenuItem boxMenuitem = new MenuItem("Box");
+        boxMenuitem.setActionCommand("add_box");
+        MenuItem bezierItem = new MenuItem("Bezier Surface");
+        bezierItem.setActionCommand("add_bezSurf");
+        MenuItem bSplineItem = new MenuItem("B-Spline Surface");
+        bSplineItem.setActionCommand("add_bSplineSurf");
+        MenuItem bInterpolateItem = new MenuItem("B-Spline interpolation");
+        bInterpolateItem.setActionCommand("add_bSplineInterp");
+        Menu samplesSubMenu = new Menu("Sample shapes");
+        MenuItem teapotItem = new MenuItem("Teapot (Bezier patches)");
+        teapotItem.setActionCommand("add_teapot");
+        MenuItem donutItem = new MenuItem("Donut (B-Spline surface)");
+        donutItem.setActionCommand("add_donut");
+        addFigureSubMenu.add(sphereMenuItem);
+        sphereMenuItem.addActionListener(this);
+        addFigureSubMenu.add(boxMenuitem);
+        boxMenuitem.addActionListener(this);
+        addFigureSubMenu.add(bezierItem);
+        bezierItem.addActionListener(this);
+        addFigureSubMenu.add(bSplineItem);
+        bSplineItem.addActionListener(this);
+        addFigureSubMenu.add(bInterpolateItem);
+        bInterpolateItem.addActionListener(this);
+        addFigureSubMenu.add(samplesSubMenu);
+        samplesSubMenu.add(teapotItem);
+        teapotItem.addActionListener(this);
+        samplesSubMenu.add(donutItem);
+        donutItem.addActionListener(this);
+        menu.add(addFigureSubMenu);
+        menu.add(removeFigureMenuItem);
+        removeFigureMenuItem.addActionListener(this);
+        menuBar.add(menu);
+        this.setMenuBar(menuBar);
         Button rightButton = new CommandButton(this,"right");
         Button closeButton = new CommandButton(this, "close");
         rightButton.setBounds(sceneToRender.getWidth()+25, sceneToRender.getHeight()/2, 50, 50);
@@ -28,23 +68,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         setFocusTraversalKeysEnabled(true);
         this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         setLayout(null);
+        addWindowListener(this);
         setVisible(true);
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("right")) {
-            Matrix4D currentCTW = scene.getCameraToWorld();
-            Vector3f c = currentCTW.getC();
-            this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
-            this.scene.setBVH();
-            this.scene.render(20);
-            this.sceneCanvas.repaint();
-        } else if (e.getActionCommand().equals("close")) {
-            setVisible(false);
-            this.dispose();
-            System.exit(0);
+        if (e.getActionCommand()=="add_sphere") {
+            AddBoxFrame addBoxFrame = new AddBoxFrame();
+        } else if (e.getActionCommand()=="add_box") {
+            System.out.println("henlo box");
         }
     }
 
@@ -179,6 +213,53 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
 
+    }
+
+    class AddBoxFrame extends Frame implements WindowListener {
+
+        public AddBoxFrame() {
+
+            addWindowListener(this);
+            setLayout(null);
+            setVisible(true);
+            setSize(400, 500);
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
     }
 
 }

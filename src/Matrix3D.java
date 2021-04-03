@@ -95,12 +95,20 @@ public class Matrix3D {
     }
 
     public static Matrix3D rotationAroundArbitraryAxis(double angle, Vector3f axis) {
+        axis = axis.normalize();
         double theta = Math.toRadians(angle);
-        Vector3f c1 = new Vector3f(Math.cos(theta)+Math.pow(axis.getX(),2)*(1-Math.cos(theta)),
-                axis.getY()*axis.getX()*(1-Math.cos(theta))+axis.getZ()*Math.sin(theta),
-                axis.getZ()*axis.getX()*(1-Math.cos(theta))-axis.getY()+Math.sin(theta));
-        Vector3f c2 = new Vector3f(axis.getX()*axis.getY()*(1-Math.cos(theta))-axis.getZ()*Math.sin(theta),
-
+        double cos = Math.cos(theta);
+        double sin = Math.sin(theta);
+        Vector3f c1 = new Vector3f(cos +Math.pow(axis.getX(),2)*(1- cos),
+                axis.getY()*axis.getX()*(1- cos)+axis.getZ()* sin,
+                axis.getZ()*axis.getX()*(1- cos)-axis.getY()+ sin);
+        Vector3f c2 = new Vector3f(axis.getX()*axis.getY()*(1- cos)-axis.getZ()* sin,
+                cos +Math.pow(axis.getY(),2)*(1- cos),
+                axis.getZ()*axis.getY()*(1- cos)+axis.getX()* sin);
+        Vector3f c3 = new Vector3f(axis.getX()*axis.getZ()*(1- cos)+axis.getY()* sin,
+                axis.getY()*axis.getZ()*(1- cos)-axis.getX()* sin,
+                cos +Math.pow(axis.getZ(),2)*(1- cos));
+        return new Matrix3D(new Vector3f[]{c1,c2,c3}, COL_VECTOR);
 
     }
 

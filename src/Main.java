@@ -69,51 +69,6 @@ public class Main {
         return new BezierSurface33[]{surface1, surface2};
     }
 
-    public static BSurface testBSSurface() {
-        int p = 3;
-        int q = 3;
-        Vector3f[][] controlPointsSurface = {
-                {
-                        new Vector3f(-1, -1, -4),
-                        new Vector3f(-0.9, -0.8, -4.2),
-                        new Vector3f(-0.8, -0.6, -4.2),
-                        new Vector3f(-0.8, -0.2, -4.3),
-                        new Vector3f(-0.7, 0, -4.2)
-                },
-                {
-                        new Vector3f(-0.5, -1.2, -4.5),
-                        new Vector3f(-0.4, -0.9, -4.6),
-                        new Vector3f(-0.43, -0.7, -4.6),
-                        new Vector3f(-0.38, -0.3, -4.5),
-                        new Vector3f(-0.34, -0.1, -4.7)
-                },
-                {
-                        new Vector3f(-0.2, -1, -4.1),
-                        new Vector3f(-0.25, -0.8, -4.9),
-                        new Vector3f(-0.27, -0.5, -4.7),
-                        new Vector3f(-0.21, -0.4, -4.9),
-                        new Vector3f(-0.18, -0.2, -5)
-                },
-                {
-                        new Vector3f(0, -1, -4.5),
-                        new Vector3f(0.1, -0.7, -4.6),
-                        new Vector3f(-0.1, -0.5, -4.2),
-                        new Vector3f(0, -0.2, -4.1),
-                        new Vector3f(0.1, 0, -4.3)
-                },
-                {
-                        new Vector3f(0.3, -1.3, -4.2),
-                        new Vector3f(0.4, -1, -4.8),
-                        new Vector3f(0.4, -0.8, -4.3),
-                        new Vector3f(0.6, -0.5, -4.0),
-                        new Vector3f(0.5, -0.2, -4.1)
-                },
-        };
-        double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
-        double[] knotsV = knotsU.clone();
-        Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -1));
-        return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
-    }
 
 
     public static void main(String[] args) throws Exception {
@@ -132,24 +87,9 @@ public class Main {
 
         Scene scene = new Scene(width, height, fieldOfView, img, cameraPosition, new Vector3f(0.1f, 0.3f, 0.6f));
 
-
-        //Sample sphere
         Color color1 = new Color(1f,1f,1f);
         Color color2 = new Color(0.8f,0.6f,0.3f);
         Color color3 = new Color(0.4f,0.9f,0.1f);
-        Diffuse diffuseSphere1 = new Diffuse(new Sphere(new Vector3f(0.3,0,-4), 0.2));
-        diffuseSphere1.setAlbedo(new Vector3f(0, 0.2, 0.9));
-        MirrorTransparent transparentSphere = new MirrorTransparent(new Sphere(new Vector3f(-0.5, 0.5, -8), 1));
-        Diffuse diffuseSphere2 = new Diffuse(new Sphere(new Vector3f(1, 0.2, -8), 1.2));
-        transparentSphere.setIor(1.5);
-        Sphere sphere3 = new Sphere(new Vector3f(2.6, 0.3, -7), 0.6);
-        Sphere sphere4 = new Sphere(new Vector3f(0, -2, -7), 0.5);
-        Sphere sphere5 = new Sphere(new Vector3f(0, -2, -4), 0.3);
-        Sphere sphere6 = new Sphere(new Vector3f(0, -2, -11), 0.6);
-        Diffuse diffuseSphere3 = new Diffuse(sphere3);
-        Diffuse diffuseSphere4 = new Diffuse(sphere4);
-        Diffuse diffuseSphere5 = new Diffuse(sphere5);
-        Diffuse diffuseSphere6 = new Diffuse(sphere6);
 
 
         Plane3d plane1 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
@@ -157,101 +97,15 @@ public class Main {
         MirrorTransparent transparentPlane = new MirrorTransparent(plane1);
         Diffuse diffusePlane = new Diffuse(plane2);
         transparentPlane.setIor(1.3);
-        scene.addSceneObject(diffuseSphere1);
-//        scene.addSceneObject(transparentSphere);
-        diffuseSphere2.setAlbedo(new Vector3f(0.7, 0, 0));
-//        scene.addSceneObject(diffuseSphere2);
-//        scene.addSceneObject(diffuseSphere3);
-//        scene.addSceneObject(diffuseSphere4);
-//        scene.addSceneObject(diffuseSphere5);
-//        scene.addSceneObject(diffuseSphere6);
-//        scene.addSceneObject(transparentPlane);
-//        scene.addSceneObject(diffusePlane);
-//        scene.addSceneObject(triangle1);
-        Vector3f[][] controlPoints = {
-                new Vector3f[] { new Vector3f(0, 0, -5),
-                        new Vector3f(0, 0.5, -5),
-                        new Vector3f(0.1, 0.8, -5),
-                        new Vector3f(0, 1, -5),},
 
-                       new Vector3f[] {                new Vector3f(0.3, 0, -5.5),
-                               new Vector3f(0.3, 0.6, -5.2),
-                               new Vector3f(0.4, 0.7, -5.5),
-                               new Vector3f(0.3, 0.9, -5.5),
-                       },
-                new Vector3f[] {
-                        new Vector3f(0.7, 0.4, -5.7),
-                        new Vector3f(0.5, 0.5, -5.3),
-                        new Vector3f(0.7, 0.8, -5.7),
-                        new Vector3f(0.8, 1, -5.5),
-                },
-                new Vector3f[] {
-                        new Vector3f(1, 0.2, -5.7),
-                        new Vector3f(1, 0.4, -5.5),
-                        new Vector3f(1.1, 0.7, -5.3),
-                        new Vector3f(0.9, 1.2, -5.8)
-                }
-        };
-
-//        BezierSurface33 bezierSurface = new BezierSurface33(controlPoints);
-//        BezierSurface33 bezierSurface = BezierSurface33.fillWithCoons(controlPoints);
-//        BezierPatchesData teaPotData = BezierPatchesData.createTeapot();
-//        Matrix4D teaPotOTW = BezierPatchesData.getTeapotOTW();
-//        Matrix4D teaPotCTW = BezierPatchesData.getTeapotCTW();
-////        scene.setCameraToWorld(teaPotCTW);
-//        BezierSurface33[] teaPotPatches = teaPotData.getSurfaces(teaPotOTW);
+//        BezierPatchesData teaPot = SampleShapes.getTeapot();
+//        BezierSurface33[] teaPotPatches = teaPot.getSurfaces();
 //        for (BezierSurface33 patch :
 //                teaPotPatches) {
 //            Diffuse diffusePatch = new Diffuse(patch);
 //            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
-//            scene.triangulateAndAddSceneObject(diffusePatch, 16);
+//            scene.triangulateAndAddSceneObject(diffusePatch, 8);
 //        }
-//        Diffuse transparentBezier = new Diffuse(bezierSurface);
-//        transparentBezier.setAlbedo(new Vector3f(0.2, 0.5, 0.1));
-////        transparentBezier.setIor(1.5);
-//        scene.triangulateAndAddSceneObject(transparentBezier, 16);
-//        BezierSurface33[] patches = testC1Patches();
-//        for (BezierSurface33 patch :
-//                patches) {
-//            Diffuse diffusePatch = new Diffuse(patch);
-//            diffusePatch.setAlbedo(new Vector3f(0.3, 0, 0.51));
-//            scene.triangulateAndAddSceneObject(diffusePatch, 16);
-//        }
-        //Testing B-Spline surfaces
-//        BSurface bSurface = testBSSurface();
-        //Testing B-Surface interpolation
-        //testing B-spline interpolating surface
-//        Vector3f[][] dataPointsSurface = {
-//                {
-//                        new Vector3f(-1, -1, -4.5),
-//                        new Vector3f(-0.8, -0.9, -4.2),
-//                        new Vector3f(-0.6, -0.9, -4.2),
-//                },
-//                {
-//                        new Vector3f(-1, -0.7, -4.5),
-//                        new Vector3f(-0.8, -0.6, -4.6),
-//                        new Vector3f(-0.44, -0.7, -4.6),
-//                },
-//                {
-//                        new Vector3f(-0.9, -0.4, -4.1),
-//                        new Vector3f(-0.8, -0.5, -4.5),
-//                        new Vector3f(-0.66, -0.4, -4.2),
-//                }
-//        };
-        Vector3f[][] dataPointsSurface = Samples.getInterpolationSurfaceSample1();
-        //note that depending on the order in which we gave the data points,
-        //it could be necessary to transpose the data points matrix
-        //my function assumes that the u direction increases with the row index
-        //while it usually comes more natural to write the points manually with u increasing with column index
-        Matrix4D objectToWorld = new Matrix4D(new Matrix3D(new double[][]{
-                {0, 1, 0},
-                {-1, 0, 0},
-                {0, 0, 1}
-        }), new Vector3f(-1, 1, -6));
-        BSurface interpolantSurface = BSurface.interpolate(dataPointsSurface, 6, 6, objectToWorld);
-        Diffuse diffuseSurface = new Diffuse(interpolantSurface);
-        diffuseSurface.setAlbedo(new Vector3f(0.1, 0.7, 0.31));
-        scene.triangulateAndAddSceneObject(diffuseSurface, 10);
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
         PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0.7, 0, -3));
@@ -265,6 +119,16 @@ public class Main {
 //        scene.addPointLight(pointLight2);
         scene.addLightSource(pointLight3);
 //        scene.addLightSource(distantLight1);
+
+        //test parallelepiped rendering
+        Matrix4D boxToWorld = new Matrix4D(
+                Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(-0.6, 0.8, -5)
+        );
+        PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, -0.7), boxToWorld);
+        Diffuse diffuseBox = new Diffuse(box);
+        diffuseBox.setAlbedo(new Vector3f(0.5, 0, 0.2));
+        scene.triangulateAndAddSceneObject(diffuseBox, -1); //divs makes no sense here
+
 
         //create BVH
         //Set minBound and maxBound to contain whole renderable scene

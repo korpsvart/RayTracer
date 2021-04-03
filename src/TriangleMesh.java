@@ -21,7 +21,8 @@ public class TriangleMesh {
             this.useVertexNormal = useVertexNormal;
         }
 
-        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh) {
+        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Matrix4D objectToWorld) {
+            this.objectToWorld = objectToWorld;
             if (this.objectToWorld != null) {
                 v0 = v0.matrixAffineTransform(objectToWorld);
                 v1 = v1.matrixAffineTransform(objectToWorld);
@@ -34,8 +35,8 @@ public class TriangleMesh {
             this.boundingVolume = new BoundingVolume(new Vector3f[]{v0, v1, v2});
         }
 
-        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Vector3f vertexNormal[]) {
-            this(v0, v1, v2, triangleMesh);
+        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Matrix4D objectToWorld, Vector3f vertexNormal[]) {
+            this(v0, v1, v2, triangleMesh, objectToWorld);
             this.vertexNormal = vertexNormal.clone();
         }
 
@@ -169,6 +170,7 @@ public class TriangleMesh {
     private int numVertices;
     private BoundingBox boundingBox;
     private BoundingVolume boundingVolume;
+    private Matrix4D objectToWorld = null;
     private Triangle triangles[];
 
     public Triangle[] getTriangles() {
@@ -219,6 +221,54 @@ public class TriangleMesh {
         //Same for bounding volume
         boundingBox = new BoundingBox(vertex);
         boundingVolume = new BoundingVolume(vertex);
+
+    }
+
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Matrix4D objectToWorld) {
+        //This is an algorithm I came up with
+        //Don't know if it's correct and how fast it is
+
+        //First loop is only to allocate exact size
+        //for vertexIndex array
+        this.vertex = vertex.clone();
+        this.objectToWorld = objectToWorld;
+        numVertices = 0;
+        numTriangles = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            numTriangles += faceIndex[i]-2;
+        }
+        numVertices = numTriangles*3;
+        this.vertexIndex = new int[numVertices];
+
+        int triPerFace = 0;
+        int localFaceOffset = 0;
+        int polygonFaceOffset = 0;
+        for (int i = 0; i < faceIndex.length; i++) {
+            triPerFace = faceIndex[i] - 2;
+            for (int j = 0; j < triPerFace; j++) {
+                if (j==0) {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 1];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 2];
+                } else {
+                    this.vertexIndex[localFaceOffset + j*3] = vertexIndex[polygonFaceOffset+j];
+                    this.vertexIndex[localFaceOffset + j*3 + 1] = vertexIndex[polygonFaceOffset + j + 2];
+                    this.vertexIndex[localFaceOffset + j*3 + 2] = vertexIndex[polygonFaceOffset + j + 1];
+                }
+            }
+            localFaceOffset+=triPerFace*3;
+            polygonFaceOffset+=faceIndex[i];
+        }
+
+        triangles = new Triangle[numTriangles];
+        makeTriangles(false);
+
+        //If bounding box is not given explicitly by caller
+        //compute it here from vertices
+        //Same for bounding volume
+        boundingBox = new BoundingBox(vertex);
+        boundingVolume = new BoundingVolume(vertex);
+
 
     }
 
@@ -396,7 +446,7 @@ public class TriangleMesh {
     public void makeTriangles(boolean useVertexNormal) {
         if (!useVertexNormal) {
             for (int i = 0; i < numTriangles; i++) {
-                Triangle triangle = new Triangle(vertex[vertexIndex[i*3]], vertex[vertexIndex[i*3+1]], vertex[vertexIndex[i*3+2]], this);
+                Triangle triangle = new Triangle(vertex[vertexIndex[i*3]], vertex[vertexIndex[i*3+1]], vertex[vertexIndex[i*3+2]], this, objectToWorld);
                 triangles[i] = triangle;
             }
         } else {
@@ -405,7 +455,7 @@ public class TriangleMesh {
                 int index2 = vertexIndex[i*3+1];
                 int index3 = vertexIndex[i*3+2];
                 Vector3f[] triangleVertexNormal = {vertexNormal[index1], vertexNormal[index2], vertexNormal[index3]};
-                Triangle triangle = new Triangle(vertex[index1], vertex[index2], vertex[index3], this, triangleVertexNormal);
+                Triangle triangle = new Triangle(vertex[index1], vertex[index2], vertex[index3], this, objectToWorld,triangleVertexNormal);
                 triangle.setUseVertexNormal(true);
                 triangle.setUseBVH(true);
                 triangles[i] = triangle;
