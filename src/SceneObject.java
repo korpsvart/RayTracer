@@ -2,6 +2,7 @@ import java.util.Optional;
 
 public abstract class SceneObject{
 
+
     /*Scene Object, decorating (more like wrapping) a GeometricObject,
     adding material properties to them.
     This class should be extended by class like Diffuse, MirrorLike ecc...

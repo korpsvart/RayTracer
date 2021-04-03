@@ -1,12 +1,23 @@
+import com.sun.jdi.Mirror;
+import javafx.scene.control.ComboBox;
+
 import javax.swing.*;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 public class Visualizer extends Frame implements ActionListener, WindowListener, KeyListener, AWTEventListener {
 
     private Scene scene;
     private SceneCanvas sceneCanvas;
+    private final static String[] materials = {
+            "Diffuse", "Mirror-Like", "Transparent"
+    };
+    private final static Map<String, MaterialType> materialsMap = Map.of(
+            "Diffuse",MaterialType.DIFFUSE, "Mirror-Like", MaterialType.MIRRORLIKE,
+            "Transparent", MaterialType.TRANSPARENT);
 
     public Visualizer(Scene scene) {
 
@@ -217,18 +228,24 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     class AddBoxFrame extends Frame implements WindowListener, ActionListener {
 
+
+        private TextField albedoLabel;
+        private Color currentColor = Color.white;
+        private JColorChooser colorChooser;
+
         public AddBoxFrame() {
 
             addWindowListener(this);
             setTitle("Add sphere");
             Panel panel = new Panel(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
+
+            //Start of position input graphics
             JLabel positionLabel = new JLabel("Insert position:");
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=0;
             c.gridy=0;
             c.gridheight=3;
-            c.insets = new Insets(0, 10, 0, 10);
             c.weightx=0.6;
             panel.add(positionLabel, c);
             JLabel x = new JLabel("X");
@@ -238,48 +255,120 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridheight=1;
             c.weightx=0.1;
             panel.add(x, c);
-            TextField textFieldX = new TextField(50);
+            TextField textFieldX = new TextField(10);
             textFieldX.addActionListener(this);
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=2;
             c.gridy=0;
             c.gridheight=1;
-            c.weightx=0.2;
+            c.weightx=0.3;
             panel.add(textFieldX, c);
             JLabel y = new JLabel("Y");
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=1;
             c.gridy=1;
             c.gridheight=1;
-            panel.add(y, c);
             c.weightx=0.1;
-            TextField textFieldY = new TextField(50);
+            panel.add(y, c);
+            TextField textFieldY = new TextField(10);
             textFieldY.addActionListener(this);
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=2;
             c.gridy=1;
             c.gridheight=1;
-            c.weightx=0.2;
+            c.weightx=0.3;
             panel.add(textFieldY, c);
             JLabel z = new JLabel("Z");
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=1;
-            c.gridy=3;
+            c.gridy=2;
             c.gridheight=1;
             c.weightx=0.1;
             panel.add(z, c);
-            TextField textFieldZ = new TextField(50);
-            textFieldY.addActionListener(this);
+            TextField textFieldZ = new TextField(10);
+            textFieldZ.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=2;
+            c.gridheight=1;
+            c.weightx=0.3;
+            panel.add(textFieldZ, c);
+            //end of position input graphics
+
+            //Start of radius input graphics
+            JLabel radiusLabel = new JLabel("Insert radius:");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=0;
+            c.gridy=3;
+            c.gridheight=1;
+            c.gridwidth=2;
+            c.weightx=0.6;
+            c.insets = new Insets(20, 0, 20, 0);
+            panel.add(radiusLabel, c);
+            TextField textFieldRadius = new TextField(10);
+            textFieldRadius.addActionListener(this);
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridx=2;
             c.gridy=3;
             c.gridheight=1;
+            c.gridwidth=1;
+            c.weightx=0.4;
+            panel.add(textFieldRadius, c);
+            //end of radius input graphics
+
+            //start of material input graphics
+            JLabel materialLabel = new JLabel("Select type of material");
+            c.gridy=4;
+            c.gridx=0;
+            c.gridwidth=2;
+            c.weightx=0.6;
+            panel.add(materialLabel, c);
+            JComboBox comboBoxMaterial = new JComboBox(materials);
+            c.gridx=2;
+            c.weightx=0.6;
+            panel.add(comboBoxMaterial, c);
+
+            //material property
+            //(changes according to selected option) - default is albedo (for diffuse objects)
+            JLabel materialPropertyLabel = new JLabel("Select albedo:");
+            c.gridy=5;
+            c.gridx=0;
+            c.weightx=0.5;
+            c.gridwidth=1;
+            panel.add(materialPropertyLabel, c);
+            JLabel rgbLabel = new JLabel("RGB:");
+            c.gridx=1;
             c.weightx=0.2;
-            panel.add(textFieldZ, c);
+            TextField currentAlbedoLabel = new TextField("255, 255, 255");
+            this.albedoLabel = currentAlbedoLabel;
+            currentAlbedoLabel.setEditable(false);
+            c.gridx=2;
+            c.weightx=0.2;
+            panel.add(currentAlbedoLabel, c);
+            Button openColorChooserButton = new Button("Select albedo");
+            openColorChooserButton.setActionCommand("colorChoose");
+            openColorChooserButton.addActionListener(this);
+            c.gridx=3;
+            c.weightx=0.2;
+            panel.add(openColorChooserButton, c);
+            //end of material property
+
+            //Add button to send data
+            Button sendButton = new Button("Create");
+            sendButton.setActionCommand("create");
+            sendButton.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy=6;
+            c.gridx=1;
+            c.weightx=0;
+            c.gridwidth=1;
+            panel.add(sendButton, c);
+
+
             add(panel);
             pack();
             setVisible(true);
-            setSize(400, 500);
+            setSize(800, 400);
             textFieldX.requestFocusInWindow();
         }
 
@@ -314,6 +403,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         }
 
+
+
         @Override
         public void windowDeactivated(WindowEvent e) {
 
@@ -321,7 +412,44 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            switch(e.getActionCommand()){
+                case "colorChoose":
+                    JColorChooser colorChooser = new JColorChooser();
+                    this.colorChooser = colorChooser;
+                    colorChooser.setPreviewPanel(new JPanel());
+                    AbstractColorChooserPanel[] panels = colorChooser.getChooserPanels();
+                    for (AbstractColorChooserPanel panel :
+                            panels) {
+                        panel.setColorTransparencySelectionEnabled(false);
+                    }
+                    JDialog dialog = JColorChooser.createDialog(this, "Pick color",
+                            true, colorChooser, this, this);
+                    dialog.setVisible(true);
+                    break;
+                case "OK":
+                    //event generated when a color is chosen
+                    Color color = this.colorChooser.getColor();
+                    albedoLabel.setText("("+color.getRed()+","+color.getGreen()+","+color.getBlue()+")");
+            }
+        }
 
+        private void createSphere(Vector3f position, double radius, MaterialType materialType, Vector3f albedo, double ior) {
+            Sphere sphere = new Sphere(position, radius);
+            switch (materialType) {
+                case DIFFUSE:
+                    Diffuse diffuse = new Diffuse(sphere);
+                    diffuse.setAlbedo(albedo);
+                    scene.addSceneObject(diffuse);
+                    break;
+                case MIRRORLIKE:
+                    scene.addSceneObject(new MirrorLike(sphere));
+                    break;
+                case TRANSPARENT:
+                    MirrorTransparent mirrorTransparent = new MirrorTransparent(sphere);
+                    mirrorTransparent.setIor(ior);
+                    scene.addSceneObject(mirrorTransparent);
+                    break;
+            }
         }
     }
 
