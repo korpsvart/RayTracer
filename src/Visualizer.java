@@ -144,7 +144,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if (event instanceof KeyEvent) {
+        if (event instanceof KeyEvent && isFocused()) {
             KeyEvent key = (KeyEvent) event;
             if (key.getID() == KeyEvent.KEY_PRESSED) { //Handle key presses
                 if (key.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
@@ -215,14 +215,72 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
-    class AddBoxFrame extends Frame implements WindowListener {
+    class AddBoxFrame extends Frame implements WindowListener, ActionListener {
 
         public AddBoxFrame() {
 
             addWindowListener(this);
-            setLayout(null);
+            setTitle("Add sphere");
+            Panel panel = new Panel(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            JLabel positionLabel = new JLabel("Insert position:");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=0;
+            c.gridy=0;
+            c.gridheight=3;
+            c.insets = new Insets(0, 10, 0, 10);
+            c.weightx=0.6;
+            panel.add(positionLabel, c);
+            JLabel x = new JLabel("X");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=0;
+            c.gridheight=1;
+            c.weightx=0.1;
+            panel.add(x, c);
+            TextField textFieldX = new TextField(50);
+            textFieldX.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=0;
+            c.gridheight=1;
+            c.weightx=0.2;
+            panel.add(textFieldX, c);
+            JLabel y = new JLabel("Y");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=1;
+            c.gridheight=1;
+            panel.add(y, c);
+            c.weightx=0.1;
+            TextField textFieldY = new TextField(50);
+            textFieldY.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=1;
+            c.gridheight=1;
+            c.weightx=0.2;
+            panel.add(textFieldY, c);
+            JLabel z = new JLabel("Z");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=3;
+            c.gridheight=1;
+            c.weightx=0.1;
+            panel.add(z, c);
+            TextField textFieldZ = new TextField(50);
+            textFieldY.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=3;
+            c.gridheight=1;
+            c.weightx=0.2;
+            panel.add(textFieldZ, c);
+            add(panel);
+            pack();
             setVisible(true);
             setSize(400, 500);
+            textFieldX.requestFocusInWindow();
         }
 
         @Override
@@ -258,6 +316,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void windowDeactivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
         }
     }
