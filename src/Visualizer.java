@@ -1,3 +1,5 @@
+import org.w3c.dom.Text;
+
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
@@ -208,130 +210,28 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
-    class AddSphereFrame extends Frame implements WindowListener, ActionListener {
+    abstract class AddObjectFrame extends Frame implements  ActionListener {
 
+        protected TextField albedoLabel;
+        protected Button albedoButton;
+        protected TextField iorText;
+        protected JLabel materialLabel;
+        protected Scene scene;
+        protected Panel mainPanel;
+        protected Panel albedoSubPanel;
+        protected Panel transparentSubPanel;
+        protected JComboBox materialComboBox;
 
-        private TextField albedoLabel;
-        private Scene scene;
-        private TextField posX, posY, posZ;
-        private TextField textRadius;
-        private Panel mainPanel;
-        private TextField iorText;
-        private Button albedoButton;
-        private Panel albedoSubPanel;
-        private Panel transparentSubPanel;
-        private Color currentColor = Color.white;
-        private JColorChooser colorChooser;
-        private JComboBox materialComboBox;
+        public AddObjectFrame(Scene scene) {
 
-        public AddSphereFrame(Scene scene) {
-
-            this.scene = scene;
-
-            addWindowListener(this);
-            setTitle("Add sphere");
+            GridBagConstraints c = new GridBagConstraints();
             Panel panel = new Panel(new GridBagLayout());
             this.mainPanel = panel;
-            GridBagConstraints c = new GridBagConstraints();
-
-            //Start of position input graphics
-            JLabel positionLabel = new JLabel("Insert position:");
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=0;
-            c.gridy=0;
-            c.gridheight=3;
-            c.weightx=0.6;
-            panel.add(positionLabel, c);
-            JLabel x = new JLabel("X");
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=1;
-            c.gridy=0;
-            c.gridheight=1;
-            c.weightx=0.1;
-            panel.add(x, c);
-            TextField textFieldX = new TextField("0",10);
-            posX = textFieldX;
-            textFieldX.addActionListener(this);
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=2;
-            c.gridy=0;
-            c.gridheight=1;
-            c.weightx=0.3;
-            panel.add(textFieldX, c);
-            JLabel y = new JLabel("Y");
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=1;
-            c.gridy=1;
-            c.gridheight=1;
-            c.weightx=0.1;
-            panel.add(y, c);
-            TextField textFieldY = new TextField("0",10);
-            posY = textFieldY;
-            textFieldY.addActionListener(this);
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=2;
-            c.gridy=1;
-            c.gridheight=1;
-            c.weightx=0.3;
-            panel.add(textFieldY, c);
-            JLabel z = new JLabel("Z");
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=1;
-            c.gridy=2;
-            c.gridheight=1;
-            c.weightx=0.1;
-            panel.add(z, c);
-            TextField textFieldZ = new TextField("-5",10);
-            posZ = textFieldZ;
-            textFieldZ.addActionListener(this);
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=2;
-            c.gridy=2;
-            c.gridheight=1;
-            c.weightx=0.3;
-            panel.add(textFieldZ, c);
-            //end of position input graphics
-
-            //Start of radius input graphics
-            JLabel radiusLabel = new JLabel("Insert radius:");
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=0;
-            c.gridy=3;
-            c.gridheight=1;
-            c.gridwidth=2;
-            c.weightx=0.6;
-            c.insets = new Insets(20, 0, 20, 0);
-            panel.add(radiusLabel, c);
-            TextField textFieldRadius = new TextField("0.3", 10);
-            textRadius = textFieldRadius;
-            textFieldRadius.addActionListener(this);
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx=2;
-            c.gridy=3;
-            c.gridheight=1;
-            c.gridwidth=1;
-            c.weightx=0.4;
-            panel.add(textFieldRadius, c);
-            //end of radius input graphics
-
-            //start of material input graphics
-
-            JLabel materialLabel = new JLabel("Select type of material");
-            c.gridy=4;
-            c.gridx=0;
-            c.gridwidth=2;
-            c.weightx=0.6;
-            panel.add(materialLabel, c);
+            this.scene = scene;
+            this.materialLabel = new JLabel("Select type of material");
             JComboBox comboBoxMaterial = new JComboBox(materials);
             this.materialComboBox = comboBoxMaterial;
-            c.gridx=2;
-            c.weightx=0.6;
-            panel.add(comboBoxMaterial, c);
-            comboBoxMaterial.addActionListener(this);
-
-            //material property
-            //(changes according to selected option) - default is albedo (for diffuse objects)
-
+            materialComboBox.addActionListener(this);
             //define albedo subpanel
             this.albedoSubPanel = new Panel(new GridBagLayout());
             JLabel materialPropertyLabel = new JLabel("Select albedo:");
@@ -373,33 +273,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.weightx=0.2;
             transparentSubPanel.add(iorTextField, c);
 
-            //add current active subpanel (default is the diffuse one)
-            addMaterialPropertySubPanel(panel, MaterialType.DIFFUSE);
-            //end of material property
 
-            //Add button to send data
-            Button sendButton = new Button("Create");
-            sendButton.setActionCommand("create");
-            sendButton.addActionListener(this);
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridy=6;
-            c.gridx=1;
-            c.weightx=0;
-            c.gridwidth=1;
-            panel.add(sendButton, c);
-
-
-            add(panel);
-            pack();
-            setVisible(true);
-            setSize(800, 400);
-            textFieldX.requestFocusInWindow();
         }
 
-
-        private void addMaterialPropertySubPanel(Panel mainPanel,MaterialType materialType) {
+        protected void addMaterialPropertySubPanel(MaterialType materialType, int gridy) {
             GridBagConstraints c = new GridBagConstraints();
-            c.gridy=5;
+            c.insets = new Insets(10, 0, 10, 0);
+            c.gridy=gridy;
             c.gridx=0;
             c.weightx=0;
             c.gridwidth=3;
@@ -422,6 +302,152 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     mainPanel.revalidate();
                     mainPanel.repaint();
             }
+        }
+
+        protected void addSendButton(int gridy) {
+            //Add button to send data
+            GridBagConstraints c = new GridBagConstraints();
+            Button sendButton = new Button("Create");
+            sendButton.setActionCommand("create");
+            sendButton.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy=gridy;
+            c.gridx=1;
+            c.weightx=0;
+            c.gridwidth=1;
+            c.insets = new Insets(10, 0, 10, 0);
+            mainPanel.add(sendButton, c);
+
+
+            add(mainPanel);
+            pack();
+            setVisible(true);
+            setSize(800, 400);
+        }
+
+    }
+
+
+    class AddSphereFrame extends AddObjectFrame implements WindowListener{
+
+
+        private TextField posX, posY, posZ;
+        private TextField textRadius;
+        private TextField iorText;
+        private Button albedoButton;
+        private Color currentColor = Color.white;
+        private JColorChooser colorChooser;
+
+
+        public AddSphereFrame(Scene scene) {
+            super(scene);
+
+            addWindowListener(this);
+            setTitle("Add sphere");
+            GridBagConstraints c = new GridBagConstraints();
+
+            //Start of position input graphics
+            JLabel positionLabel = new JLabel("Insert position:");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=0;
+            c.gridy=0;
+            c.gridheight=3;
+            c.weightx=0.6;
+            mainPanel.add(positionLabel, c);
+            JLabel x = new JLabel("X");
+            JLabel y = new JLabel("Y");
+            JLabel z = new JLabel("Z");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=0;
+            c.gridheight=1;
+            c.weightx=0.1;
+            mainPanel.add(x, c);
+            TextField textFieldX = new TextField("0",10);
+            posX = textFieldX;
+            textFieldX.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=0;
+            c.gridheight=1;
+            c.weightx=0.3;
+            mainPanel.add(textFieldX, c);
+
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=1;
+            c.gridheight=1;
+            c.weightx=0.1;
+            mainPanel.add(y, c);
+            TextField textFieldY = new TextField("0",10);
+            posY = textFieldY;
+            textFieldY.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=1;
+            c.gridheight=1;
+            c.weightx=0.3;
+            mainPanel.add(textFieldY, c);
+
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=1;
+            c.gridy=2;
+            c.gridheight=1;
+            c.weightx=0.1;
+            mainPanel.add(z, c);
+            TextField textFieldZ = new TextField("-5",10);
+            posZ = textFieldZ;
+            textFieldZ.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=2;
+            c.gridheight=1;
+            c.weightx=0.3;
+            mainPanel.add(textFieldZ, c);
+            //end of position input graphics
+
+            //Start of radius input graphics
+            JLabel radiusLabel = new JLabel("Insert radius:");
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=0;
+            c.gridy=3;
+            c.gridheight=1;
+            c.gridwidth=2;
+            c.weightx=0.6;
+            c.insets = new Insets(20, 0, 20, 0);
+            mainPanel.add(radiusLabel, c);
+            TextField textFieldRadius = new TextField("0.3", 10);
+            textRadius = textFieldRadius;
+            textFieldRadius.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx=2;
+            c.gridy=3;
+            c.gridheight=1;
+            c.gridwidth=1;
+            c.weightx=0.4;
+            mainPanel.add(textFieldRadius, c);
+            //end of radius input graphics
+
+            //start of material input graphics
+            c.gridy=4;
+            c.gridx=0;
+            c.gridwidth=2;
+            c.weightx=0.6;
+            mainPanel.add(materialLabel, c);
+            c.gridx=2;
+            c.weightx=0.6;
+            mainPanel.add(materialComboBox, c);
+
+            //material property
+            //(changes according to selected option) - default is albedo (for diffuse objects)
+            //add current active subpanel (default is the diffuse one)
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, 5);
+            //end of material property
+
+
+            //add send button
+            addSendButton(6);
+
         }
 
 
@@ -489,13 +515,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     MaterialType materialType = materialsMap.get(cb.getSelectedItem());
                     switch (materialType) {
                         case DIFFUSE:
-                            addMaterialPropertySubPanel(mainPanel,MaterialType.DIFFUSE);
+                            addMaterialPropertySubPanel(MaterialType.DIFFUSE, 5);
                             break;
                         case TRANSPARENT:
-                            addMaterialPropertySubPanel(mainPanel, MaterialType.TRANSPARENT);
+                            addMaterialPropertySubPanel(MaterialType.TRANSPARENT, 5);
                             break;
                         case MIRRORLIKE:
-                            addMaterialPropertySubPanel(mainPanel, MaterialType.MIRRORLIKE);
+                            addMaterialPropertySubPanel(MaterialType.MIRRORLIKE, 5);
                     }
                     break;
                 case "create":
@@ -530,6 +556,46 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     scene.addSceneObject(mirrorTransparent);
                     break;
             }
+        }
+    }
+
+    class AddBoxFrame extends AddObjectFrame {
+
+        public AddBoxFrame(Scene scene) {
+            super(scene);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            //labels creation
+            JLabel minLabel = new JLabel("Insert min extension coordinates");
+            JLabel maxLabel = new JLabel("Insert max extension coordinates");
+            JLabel translationLabel = new JLabel("Insert origin (translation to world coordinates)");
+            JLabel rotationLabel = new JLabel("Insert rotation around the three main axis");
+            JLabel x = new JLabel("X");
+            JLabel y = new JLabel("Y");
+            JLabel z = new JLabel("Z");
+
+            //text field creation
+            TextField textFieldXMin = new TextField("-1",10);
+            TextField textFieldYMin = new TextField("-1",10);
+            TextField textFieldZMin = new TextField("1",10);
+            TextField textFieldXMax = new TextField("1",10);
+            TextField textFieldYMax = new TextField("1",10);
+            TextField textFieldZMax = new TextField("-1",10);
+            TextField textFieldXTranslation = new TextField("0", 10);
+            TextField textFieldYTranslation = new TextField("0", 10);
+            TextField textFieldZTranslation = new TextField("-4", 10);
+            TextField textFieldXRotation = new TextField("0", 10);
+            TextField textFieldYRotation = new TextField("0", 10);
+            TextField textFieldZRotation = new TextField("0", 10);
+
+            int gridy = 0;
+            GridBagConstraints c = new GridBagConstraints();
+
+
+
         }
     }
 
