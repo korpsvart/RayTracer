@@ -213,6 +213,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     abstract class AddObjectFrame extends Frame implements  ActionListener {
 
         protected TextField albedoLabel;
+        protected JColorChooser colorChooser;
         protected Button albedoButton;
         protected TextField iorText;
         protected JLabel materialLabel;
@@ -220,6 +221,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Panel mainPanel;
         protected Panel albedoSubPanel;
         protected Panel transparentSubPanel;
+        protected Color currentColor = Color.white;
         protected JComboBox materialComboBox;
 
         public AddObjectFrame(Scene scene) {
@@ -325,6 +327,43 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             setSize(800, 400);
         }
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "colorChoose":
+                    JColorChooser colorChooser = new JColorChooser(currentColor);
+                    this.colorChooser = colorChooser;
+                    colorChooser.setPreviewPanel(new JPanel());
+                    AbstractColorChooserPanel[] panels = colorChooser.getChooserPanels();
+                    for (AbstractColorChooserPanel panel :
+                            panels) {
+                        panel.setColorTransparencySelectionEnabled(false);
+                    }
+                    JDialog dialog = JColorChooser.createDialog(this, "Pick color",
+                            true, colorChooser, this, this);
+                    dialog.setVisible(true);
+                    break;
+                case "OK":
+                    //event generated when a color is chosen
+                    Color color = this.colorChooser.getColor();
+                    albedoLabel.setText("("+color.getRed()+","+color.getGreen()+","+color.getBlue()+")");
+                    break;
+                case "comboBoxChanged":
+                    JComboBox cb = (JComboBox)e.getSource();
+                    MaterialType materialType = materialsMap.get(cb.getSelectedItem());
+                    switch (materialType) {
+                        case DIFFUSE:
+                            addMaterialPropertySubPanel(MaterialType.DIFFUSE, 5);
+                            break;
+                        case TRANSPARENT:
+                            addMaterialPropertySubPanel(MaterialType.TRANSPARENT, 5);
+                            break;
+                        case MIRRORLIKE:
+                            addMaterialPropertySubPanel(MaterialType.MIRRORLIKE, 5);
+                    }
+                    break;
+            }
+        }
     }
 
 
@@ -333,8 +372,6 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         private TextField posX, posY, posZ;
         private TextField textRadius;
-        private TextField iorText;
-        private Button albedoButton;
         private Color currentColor = Color.white;
         private JColorChooser colorChooser;
 
@@ -491,39 +528,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            super.actionPerformed(e);
             switch(e.getActionCommand()){
-                case "colorChoose":
-                    JColorChooser colorChooser = new JColorChooser();
-                    this.colorChooser = colorChooser;
-                    colorChooser.setPreviewPanel(new JPanel());
-                    AbstractColorChooserPanel[] panels = colorChooser.getChooserPanels();
-                    for (AbstractColorChooserPanel panel :
-                            panels) {
-                        panel.setColorTransparencySelectionEnabled(false);
-                    }
-                    JDialog dialog = JColorChooser.createDialog(this, "Pick color",
-                            true, colorChooser, this, this);
-                    dialog.setVisible(true);
-                    break;
-                case "OK":
-                    //event generated when a color is chosen
-                    Color color = this.colorChooser.getColor();
-                    albedoLabel.setText("("+color.getRed()+","+color.getGreen()+","+color.getBlue()+")");
-                    break;
-                case "comboBoxChanged":
-                    JComboBox cb = (JComboBox)e.getSource();
-                    MaterialType materialType = materialsMap.get(cb.getSelectedItem());
-                    switch (materialType) {
-                        case DIFFUSE:
-                            addMaterialPropertySubPanel(MaterialType.DIFFUSE, 5);
-                            break;
-                        case TRANSPARENT:
-                            addMaterialPropertySubPanel(MaterialType.TRANSPARENT, 5);
-                            break;
-                        case MIRRORLIKE:
-                            addMaterialPropertySubPanel(MaterialType.MIRRORLIKE, 5);
-                    }
-                    break;
                 case "create":
                     MaterialType mType = materialsMap.get(materialComboBox.getSelectedItem());
                     Vector3f position = new Vector3f(Double.parseDouble(posX.getText()),
@@ -543,7 +549,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             Sphere sphere = new Sphere(position, radius);
             switch (materialType) {
                 case DIFFUSE:
-                    Diffuse diffuse = new Diffuse(sphere);
+                    Phong diffuse = new Phong(sphere);
                     diffuse.setAlbedo(albedo);
                     scene.addSceneObject(diffuse);
                     break;
