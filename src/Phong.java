@@ -4,9 +4,12 @@ import java.util.Optional;
 public class Phong extends SceneObject{
 
     private Vector3f albedo = new Vector3f(0.3, 0.3, 0.3);
-    private double kd = 0.7; //diffuse component coeff
+    private double kd = 0.95; //diffuse component coeff
     private double ks = 1-kd; //specular component coeff
     private int n = 20; //specular exponent
+    //for a more realistic visual effect
+    //ks should increase as n increases
+    //because the specular reflection is more "focused"
 
 
     public Phong(GeometricObject geometricObject) {
