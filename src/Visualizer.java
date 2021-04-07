@@ -218,7 +218,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     abstract class AddLightSourceFrame extends Frame implements ActionListener {
 
         protected Scene scene;
-        int gridy = 0;
+
         private JLabel colorLabel = new JLabel("Select light color");
         protected Color currentColor = Color.white;
         private JLabel intensityLabel = new JLabel("Insert light intensity (recommended in range (1,200))");
@@ -236,19 +236,35 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         private JLabel z = new JLabel("z");
         private TextField textFieldXPosition = new TextField("1", 10);
         private TextField textFieldYPosition = new TextField("0", 10);
-        private TextField textFieldZPosition = new TextField("1", 10);
+        private TextField textFieldZPosition = new TextField("-1", 10);
         private JLabel labelLightDirection = new JLabel("Insert light direction");
+        private TextField textFieldXDirection = new TextField("1", 10);
+        private TextField textFieldYDirection = new TextField("0", 10);
+        private TextField textFieldZDirection = new TextField("-1", 10);
 
         public AddLightSourceFrame(Scene scene) {
             this.scene = scene;
 
             GridBagConstraints c = new GridBagConstraints();
+            int gridy = 0;
+
+            c.gridy=gridy++;
+            c.gridwidth=2;
+            mainPanel.add(intensityLabel, c);
+            c.gridx=2;
+            c.gridwidth=1;
+            mainPanel.add(textFieldIntensity, c);
+
+            c.gridy=gridy++;
+            mainPanel.add(colorSubPanel, c);
+
+
+
 
 
         }
 
-        private addLightPropertiesSubPanel() {
-
+        private void addLightPropertiesSubPanel() {
         }
 
 
