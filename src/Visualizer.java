@@ -39,6 +39,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         Menu addFigureSubMenu = new Menu("Add figure...");
         MenuItem removeFigureMenuItem = new MenuItem("Remove figure");
         removeFigureMenuItem.setActionCommand("remove");
+        Menu addLightMenu = new Menu("Add light");
+        MenuItem pointLightMenuItem = new MenuItem("Point light");
+        pointLightMenuItem.setActionCommand("add_point_light");
+        MenuItem distantLightMenuItem = new MenuItem("Distant light");
+        distantLightMenuItem.setActionCommand("add_distant_light");
         MenuItem sphereMenuItem = new MenuItem("Sphere");
         sphereMenuItem.setActionCommand("add_sphere");
         MenuItem boxMenuitem = new MenuItem("Box");
@@ -69,8 +74,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         teapotItem.addActionListener(this);
         samplesSubMenu.add(donutItem);
         donutItem.addActionListener(this);
+        addLightMenu.add(pointLightMenuItem);
+        pointLightMenuItem.addActionListener(this);
+        addLightMenu.add(distantLightMenuItem);
+        distantLightMenuItem.addActionListener(this);
         menu.add(addFigureSubMenu);
         menu.add(removeFigureMenuItem);
+        menu.add(addLightMenu);
         removeFigureMenuItem.addActionListener(this);
         menuBar.add(menu);
         this.setMenuBar(menuBar);
@@ -95,6 +105,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddSphereFrame addSphereFrame = new AddSphereFrame(this.scene);
         } else if (e.getActionCommand()=="add_box") {
             AddBoxFrame addBoxFrame = new AddBoxFrame(this.scene);
+        } else if (e.getActionCommand()=="add_point_light") {
+            AddPointLightFrame addPointLightFrame = new AddPointLightFrame(this.scene);
+        } else if (e.getActionCommand()=="add_distant_light") {
+            AddDistantLightFrame addDistantLightFrame = new AddDistantLightFrame(this.scene);
         }
     }
 
@@ -211,11 +225,14 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             super(label);
             addActionListener(visualizer);
         }
-
-
     }
 
-    abstract class AddLightSourceFrame extends Frame implements ActionListener {
+
+
+
+
+
+    abstract class AddLightSourceFrame extends Frame implements ActionListener, WindowListener {
 
         protected Scene scene;
 
@@ -228,26 +245,24 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Button colorButton = new Button("Choose color");
         protected TextField colorTextField = new TextField("(255,255,255)", 10);
         protected Panel colorSubPanel = createChooseRGBPanel();
-        protected JLabel lightType = new JLabel("Choose light type");
-        protected JComboBox comboBoxLightType = new JComboBox();
-        private JLabel labelLightPosition = new JLabel("Insert light position");
-        private JLabel x = new JLabel("x");
-        private JLabel y = new JLabel("y");
-        private JLabel z = new JLabel("z");
-        private TextField textFieldXPosition = new TextField("1", 10);
-        private TextField textFieldYPosition = new TextField("0", 10);
-        private TextField textFieldZPosition = new TextField("-1", 10);
-        private JLabel labelLightDirection = new JLabel("Insert light direction");
-        private TextField textFieldXDirection = new TextField("1", 10);
-        private TextField textFieldYDirection = new TextField("0", 10);
-        private TextField textFieldZDirection = new TextField("-1", 10);
+        protected int gridy = 0;
+        protected JLabel x = new JLabel("x");
+        protected JLabel y = new JLabel("y");
+        protected JLabel z = new JLabel("z");
+        protected TextField textFieldX = new TextField("1", 10);
+        protected TextField textFieldY = new TextField("0", 10);
+        protected TextField textFieldZ = new TextField("-1", 10);
+
 
         public AddLightSourceFrame(Scene scene) {
             this.scene = scene;
+            this.addWindowListener(this);
 
             GridBagConstraints c = new GridBagConstraints();
-            int gridy = 0;
+            c.fill = GridBagConstraints.HORIZONTAL;
 
+
+            c.insets = new Insets(10, 0, 10, 0);
             c.gridy=gridy++;
             c.gridwidth=2;
             mainPanel.add(intensityLabel, c);
@@ -258,18 +273,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridy=gridy++;
             mainPanel.add(colorSubPanel, c);
 
-
-
-
-
         }
-
-        private void addLightPropertiesSubPanel() {
-        }
-
 
         private Panel createChooseRGBPanel() {
             GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(10, 0, 10, 0);
             Panel chooseRGBPanel = new Panel(new GridBagLayout());
             JLabel materialPropertyLabel = new JLabel("Select color:");
             c.gridy=0;
@@ -296,9 +305,192 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             return chooseRGBPanel;
         }
 
+        public void createFrame() {
+            add(mainPanel);
+            pack();
+            setSize(400, 400);
+            setVisible(true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "colorChoose":
+                    JColorChooser colorChooser = new JColorChooser(currentColor);
+                    this.colorChooser = colorChooser;
+                    colorChooser.setPreviewPanel(new JPanel());
+                    AbstractColorChooserPanel[] panels = colorChooser.getChooserPanels();
+                    for (AbstractColorChooserPanel panel :
+                            panels) {
+                        panel.setColorTransparencySelectionEnabled(false);
+                    }
+                    JDialog dialog = JColorChooser.createDialog(this, "Pick color",
+                            true, colorChooser, this, this);
+                    dialog.setVisible(true);
+                    break;
+                case "OK":
+                    //event generated when a color is chosen
+                    Color color = this.colorChooser.getColor();
+                    colorTextField.setText("(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")");
+                    break;
+            }
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
+
+        protected void addLightSource() {
+            double x = Double.parseDouble(textFieldX.getText());
+            double y = Double.parseDouble(textFieldY.getText());
+            double z = Double.parseDouble(textFieldZ.getText());
+            Vector3f xyz = new Vector3f(x, y, z);
+            double intensity = Double.parseDouble(textFieldIntensity.getText());
+            String colorVal = colorTextField.getText().substring(1, colorTextField.getText().length()-1);
+            String[] colorA = colorVal.split(",");
+            Vector3f color = new Vector3f(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
+            color = color.mul((double)1/255);
+
+        }
+
+        abstract void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz);
+
+        protected void addSendButton(int gridy) {
+            //Add button to send data
+            GridBagConstraints c = new GridBagConstraints();
+            Button sendButton = new Button("Create");
+            sendButton.setActionCommand("create");
+            sendButton.addActionListener(this);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy=gridy;
+            c.gridx=1;
+            c.weightx=0;
+            c.gridwidth=1;
+            c.insets = new Insets(10, 0, 10, 0);
+            mainPanel.add(sendButton, c);
+        }
+    }
+
+    class AddPointLightFrame extends AddLightSourceFrame {
+        //only positional data
+        private JLabel labelLightPosition = new JLabel("Insert light position");
+
+        public AddPointLightFrame(Scene scene) {
+            super(scene);
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(10, 0, 10, 0);
+            c.gridy = gridy;
+            c.weightx=0.6;
+            c.gridheight=3;
+            mainPanel.add(labelLightPosition, c);
+            c.weightx=0.2;
+            c.gridheight=1;
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(10, 0, 0, 0);
+            mainPanel.add(x, c);
+            c.gridx=2;
+            mainPanel.add(textFieldX, c);
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(0, 0, 0, 0);
+            mainPanel.add(y, c);
+            c.gridx=2;
+            mainPanel.add(textFieldY, c);
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(0, 0, 10, 0);
+            mainPanel.add(z, c);
+            c.gridx=2;
+            mainPanel.add(textFieldZ, c);
+
+            addSendButton(gridy++);
+
+
+            createFrame();
+        }
+
+        @Override
+        void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
+            PointLight pointLight = new PointLight()
+        }
+
 
     }
 
+    class AddDistantLightFrame extends AddLightSourceFrame {
+        //only directional data
+        private JLabel labelLightDirection = new JLabel("Insert light direction");
+
+        public AddDistantLightFrame(Scene scene) {
+            super(scene);
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy = gridy;
+            c.weightx=0.6;
+            c.gridheight=3;
+            c.insets = new Insets(10, 0, 10, 0);
+            mainPanel.add(labelLightDirection, c);
+            c.weightx=0.2;
+            c.gridheight=1;
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(10, 0, 0, 0);
+            mainPanel.add(x, c);
+            c.gridx=2;
+            mainPanel.add(textFieldX, c);
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(0, 0, 0, 0);
+            mainPanel.add(y, c);
+            c.gridx=2;
+            mainPanel.add(textFieldY, c);
+            c.gridx=1;
+            c.gridy = gridy++;
+            c.insets = new Insets(0, 0, 10, 0);
+            mainPanel.add(z, c);
+            c.gridx=2;
+            mainPanel.add(textFieldZ, c);
+
+            addSendButton(gridy++);
+
+
+            createFrame();
+        }
+    }
 
 
     abstract class AddObjectFrame extends Frame implements  ActionListener {
