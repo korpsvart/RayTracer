@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.util.Optional;
 
 public class PointLight extends LightSource {
     //PointLight are unaffected by rotation
@@ -15,12 +14,12 @@ public class PointLight extends LightSource {
     }
 
 
-    public PointLight(Color color, float intensity, Matrix4D lightToWorld) {
+    public PointLight(Vector3f color, double intensity, Matrix4D lightToWorld) {
         super(color, intensity, lightToWorld);
         position = lightToWorld.getC();
     }
 
-    public PointLight(Color color, float intensity, Vector3f position) {
+    public PointLight(Vector3f color, double intensity, Vector3f position) {
         super(color, intensity, new Matrix4D(position));
         this.position = position;
     }
@@ -35,7 +34,7 @@ public class PointLight extends LightSource {
 
     public Vector3f illuminate(double distance) {
         double intensity = this.getIntensity()/(4*Math.PI*Math.pow(distance, 2));
-        return Vector3f.colorToVector(this.getColor()).mul(intensity);
+        return this.getColor().mul(intensity);
     }
 
 

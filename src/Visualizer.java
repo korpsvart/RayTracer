@@ -238,8 +238,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         private JLabel colorLabel = new JLabel("Select light color");
         protected Color currentColor = Color.white;
-        private JLabel intensityLabel = new JLabel("Insert light intensity (recommended in range (1,200))");
-        protected TextField textFieldIntensity = new TextField("100", 10);
+        private JLabel intensityLabel = new JLabel("Insert light intensity (number inside [0,1])");
+        protected TextField textFieldIntensity = new TextField("0.7", 10);
         protected Panel mainPanel = new Panel(new GridBagLayout());
         protected JColorChooser colorChooser;
         protected Button colorButton = new Button("Choose color");
@@ -333,6 +333,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     Color color = this.colorChooser.getColor();
                     colorTextField.setText("(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")");
                     break;
+                case "create":
+                    this.addLightSource();
+                    break;
             }
         }
 
@@ -382,7 +385,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             String[] colorA = colorVal.split(",");
             Vector3f color = new Vector3f(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
             color = color.mul((double)1/255);
-
+            addParticularLightSource(intensity, color, xyz);
+            renderScene(scene);
         }
 
         abstract void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz);
@@ -445,7 +449,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
-            PointLight pointLight = new PointLight()
+            //remapping intensity over [0,150]
+            intensity*=150;
+            PointLight pointLight = new PointLight(color, intensity, xyz);
+            scene.addLightSource(pointLight);
         }
 
 
@@ -489,6 +496,14 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
 
             createFrame();
+        }
+
+        @Override
+        void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
+            //remapping intensity over [0,10]
+            intensity*=10;
+            DistantLight distantLight = new DistantLight(color, intensity, xyz);
+            scene.addLightSource(distantLight);
         }
     }
 
@@ -901,12 +916,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     class AddBoxFrame extends AddObjectFrame {
 
         //text field creation
-        private TextField textFieldXMin = new TextField("-0.4",10);
-        private TextField textFieldYMin = new TextField("-0.4",10);
-        private TextField textFieldZMin = new TextField("0.4",10);
-        private TextField textFieldXMax = new TextField("0.4",10);
-        private TextField textFieldYMax = new TextField("0.4",10);
-        private TextField textFieldZMax = new TextField("-0.4",10);
+        private TextField textFieldXMin = new TextField("-0.2",10);
+        private TextField textFieldYMin = new TextField("-0.2",10);
+        private TextField textFieldZMin = new TextField("-0.2",10);
+        private TextField textFieldXMax = new TextField("0.2",10);
+        private TextField textFieldYMax = new TextField("0.2",10);
+        private TextField textFieldZMax = new TextField("0.2",10);
         private TextField textFieldXTranslation = new TextField("0", 10);
         private TextField textFieldYTranslation = new TextField("0", 10);
         private TextField textFieldZTranslation = new TextField("-4", 10);
@@ -1101,7 +1116,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                             Double.parseDouble(textFieldYMin.getText()), Double.parseDouble(textFieldZMin.getText()));
                     Vector3f max = new Vector3f(Double.parseDouble(textFieldXMax.getText()),
                             Double.parseDouble(textFieldYMax.getText()), Double.parseDouble(textFieldZMax.getText()));
-                    Vector3f translation = new Vector3f(Double.parseDouble(textFieldXTranslation.getText()),
+                    //I add a little shift in x direction to translation
+                    //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
+                    //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
+                    Vector3f translation = new Vector3f(Double.parseDouble(textFieldXTranslation.getText()+10e-6),
                             Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
                     Vector3f rotation = new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
                             Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));

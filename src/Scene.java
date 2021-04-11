@@ -43,7 +43,7 @@ public class Scene {
     private ArrayList<SceneObject> nonBVHSceneObjects;
     private ArrayList<SceneObject> sceneObjectsBVH;
     private ArrayList<LightSource> lightSources;
-    private EnvironmentLight environmentLight = new EnvironmentLight(new Color(1f, 1f, 1f), 0.3f);
+    private EnvironmentLight environmentLight = new EnvironmentLight(new Vector3f(1, 1, 1), 0.3f);
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
@@ -242,7 +242,7 @@ public class Scene {
         //same as above but allow caller to specify ray type
         if (rayDepth > MAX_RAY_DEPTH) {
             if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
-                return Vector3f.colorToVector(environmentLight.getColor()).mul(environmentLight.getIntensity());
+                return environmentLight.getColor().mul(environmentLight.getIntensity());
             } else {
                 return this.backgroundColor;
             }
@@ -252,7 +252,7 @@ public class Scene {
             return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
         } else {
             if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
-                return Vector3f.colorToVector(environmentLight.getColor()).mul(environmentLight.getIntensity());
+                return environmentLight.getColor().mul(environmentLight.getIntensity());
             } else {
                 return this.backgroundColor;
             }

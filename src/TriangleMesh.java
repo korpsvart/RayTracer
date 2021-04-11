@@ -10,7 +10,9 @@ public class TriangleMesh {
 
 
         private boolean useVertexNormal = false;
-        private final Vector3f v0, v1, v2;
+        private Vector3f v0;
+        private final Vector3f v1;
+        private Vector3f v2;
         private TriangleMesh triangleMesh; //corresponding triangle mesh
         private Vector3f faceNormal = null;
         private double area  = -1;
@@ -53,6 +55,7 @@ public class TriangleMesh {
 
             Main.getRayTriangleTests().getAndIncrement();
 
+
             Vector3f e1 = v1.moveTo(v0);
             Vector3f e2 = v2.moveTo(v0);
             Vector3f h = e1.crossProduct(e2);
@@ -60,6 +63,15 @@ public class TriangleMesh {
             Vector3f d = ray.getDirection();
 
             double denom = d.dotProduct(h);
+
+            if (Math.abs(denom-h.magnitude())<10e-6) {
+                //In this case the ray is (almost) perpendicular to the triangle plane
+                //often this leads to an annoying effect when using triangulation and when
+                //two adjacent triangles belong to the same plane (typical example: triangulation of a cube):
+                //the separation between the two triangles becomes visible as a thin line.
+                //This obviously happen because the ray will sometimes miss both triangles, because of numerical imprecision.
+                //How to solve this??
+            }
 
             if (Math.abs(denom) < 10e-6) {
                 //if denom is really close to 0 it means

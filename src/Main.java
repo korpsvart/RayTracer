@@ -1,5 +1,3 @@
-import com.sun.jdi.Mirror;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicLong;
@@ -87,9 +85,8 @@ public class Main {
 
         Scene scene = new Scene(width, height, fieldOfView, img, cameraPosition, new Vector3f(0.1f, 0.3f, 0.6f));
 
-        Color color1 = new Color(1f,1f,1f);
-        Color color2 = new Color(0.8f,0.6f,0.3f);
-        Color color3 = new Color(0.4f,0.9f,0.1f);
+        Vector3f color1 = new Vector3f(1,1,1);
+        Vector3f color2 = new Vector3f(0.8,0.6,0.3);
 
 
         Plane3d plane1 = new Plane3d(new Vector3f(0, -1, 0), new Vector3f(0, 1, 0));
@@ -108,7 +105,7 @@ public class Main {
 //        }
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0.7, 0, -3));
+        PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(-1, 0, -4));
         Matrix3D lightRotation = new Matrix3D(new double[][] {
             {0,0,-1},
             {0,0,1},
@@ -124,7 +121,7 @@ public class Main {
         Matrix4D boxToWorld = new Matrix4D(
                 Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(-0.6, 0.8, -5)
         );
-        PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, -0.7), boxToWorld);
+        PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, 0.7), boxToWorld);
         Diffuse diffuseBox = new Diffuse(box);
         diffuseBox.setAlbedo(new Vector3f(0.5, 0, 0.2));
         scene.triangulateAndAddSceneObject(diffuseBox, -1); //divs makes no sense here

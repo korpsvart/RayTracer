@@ -4,11 +4,11 @@ public abstract class LightSource {
 
     //Lights are unaffected by scaling transform
 
-    private final Color color;
-    private final float intensity;
+    private final Vector3f color;
+    private final double intensity;
     private final Matrix4D lightToWorld;
 
-    public float getIntensity() {
+    public double getIntensity() {
         return intensity;
     }
 
@@ -16,14 +16,14 @@ public abstract class LightSource {
 
 
 
-    protected LightSource(Color color, float intensity, Matrix4D lightToWorld) {
+    protected LightSource(Vector3f color, double intensity, Matrix4D lightToWorld) {
         this.color = color;
         this.intensity = intensity;
         this.lightToWorld = lightToWorld;
     }
 
 
-    public Color getColor() {
+    public Vector3f getColor() {
         return color;
     }
 
