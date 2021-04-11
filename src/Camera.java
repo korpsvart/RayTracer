@@ -14,8 +14,8 @@ public class Camera {
         //default
         this.position = new Vector3f(0, 0, 0);
         this.up = new Vector3f(0, 1, 0);
-        this.forward = new Vector3f(0, 0, -1);
-        this.left = new Vector3f(-1, 0, 0); //it's cross product of up and forward
+        this.forward = new Vector3f(0, 0, 1);
+        this.left = new Vector3f(1, 0, 0); //it's cross product of up and forward
     }
 
     public void rotateX(double angle) {

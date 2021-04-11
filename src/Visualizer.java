@@ -1119,7 +1119,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     //I add a little shift in x direction to translation
                     //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
                     //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
-                    Vector3f translation = new Vector3f(Double.parseDouble(textFieldXTranslation.getText()+10e-6),
+                    Vector3f translation = new Vector3f(Double.parseDouble(textFieldXTranslation.getText())+10e-6,
                             Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
                     Vector3f rotation = new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
                             Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));

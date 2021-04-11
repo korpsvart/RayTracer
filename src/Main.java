@@ -119,7 +119,7 @@ public class Main {
 
         //test parallelepiped rendering
         Matrix4D boxToWorld = new Matrix4D(
-                Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(-0.6, 0.8, -5)
+                Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(0.6, 0.8, -5)
         );
         PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, 0.7), boxToWorld);
         Diffuse diffuseBox = new Diffuse(box);

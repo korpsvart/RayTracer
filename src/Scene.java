@@ -340,7 +340,7 @@ public class Scene {
             for (int j = startY; j < h+startY; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
                 double y = (1-2*(j+0.5)/height)*scale;
-                Vector3f rayDirection = new Vector3f(x,y,1);
+                Vector3f rayDirection = new Vector3f(x,y,-1);
                 Vector3f rayDirectionWorld = camera.convertToFixedSystem(rayDirection).normalize();
                 Line3d ray = new Line3d(camera.getPosition(), rayDirectionWorld);
                 Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
