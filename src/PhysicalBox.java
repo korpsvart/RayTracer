@@ -35,9 +35,9 @@ public class PhysicalBox extends GeometricObject {
         };
 
         int[] vertexIndex = new int[] {
-                0, 1, 2, 4,
-                2, 4, 6, 7,
-                1, 5, 4, 7,
+                0, 2, 1, 4,
+                2, 6, 4, 7,
+                1, 4, 5, 7,
                 0, 1, 3, 5,
                 0, 3, 2, 6,
                 3, 5, 6, 7
