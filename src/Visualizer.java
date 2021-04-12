@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -109,7 +110,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddPointLightFrame addPointLightFrame = new AddPointLightFrame(this.scene);
         } else if (e.getActionCommand()=="add_distant_light") {
             AddDistantLightFrame addDistantLightFrame = new AddDistantLightFrame(this.scene);
+        } else if (e.getActionCommand()=="add_bezSurf") {
+            AddBezierSurface addBezierSurface = new AddBezierSurface(this.scene);
         }
+
     }
 
     @Override
@@ -189,17 +193,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     renderScene(this.scene);
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_W) {
-                    scene.getCamera().translate(new Vector3f(0, 0, 0.1));
+                    scene.getCamera().translate(new Vector3f(0, 0, -0.1));
                     renderScene(this.scene);
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_S) {
-                    scene.getCamera().translate(new Vector3f(0, 0, -0.1));
+                    scene.getCamera().translate(new Vector3f(0, 0, 0.1));
                     renderScene(this.scene);
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_Q) {
-                    scene.getCamera().rotateY(-2); //degrees
+                    scene.getCamera().rotateY(2); //degrees
                     renderScene(this.scene);
                 }else if (key.getExtendedKeyCode() == KeyEvent.VK_E) {
-                    scene.getCamera().rotateY(2); //degrees
+                    scene.getCamera().rotateY(-2); //degrees
                     renderScene(this.scene);
                 }else if (key.getExtendedKeyCode() == KeyEvent.VK_R) {
                     scene.getCamera().rotateX(2); //degrees
@@ -508,7 +512,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     }
 
 
-    abstract class AddObjectFrame extends Frame implements  ActionListener {
+    abstract class AddObjectFrame extends Frame implements  ActionListener, WindowListener {
 
         protected TextField albedoTextField;
         protected JColorChooser colorChooser;
@@ -519,12 +523,20 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Panel mainPanel;
         protected int materialSubPanelGridy;
         protected Panel albedoSubPanel;
+        protected Panel otwSubPanel = createOTWSubPanel();
         protected Panel transparentSubPanel;
         protected Color currentColor = Color.white;
         protected JComboBox materialComboBox;
+        protected TextField textFieldXTranslation = new TextField("0", 10);
+        protected TextField textFieldYTranslation = new TextField("0", 10);
+        protected TextField textFieldZTranslation = new TextField("-4", 10);
+        protected TextField textFieldXRotation = new TextField("0", 10);
+        protected TextField textFieldYRotation = new TextField("0", 10);
+        protected TextField textFieldZRotation = new TextField("0", 10);
 
         public AddObjectFrame(Scene scene) {
 
+            addWindowListener(this);
             GridBagConstraints c = new GridBagConstraints();
             Panel panel = new Panel(new GridBagLayout());
             this.mainPanel = panel;
@@ -553,6 +565,108 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             transparentSubPanel.add(iorTextField, c);
 
 
+        }
+
+        protected Vector3f extractVectorFromTextField(TextField textField) {
+            String vectorVal = textField.getText().substring(1, textField.getText().length()-1);
+            String[] vectorA = vectorVal.split(",");
+            return new Vector3f(Arrays.stream(vectorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
+        }
+
+        protected void addOTWSubPanel(int gridy) {
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy = gridy;
+            mainPanel.add(otwSubPanel, c);
+        }
+
+        private Panel createOTWSubPanel() {
+            Panel otwSubPanel = new Panel(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            int gridy = 0;
+            JLabel translationLabel = new JLabel("Insert origin (translation to world coordinates)");
+            JLabel rotationLabel = new JLabel("Insert rotation around the three main axis");
+            TextField textFieldXTranslation = new TextField("0", 10);
+            TextField textFieldYTranslation = new TextField("0", 10);
+            TextField textFieldZTranslation = new TextField("-4", 10);
+            TextField textFieldXRotation = new TextField("0", 10);
+            TextField textFieldYRotation = new TextField("0", 10);
+            TextField textFieldZRotation = new TextField("0", 10);
+            JLabel x = new JLabel("X");
+            JLabel y = new JLabel("Y");
+            JLabel z = new JLabel("Z");
+            JLabel x2 = new JLabel("X");
+            JLabel y2 = new JLabel("Y");
+            JLabel z2 = new JLabel("Z");
+
+
+            //translation
+            c.insets = new Insets(10, 0, 10, 0);
+            c.gridy=gridy;
+            c.gridx=0;
+            c.gridwidth = 1;
+            c.gridheight = 3;
+            c.weightx = 0.6;
+            otwSubPanel.add(translationLabel, c);
+
+            c.insets = new Insets(10, 0, 0, 0);
+            c.gridx=1;
+            c.gridy=gridy++;
+            c.gridwidth=1;
+            c.gridheight=1;
+            c.weightx=0.2;
+            otwSubPanel.add(x, c);
+            c.gridx=2;
+            otwSubPanel.add(textFieldXTranslation, c);
+
+            c.insets = new Insets(0, 0, 0, 0);
+            c.gridy=gridy++;
+            c.gridx=1;
+            otwSubPanel.add(y, c);
+            c.gridx=2;
+            otwSubPanel.add(textFieldYTranslation, c);
+
+            c.gridy=gridy++;
+            c.gridx=1;
+            otwSubPanel.add(z, c);
+            c.gridx=2;
+            c.insets = new Insets(0, 0, 10, 0);
+            otwSubPanel.add(textFieldZTranslation, c);
+
+            //rotation
+            c.insets = new Insets(10, 0, 10, 0);
+            c.gridy=gridy;
+            c.gridx=0;
+            c.gridwidth = 1;
+            c.gridheight = 3;
+            c.weightx = 0.6;
+            otwSubPanel.add(rotationLabel, c);
+
+            c.insets = new Insets(10, 0, 0, 0);
+            c.gridx=1;
+            c.gridy=gridy++;
+            c.gridwidth=1;
+            c.gridheight=1;
+            c.weightx=0.2;
+            otwSubPanel.add(x2, c);
+            c.gridx=2;
+            otwSubPanel.add(textFieldXRotation, c);
+
+            c.insets = new Insets(0, 0, 0, 0);
+            c.gridy=gridy++;
+            c.gridx=1;
+            otwSubPanel.add(y2, c);
+            c.gridx=2;
+            otwSubPanel.add(textFieldYRotation, c);
+
+            c.gridy=gridy++;
+            c.gridx=1;
+            otwSubPanel.add(z2, c);
+            c.gridx=2;
+            c.insets = new Insets(0, 0, 10, 0);
+            otwSubPanel.add(textFieldZRotation, c);
+            return otwSubPanel;
         }
 
         private Panel createChooseRGBPanel() {
@@ -645,6 +759,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             setSize(800, 400);
         }
 
+        abstract GeometricObject createGeometricObject();
+
         protected void addSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3f albedo, double ior) {
             switch (materialType) {
                 case DIFFUSE:
@@ -732,10 +848,58 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     break;
             }
         }
+
+        protected Vector3f getTranslation() {
+            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText())+10e-6,
+                    Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
+        }
+
+        protected Vector3f getRotation() {
+            return new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
+                    Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
     }
 
 
-    class AddSphereFrame extends AddObjectFrame implements WindowListener{
+    class AddSphereFrame extends AddObjectFrame{
 
 
         private TextField posX, posY, posZ;
@@ -747,7 +911,6 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         public AddSphereFrame(Scene scene) {
             super(scene);
 
-            addWindowListener(this);
             setTitle("Add sphere");
             GridBagConstraints c = new GridBagConstraints();
 
@@ -850,43 +1013,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
 
-        @Override
-        public void windowOpened(WindowEvent e) {
 
-        }
-
-        @Override
-        public void windowClosing(WindowEvent e) {
-            setVisible(false);
-            this.dispose();
-        }
-
-        @Override
-        public void windowClosed(WindowEvent e) {
-
-        }
-
-        @Override
-        public void windowIconified(WindowEvent e) {
-
-        }
-
-        @Override
-        public void windowDeiconified(WindowEvent e) {
-
-        }
-
-        @Override
-        public void windowActivated(WindowEvent e) {
-
-        }
-
-
-
-        @Override
-        public void windowDeactivated(WindowEvent e) {
-
-        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -907,7 +1034,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             }
         }
 
-        private void createSphere(Vector3f position, double radius, MaterialType materialType, Vector3f albedo, double ior) {
+        private GeometricObject createGeometricObject(Vector3f position, double radius, MaterialType materialType, Vector3f albedo, double ior) {
             Sphere sphere = new Sphere(position, radius);
             addSceneObject(sphere, materialType, albedo, ior);
         }
@@ -922,12 +1049,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         private TextField textFieldXMax = new TextField("0.2",10);
         private TextField textFieldYMax = new TextField("0.2",10);
         private TextField textFieldZMax = new TextField("0.2",10);
-        private TextField textFieldXTranslation = new TextField("0", 10);
-        private TextField textFieldYTranslation = new TextField("0", 10);
-        private TextField textFieldZTranslation = new TextField("-4", 10);
-        private TextField textFieldXRotation = new TextField("0", 10);
-        private TextField textFieldYRotation = new TextField("0", 10);
-        private TextField textFieldZRotation = new TextField("0", 10);
+
 
         public AddBoxFrame(Scene scene) {
             super(scene);
@@ -1119,13 +1241,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     //I add a little shift in x direction to translation
                     //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
                     //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
-                    Vector3f translation = new Vector3f(Double.parseDouble(textFieldXTranslation.getText())+10e-6,
-                            Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
-                    Vector3f rotation = new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
-                            Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
-                    String albedoVal = albedoTextField.getText().substring(1, albedoTextField.getText().length()-1);
-                    String[] albedoA = albedoVal.split(",");
-                    Vector3f albedo = new Vector3f(Arrays.stream(albedoA).mapToDouble((x) -> Double.parseDouble(x)).toArray());
+                    Vector3f translation = getTranslation();
+                    Vector3f rotation = getRotation();
+                    Vector3f albedo = extractVectorFromTextField(albedoTextField);
                     albedo = albedo.mul((double)1/255);
                     double ior = Double.parseDouble(iorText.getText());
                     createBox(min, max, translation, rotation, mType, albedo, ior);
@@ -1146,6 +1264,132 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             Matrix4D objectToWorld = new Matrix4D(rotationMatrix, translation);
             PhysicalBox box = new PhysicalBox(min, max, objectToWorld);
             triangulateAndAddSceneObject(box, materialType, albedo, ior, -1);
+        }
+
+
+    }
+
+    class AddBezierSurface extends AddObjectFrame {
+
+        private ControlPointsFrame controlPointsFrame = new ControlPointsFrame();
+        private Button buttonCP = new Button("Edit control points");
+
+
+        public AddBezierSurface(Scene scene) {
+
+            super(scene);
+            buttonCP.setActionCommand("edit_cp");
+            buttonCP.addActionListener(this);
+            int gridy = 0;
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridy = gridy++;
+            mainPanel.add(buttonCP, c);
+            addOTWSubPanel(gridy++);
+            addMaterialComboBox(gridy++);
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+            addSendButton(gridy++);
+
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            super.actionPerformed(e);
+            switch (e.getActionCommand()) {
+                case "edit_cp":
+                    controlPointsFrame.setVisible(true);
+                    break;
+                case "create":
+                    double ior = Double.parseDouble(iorText.getText());
+                    Vector3f albedo = extractVectorFromTextField(albedoTextField);
+                    albedo = albedo.mul((double)1/255);
+            }
+        }
+
+        private BezierSurface33 createSurface() {
+            Vector3f[][] cp = new Vector3f[4][4];
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    cp[i][j] = extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
+                }
+            }
+            return new BezierSurface33(cp
+        }
+    }
+
+    class ControlPointsFrame extends Frame implements WindowListener {
+
+        private TextField[][] textFieldsCP = new TextField[4][4];
+        private BasicArrowButton[][] buttonsCP = new BasicArrowButton[4][4];
+
+        public ControlPointsFrame() {
+            addWindowListener(this);
+            this.setSize(1200, 1200);
+            Panel mainPanel = new Panel(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(10, 10, 10, 10);
+
+            Vector3f[][] defaultSampleCP = SampleShapes.getBezierSurfaceSampleCP();
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
+                            ","+defaultSampleCP[i][j].getY()+
+                            ","+defaultSampleCP[j][j].getZ()+"}", 15);
+                    buttonsCP[i][j] = new BasicArrowButton(BasicArrowButton.BOTTOM);
+                    c.gridx=j*2;
+                    c.gridy=i;
+                    mainPanel.add(textFieldsCP[i][j], c);
+                    c.gridx=j*2+1;
+                    mainPanel.add(buttonsCP[i][j], c);
+                }
+            }
+            this.add(mainPanel);
+            this.pack();
+        }
+
+        public BasicArrowButton[][] getButtonsCP() {
+            return buttonsCP;
+        }
+
+        public TextField[][] getTextFieldsCP() {
+            return textFieldsCP;
+        }
+
+        @Override
+        public void windowOpened(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent windowEvent) {
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent windowEvent) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent windowEvent) {
+
         }
 
 

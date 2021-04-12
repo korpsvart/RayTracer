@@ -369,7 +369,7 @@ public class SampleShapes {
         return new BezierPatchesData(numPatches, numCP, patchesCP, cP, otw);
     }
 
-    private static BezierSurface33 getBezierSurfaceSample() {
+    public static BezierSurface33 getBezierSurfaceSample() {
         return new BezierSurface33(new Vector3f[][]{
                 new Vector3f[]{new Vector3f(0, 0, -5),
                         new Vector3f(0, 0.5, -5),
@@ -394,6 +394,33 @@ public class SampleShapes {
                         new Vector3f(0.9, 1.2, -5.8)
                 }
         });
+    }
+
+    public static Vector3f[][] getBezierSurfaceSampleCP() {
+        return new Vector3f[][]{
+                new Vector3f[]{new Vector3f(0, 0, -5),
+                        new Vector3f(0, 0.5, -5),
+                        new Vector3f(0.1, 0.8, -5),
+                        new Vector3f(0, 1, -5),},
+
+                new Vector3f[]{new Vector3f(0.3, 0, -5.5),
+                        new Vector3f(0.3, 0.6, -5.2),
+                        new Vector3f(0.4, 0.7, -5.5),
+                        new Vector3f(0.3, 0.9, -5.5),
+                },
+                new Vector3f[]{
+                        new Vector3f(0.7, 0.4, -5.7),
+                        new Vector3f(0.5, 0.5, -5.3),
+                        new Vector3f(0.7, 0.8, -5.7),
+                        new Vector3f(0.8, 1, -5.5),
+                },
+                new Vector3f[]{
+                        new Vector3f(1, 0.2, -5.7),
+                        new Vector3f(1, 0.4, -5.5),
+                        new Vector3f(1.1, 0.7, -5.3),
+                        new Vector3f(0.9, 1.2, -5.8)
+                }
+        };
     }
 
     public static Sphere getSphereSample(int i) {
