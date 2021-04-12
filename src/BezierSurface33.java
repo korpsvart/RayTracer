@@ -50,6 +50,20 @@ public class BezierSurface33 extends GeometricObject {
         }
     }
 
+    public BezierSurface33(Vector3f controlPoints[][], Matrix4D objectToWorld) {
+        //in case the points are given in a single array of 16 points
+        //(we assume the points are ordered going first left to right
+        //and then bottom up
+        //but in the internal representation the the first row is the first "column" of points
+        this.controlPoints = new Vector3f[4][4];
+        this.objectToWorld = objectToWorld;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                this.controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
+            }
+        }
+    }
+
 
     public Vector3f evaluate(double u, double v) {
         //This version is based on the fact

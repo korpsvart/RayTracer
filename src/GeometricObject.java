@@ -11,6 +11,7 @@ public abstract class GeometricObject {
      */
 
     protected Matrix4D objectToWorld = null;
+    protected boolean triangulated = true;
     private boolean useBVH = false;//set to true if you wish to use bvh to accelerate intersection
     //1)do not use bvh acceleration with plane
     //2)it's not recommended for simple object, such as spheres
@@ -22,6 +23,7 @@ public abstract class GeometricObject {
     public boolean isUseBVH() {
         return useBVH;
     }
+
 
     public Matrix4D getObjectToWorld() {
         if (objectToWorld == null) {
@@ -104,6 +106,7 @@ public abstract class GeometricObject {
         return BoundingVolume.createNullBoundingvolume();
     }
 
-
-
+    public boolean isTriangulated() {
+        return triangulated;
+    }
 }

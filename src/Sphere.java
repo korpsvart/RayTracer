@@ -8,6 +8,7 @@ public class Sphere extends GeometricObject {
 
 
     public Sphere(Vector3f centre, double radius) {
+        this.triangulated = false;
         this.centre = centre;
         this.radius = radius;
 

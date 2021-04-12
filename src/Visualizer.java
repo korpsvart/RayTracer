@@ -100,6 +100,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
+    public static Vector3f extractVectorFromTextField(TextField textField) {
+        String vectorVal = textField.getText().substring(1, textField.getText().length()-1);
+        String[] vectorA = vectorVal.split(",");
+        return new Vector3f(Arrays.stream(vectorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
+    }
+
+    public static String extractTextFromVector(Vector3f v) {
+        return "{"+v.getX()+","+v.getY()+","+v.getZ()+"}";
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand()=="add_sphere") {
@@ -523,16 +534,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Panel mainPanel;
         protected int materialSubPanelGridy;
         protected Panel albedoSubPanel;
-        protected Panel otwSubPanel = createOTWSubPanel();
-        protected Panel transparentSubPanel;
-        protected Color currentColor = Color.white;
-        protected JComboBox materialComboBox;
         protected TextField textFieldXTranslation = new TextField("0", 10);
         protected TextField textFieldYTranslation = new TextField("0", 10);
         protected TextField textFieldZTranslation = new TextField("-4", 10);
         protected TextField textFieldXRotation = new TextField("0", 10);
         protected TextField textFieldYRotation = new TextField("0", 10);
         protected TextField textFieldZRotation = new TextField("0", 10);
+        protected Panel otwSubPanel = createOTWSubPanel();
+        protected Panel transparentSubPanel;
+        protected Color currentColor = Color.white;
+        protected JComboBox materialComboBox;
+        protected int divs = 12;
 
         public AddObjectFrame(Scene scene) {
 
@@ -567,11 +579,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         }
 
-        protected Vector3f extractVectorFromTextField(TextField textField) {
-            String vectorVal = textField.getText().substring(1, textField.getText().length()-1);
-            String[] vectorA = vectorVal.split(",");
-            return new Vector3f(Arrays.stream(vectorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
-        }
+
+
+
 
         protected void addOTWSubPanel(int gridy) {
             GridBagConstraints c = new GridBagConstraints();
@@ -581,18 +591,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
         private Panel createOTWSubPanel() {
-            Panel otwSubPanel = new Panel(new GridBagLayout());
+            Panel panel = new Panel(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.HORIZONTAL;
             int gridy = 0;
             JLabel translationLabel = new JLabel("Insert origin (translation to world coordinates)");
             JLabel rotationLabel = new JLabel("Insert rotation around the three main axis");
-            TextField textFieldXTranslation = new TextField("0", 10);
-            TextField textFieldYTranslation = new TextField("0", 10);
-            TextField textFieldZTranslation = new TextField("-4", 10);
-            TextField textFieldXRotation = new TextField("0", 10);
-            TextField textFieldYRotation = new TextField("0", 10);
-            TextField textFieldZRotation = new TextField("0", 10);
             JLabel x = new JLabel("X");
             JLabel y = new JLabel("Y");
             JLabel z = new JLabel("Z");
@@ -608,7 +612,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridwidth = 1;
             c.gridheight = 3;
             c.weightx = 0.6;
-            otwSubPanel.add(translationLabel, c);
+            panel.add(translationLabel, c);
 
             c.insets = new Insets(10, 0, 0, 0);
             c.gridx=1;
@@ -616,23 +620,23 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridwidth=1;
             c.gridheight=1;
             c.weightx=0.2;
-            otwSubPanel.add(x, c);
+            panel.add(x, c);
             c.gridx=2;
-            otwSubPanel.add(textFieldXTranslation, c);
+            panel.add(textFieldXTranslation, c);
 
             c.insets = new Insets(0, 0, 0, 0);
             c.gridy=gridy++;
             c.gridx=1;
-            otwSubPanel.add(y, c);
+            panel.add(y, c);
             c.gridx=2;
-            otwSubPanel.add(textFieldYTranslation, c);
+            panel.add(textFieldYTranslation, c);
 
             c.gridy=gridy++;
             c.gridx=1;
-            otwSubPanel.add(z, c);
+            panel.add(z, c);
             c.gridx=2;
             c.insets = new Insets(0, 0, 10, 0);
-            otwSubPanel.add(textFieldZTranslation, c);
+            panel.add(textFieldZTranslation, c);
 
             //rotation
             c.insets = new Insets(10, 0, 10, 0);
@@ -641,7 +645,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridwidth = 1;
             c.gridheight = 3;
             c.weightx = 0.6;
-            otwSubPanel.add(rotationLabel, c);
+            panel.add(rotationLabel, c);
 
             c.insets = new Insets(10, 0, 0, 0);
             c.gridx=1;
@@ -649,24 +653,24 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridwidth=1;
             c.gridheight=1;
             c.weightx=0.2;
-            otwSubPanel.add(x2, c);
+            panel.add(x2, c);
             c.gridx=2;
-            otwSubPanel.add(textFieldXRotation, c);
+            panel.add(textFieldXRotation, c);
 
             c.insets = new Insets(0, 0, 0, 0);
             c.gridy=gridy++;
             c.gridx=1;
-            otwSubPanel.add(y2, c);
+            panel.add(y2, c);
             c.gridx=2;
-            otwSubPanel.add(textFieldYRotation, c);
+            panel.add(textFieldYRotation, c);
 
             c.gridy=gridy++;
             c.gridx=1;
-            otwSubPanel.add(z2, c);
+            panel.add(z2, c);
             c.gridx=2;
             c.insets = new Insets(0, 0, 10, 0);
-            otwSubPanel.add(textFieldZRotation, c);
-            return otwSubPanel;
+            panel.add(textFieldZRotation, c);
+            return panel;
         }
 
         private Panel createChooseRGBPanel() {
@@ -846,10 +850,28 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                             addMaterialPropertySubPanel(MaterialType.MIRRORLIKE, materialSubPanelGridy);
                     }
                     break;
+                case "create":
+                    MaterialType mType = materialsMap.get(materialComboBox.getSelectedItem());
+                    String albedoVal = albedoTextField.getText().substring(1, albedoTextField.getText().length()-1);
+                    String[] albedoA = albedoVal.split(",");
+                    Vector3f albedo = new Vector3f(Arrays.stream(albedoA).mapToDouble((x) -> Double.parseDouble(x)).toArray());
+                    albedo = albedo.mul((double)1/255);
+                    double ior = Double.parseDouble(iorText.getText());
+                    GeometricObject geometricObject = createGeometricObject();
+                    if (geometricObject.isTriangulated()) {
+                        triangulateAndAddSceneObject(geometricObject, mType, albedo, ior, divs);
+                    } else {
+                        addSceneObject(geometricObject, mType, albedo, ior);
+                    }
+                    renderScene(this.scene);
+                    break;
             }
         }
 
         protected Vector3f getTranslation() {
+            //I add a little shift in x direction to translation
+            //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
+            //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
             return new Vector3f(Double.parseDouble(textFieldXTranslation.getText())+10e-6,
                     Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
         }
@@ -857,6 +879,19 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Vector3f getRotation() {
             return new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
                     Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
+        }
+
+        protected Matrix4D getOTWMatrix() {
+            Vector3f translation = getTranslation();
+            Vector3f rotation = getRotation();
+            double anglex = rotation.getX();
+            double angley = rotation.getY();
+            double anglez = rotation.getZ();
+            Matrix3D rotationMatrix = Matrix3D.rotationAroundzAxis(anglez).matrixMult(
+                    Matrix3D.rotationAroundyAxis(angley)
+            ).matrixMult(Matrix3D.rotationAroundxAxis(anglex));
+            Matrix4D objectToWorld = new Matrix4D(rotationMatrix, translation);
+            return objectToWorld;
         }
 
         @Override
@@ -1014,29 +1049,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
 
 
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            super.actionPerformed(e);
-            switch(e.getActionCommand()){
-                case "create":
-                    MaterialType mType = materialsMap.get(materialComboBox.getSelectedItem());
-                    Vector3f position = new Vector3f(Double.parseDouble(posX.getText()),
-                            Double.parseDouble(posY.getText()), Double.parseDouble(posZ.getText()));
-                    double radius = Double.parseDouble(textRadius.getText());
-                    String albedoVal = albedoTextField.getText().substring(1, albedoTextField.getText().length()-1);
-                    String[] albedoA = albedoVal.split(",");
-                    Vector3f albedo = new Vector3f(Arrays.stream(albedoA).mapToDouble((x) -> Double.parseDouble(x)).toArray());
-                    albedo = albedo.mul((double)1/255);
-                    double ior = Double.parseDouble(iorText.getText());
-                    createSphere(position,radius,mType,albedo,ior);
-                    renderScene(this.scene);
-            }
-        }
-
-        private GeometricObject createGeometricObject(Vector3f position, double radius, MaterialType materialType, Vector3f albedo, double ior) {
+        protected GeometricObject createGeometricObject() {
+            Vector3f position = new Vector3f(Double.parseDouble(posX.getText()),
+                    Double.parseDouble(posY.getText()), Double.parseDouble(posZ.getText()));
+            double radius = Double.parseDouble(textRadius.getText());
             Sphere sphere = new Sphere(position, radius);
-            addSceneObject(sphere, materialType, albedo, ior);
+            return sphere;
         }
     }
 
@@ -1148,71 +1166,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.insets = new Insets(0, 0, 10, 0);
             mainPanel.add(textFieldZMax, c);
 
-            //translation
-            c.insets = new Insets(10, 0, 10, 0);
-            c.gridy=gridy;
-            c.gridx=0;
-            c.gridwidth = 1;
-            c.gridheight = 3;
-            c.weightx = 0.6;
-            mainPanel.add(translationLabel, c);
-
-            c.insets = new Insets(10, 0, 0, 0);
-            c.gridx=1;
-            c.gridy=gridy++;
-            c.gridwidth=1;
-            c.gridheight=1;
-            c.weightx=0.2;
-            mainPanel.add(x3, c);
-            c.gridx=2;
-            mainPanel.add(textFieldXTranslation, c);
-
-            c.insets = new Insets(0, 0, 0, 0);
-            c.gridy=gridy++;
-            c.gridx=1;
-            mainPanel.add(y3, c);
-            c.gridx=2;
-            mainPanel.add(textFieldYTranslation, c);
-
-            c.gridy=gridy++;
-            c.gridx=1;
-            mainPanel.add(z3, c);
-            c.gridx=2;
-            c.insets = new Insets(0, 0, 10, 0);
-            mainPanel.add(textFieldZTranslation, c);
-
-            //rotation
-            c.insets = new Insets(10, 0, 10, 0);
-            c.gridy=gridy;
-            c.gridx=0;
-            c.gridwidth = 1;
-            c.gridheight = 3;
-            c.weightx = 0.6;
-            mainPanel.add(rotationLabel, c);
-
-            c.insets = new Insets(10, 0, 0, 0);
-            c.gridx=1;
-            c.gridy=gridy++;
-            c.gridwidth=1;
-            c.gridheight=1;
-            c.weightx=0.2;
-            mainPanel.add(x4, c);
-            c.gridx=2;
-            mainPanel.add(textFieldXRotation, c);
-
-            c.insets = new Insets(0, 0, 0, 0);
-            c.gridy=gridy++;
-            c.gridx=1;
-            mainPanel.add(y4, c);
-            c.gridx=2;
-            mainPanel.add(textFieldYRotation, c);
-
-            c.gridy=gridy++;
-            c.gridx=1;
-            mainPanel.add(z4, c);
-            c.gridx=2;
-            c.insets = new Insets(0, 0, 10, 0);
-            mainPanel.add(textFieldZRotation, c);
+            addOTWSubPanel(gridy++);
 
             c.insets = new Insets(10, 0, 10, 0);
             c.gridwidth=1;
@@ -1228,42 +1182,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         }
 
+
         @Override
-        public void actionPerformed(ActionEvent e) {
-            super.actionPerformed(e);
-            switch (e.getActionCommand()) {
-                case "create":
-                    MaterialType mType = materialsMap.get(materialComboBox.getSelectedItem());
-                    Vector3f min = new Vector3f(Double.parseDouble(textFieldXMin.getText()),
-                            Double.parseDouble(textFieldYMin.getText()), Double.parseDouble(textFieldZMin.getText()));
-                    Vector3f max = new Vector3f(Double.parseDouble(textFieldXMax.getText()),
-                            Double.parseDouble(textFieldYMax.getText()), Double.parseDouble(textFieldZMax.getText()));
-                    //I add a little shift in x direction to translation
-                    //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
-                    //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
-                    Vector3f translation = getTranslation();
-                    Vector3f rotation = getRotation();
-                    Vector3f albedo = extractVectorFromTextField(albedoTextField);
-                    albedo = albedo.mul((double)1/255);
-                    double ior = Double.parseDouble(iorText.getText());
-                    createBox(min, max, translation, rotation, mType, albedo, ior);
-                    renderScene(this.scene);
-                    break;
-            }
-
-        }
-
-        private void createBox(Vector3f min, Vector3f max, Vector3f translation, Vector3f rotation, MaterialType materialType,
-                               Vector3f albedo, double ior) {
-            double anglex = rotation.getX();
-            double angley = rotation.getY();
-            double anglez = rotation.getZ();
-            Matrix3D rotationMatrix = Matrix3D.rotationAroundzAxis(anglez).matrixMult(
-                    Matrix3D.rotationAroundyAxis(angley)
-            ).matrixMult(Matrix3D.rotationAroundxAxis(anglex));
-            Matrix4D objectToWorld = new Matrix4D(rotationMatrix, translation);
-            PhysicalBox box = new PhysicalBox(min, max, objectToWorld);
-            triangulateAndAddSceneObject(box, materialType, albedo, ior, -1);
+        GeometricObject createGeometricObject() {
+            Vector3f min = new Vector3f(Double.parseDouble(textFieldXMin.getText()),
+                    Double.parseDouble(textFieldYMin.getText()), Double.parseDouble(textFieldZMin.getText()));
+            Vector3f max = new Vector3f(Double.parseDouble(textFieldXMax.getText()),
+                    Double.parseDouble(textFieldYMax.getText()), Double.parseDouble(textFieldZMax.getText()));
+            PhysicalBox box = new PhysicalBox(min, max, getOTWMatrix());
+            return box;
         }
 
 
@@ -1278,7 +1205,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         public AddBezierSurface(Scene scene) {
 
             super(scene);
-            buttonCP.setActionCommand("edit_cp");
+            buttonCP.setActionCommand("open_edit_cp");
             buttonCP.addActionListener(this);
             int gridy = 0;
             GridBagConstraints c = new GridBagConstraints();
@@ -1296,28 +1223,28 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
             switch (e.getActionCommand()) {
-                case "edit_cp":
+                case "open_edit_cp":
                     controlPointsFrame.setVisible(true);
                     break;
-                case "create":
-                    double ior = Double.parseDouble(iorText.getText());
-                    Vector3f albedo = extractVectorFromTextField(albedoTextField);
-                    albedo = albedo.mul((double)1/255);
+
             }
         }
 
-        private BezierSurface33 createSurface() {
+
+        @Override
+        GeometricObject createGeometricObject() {
             Vector3f[][] cp = new Vector3f[4][4];
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     cp[i][j] = extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
                 }
             }
-            return new BezierSurface33(cp
+            return new BezierSurface33(cp, getOTWMatrix());
         }
+
     }
 
-    class ControlPointsFrame extends Frame implements WindowListener {
+    class ControlPointsFrame extends Frame implements WindowListener, ActionListener {
 
         private TextField[][] textFieldsCP = new TextField[4][4];
         private BasicArrowButton[][] buttonsCP = new BasicArrowButton[4][4];
@@ -1336,7 +1263,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
                             ","+defaultSampleCP[i][j].getY()+
                             ","+defaultSampleCP[j][j].getZ()+"}", 15);
+                    textFieldsCP[i][j].setEditable(false);
                     buttonsCP[i][j] = new BasicArrowButton(BasicArrowButton.BOTTOM);
+                    buttonsCP[i][j].addActionListener(this);
+                    buttonsCP[i][j].setName(i+","+j);
+                    buttonsCP[i][j].setActionCommand("edit_cp");
                     c.gridx=j*2;
                     c.gridy=i;
                     mainPanel.add(textFieldsCP[i][j], c);
@@ -1392,7 +1323,117 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         }
 
+        public void setCP(int i, int j, Vector3f data) {
+            textFieldsCP[i][j].setText(extractTextFromVector(data));
+        }
 
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()) {
+                case "edit_cp":
+                    BasicArrowButton button = (BasicArrowButton) e.getSource();
+                    String[] pos = button.getName().split(",");
+                    int i = Integer.parseInt(pos[0]);
+                    int j = Integer.parseInt(pos[1]);
+                    Vector3f currentData = extractVectorFromTextField(textFieldsCP[i][j]);
+                    VectorEditFrame vectorEditFrame = new VectorEditFrame(i, j, currentData,this);
+
+            }
+        }
+
+
+    }
+
+    class VectorEditFrame extends Frame implements WindowListener {
+
+        protected JLabel x = new JLabel("x");
+        protected JLabel y = new JLabel("y");
+        protected JLabel z = new JLabel("z");
+        protected TextField textFieldX;
+        protected TextField textFieldY;
+        protected TextField textFieldZ;
+        private ControlPointsFrame mainFrame;
+        int i, j;
+
+        public VectorEditFrame(int i, int j, Vector3f data, ControlPointsFrame mainFrame) {
+            addWindowListener(this);
+            this.i = i;
+            this.j = j;
+            textFieldX = new TextField(Double.toString(data.getX()), 10);
+            textFieldY = new TextField(Double.toString(data.getY()), 10);
+            textFieldZ = new TextField(Double.toString(data.getZ()), 10);
+            this.mainFrame = mainFrame;
+
+            Panel mainPanel = new Panel(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+
+            int gridy=0;
+
+            c.insets = new Insets(20, 20, 20, 20);
+            c.gridy = gridy++;
+            mainPanel.add(x, c);
+            c.gridx=1;
+            mainPanel.add(textFieldX, c);
+
+            c.gridy = gridy++;
+            c.gridx=0;
+            mainPanel.add(y, c);
+            c.gridx=1;
+            mainPanel.add(textFieldY, c);
+
+            c.gridy = gridy++;
+            c.gridx=0;
+            mainPanel.add(z, c);
+            c.gridx=1;
+            mainPanel.add(textFieldZ, c);
+
+
+            this.add(mainPanel);
+            this.pack();
+            setVisible(true);
+        }
+
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            Double x = Double.parseDouble(textFieldX.getText());
+            Double y = Double.parseDouble(textFieldY.getText());
+            Double z = Double.parseDouble(textFieldZ.getText());
+            mainFrame.setCP(i, j, new Vector3f(x, y, z));
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
     }
 
 
