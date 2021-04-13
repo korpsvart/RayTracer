@@ -432,44 +432,44 @@ public class SampleShapes {
             int q = 3;
             Vector3f[][] controlPointsSurface = {
                     {
-                            new Vector3f(-1, -1, -4),
-                            new Vector3f(-0.9, -0.8, -4.2),
-                            new Vector3f(-0.8, -0.6, -4.2),
-                            new Vector3f(-0.8, -0.2, -4.3),
-                            new Vector3f(-0.7, 0, -4.2)
+                            new Vector3f(-1, -1, 0),
+                            new Vector3f(-0.9, -0.8, -0.2),
+                            new Vector3f(-0.8, -0.6, -0.2),
+                            new Vector3f(-0.8, -0.2, -0.3),
+                            new Vector3f(-0.7, 0, -0.2)
                     },
                     {
-                            new Vector3f(-0.5, -1.2, -4.5),
-                            new Vector3f(-0.4, -0.9, -4.6),
-                            new Vector3f(-0.43, -0.7, -4.6),
-                            new Vector3f(-0.38, -0.3, -4.5),
-                            new Vector3f(-0.34, -0.1, -4.7)
+                            new Vector3f(-0.5, -1.2, -0.5),
+                            new Vector3f(-0.4, -0.9, -0.6),
+                            new Vector3f(-0.43, -0.7, -0.6),
+                            new Vector3f(-0.38, -0.3, -0.5),
+                            new Vector3f(-0.34, -0.1, -0.7)
                     },
                     {
-                            new Vector3f(-0.2, -1, -4.1),
-                            new Vector3f(-0.25, -0.8, -4.9),
-                            new Vector3f(-0.27, -0.5, -4.7),
-                            new Vector3f(-0.21, -0.4, -4.9),
-                            new Vector3f(-0.18, -0.2, -5)
+                            new Vector3f(-0.2, -1, -0.1),
+                            new Vector3f(-0.25, -0.8, -0.9),
+                            new Vector3f(-0.27, -0.5, -0.7),
+                            new Vector3f(-0.21, -0.4, -0.9),
+                            new Vector3f(-0.18, -0.2, -1)
                     },
                     {
-                            new Vector3f(0, -1, -4.5),
-                            new Vector3f(0.1, -0.7, -4.6),
-                            new Vector3f(-0.1, -0.5, -4.2),
-                            new Vector3f(0, -0.2, -4.1),
-                            new Vector3f(0.1, 0, -4.3)
+                            new Vector3f(0, -1, -0.5),
+                            new Vector3f(0.1, -0.7, -0.6),
+                            new Vector3f(-0.1, -0.5, -0.2),
+                            new Vector3f(0, -0.2, -0.1),
+                            new Vector3f(0.1, 0, -0.3)
                     },
                     {
-                            new Vector3f(0.3, -1.3, -4.2),
-                            new Vector3f(0.4, -1, -4.8),
-                            new Vector3f(0.4, -0.8, -4.3),
-                            new Vector3f(0.6, -0.5, -4.0),
-                            new Vector3f(0.5, -0.2, -4.1)
+                            new Vector3f(0.3, -1.3, -0.2),
+                            new Vector3f(0.4, -1, -0.8),
+                            new Vector3f(0.4, -0.8, -0.3),
+                            new Vector3f(0.6, -0.5, -0.0),
+                            new Vector3f(0.5, -0.2, -0.1)
                     },
             };
             double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
             double[] knotsV = knotsU.clone();
-            Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -1));
+            Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -5));
             return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
     }
 

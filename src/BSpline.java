@@ -21,7 +21,16 @@ public class BSpline {
 
 
     public BSpline(Vector3f[] controlPoints, double[] knots, int degree) {
-        //check that length(controlPoints)=length(knots)-n+1
+        //check that number of control points in each direction >= (degree+1)
+        //Note that if we have equality, then the bspline becomes a bezier curve
+        if (controlPoints.length <= degree) {
+            throw new IllegalArgumentException("number of control points should be at least equal to degree+1");
+        }
+//        } else if (knots.length != (controlPoints.length + degree +1)) {
+//            //check that length(knots)=length(controlPoints)+degree+1
+//            throw new IllegalArgumentException("equality length(knots)=length(controlPoints)+degree+1 for clamped" +
+//                    "B-splines is not satisfied");
+//        }
         this.controlPoints = controlPoints;
         this.knots = knots;
         this.degree = degree;
@@ -499,6 +508,7 @@ public class BSpline {
         interpolant.t = t;
         return interpolant;
     }
+
 
 
 

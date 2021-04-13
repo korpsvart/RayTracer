@@ -1,5 +1,7 @@
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.*;
@@ -123,6 +125,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddDistantLightFrame addDistantLightFrame = new AddDistantLightFrame(this.scene);
         } else if (e.getActionCommand()=="add_bezSurf") {
             AddBezierSurface addBezierSurface = new AddBezierSurface(this.scene);
+        } else if (e.getActionCommand()=="add_bSplineSurf")  {
+            AddBSplineSurfaceFrame addBSplineSurfaceFrame = new AddBSplineSurfaceFrame(this.scene);
         }
 
     }
@@ -588,6 +592,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridy = gridy;
             mainPanel.add(otwSubPanel, c);
+        }
+
+        protected void setDefaultOTW(Vector3f translation, Vector3f rotation) {
+            textFieldXTranslation.setText(Double.toString(translation.getX()));
+            textFieldYTranslation.setText(Double.toString(translation.getY()));
+            textFieldZTranslation.setText(Double.toString(translation.getZ()));
+            textFieldXRotation.setText(Double.toString(rotation.getX()));
+            textFieldYRotation.setText(Double.toString(rotation.getX()));
+            textFieldZRotation.setText(Double.toString(rotation.getX()));
         }
 
         private Panel createOTWSubPanel() {
@@ -1198,7 +1211,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     class AddBezierSurface extends AddObjectFrame {
 
-        private ControlPointsFrame controlPointsFrame = new ControlPointsFrame();
+        private ControlPointsFrame controlPointsFrame = new ControlPointsFrame(4, 4, SampleShapes.getBezierSurfaceSampleCP());
         private Button buttonCP = new Button("Edit control points");
 
 
@@ -1246,20 +1259,20 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     class ControlPointsFrame extends Frame implements WindowListener, ActionListener {
 
-        private TextField[][] textFieldsCP = new TextField[4][4];
-        private BasicArrowButton[][] buttonsCP = new BasicArrowButton[4][4];
+        private TextField[][] textFieldsCP;
+        private BasicArrowButton[][] buttonsCP;
 
-        public ControlPointsFrame() {
+        public ControlPointsFrame(int m, int n, Vector3f[][] defaultSampleCP) {
             addWindowListener(this);
+            textFieldsCP = new TextField[m][n];
+            buttonsCP = new BasicArrowButton[m][n];
             this.setSize(1200, 1200);
             Panel mainPanel = new Panel(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.HORIZONTAL;
             c.insets = new Insets(10, 10, 10, 10);
-
-            Vector3f[][] defaultSampleCP = SampleShapes.getBezierSurfaceSampleCP();
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
                     textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
                             ","+defaultSampleCP[i][j].getY()+
                             ","+defaultSampleCP[j][j].getZ()+"}", 15);
@@ -1434,6 +1447,229 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         public void windowDeactivated(WindowEvent e) {
 
         }
+    }
+
+
+    class AddBSplineSurfaceFrame extends AddObjectFrame implements ChangeListener {
+
+        private ControlPointsFrame controlPointsFrame;
+        private int p,q; //degrees in both directions. Default is 3
+        private int m,n; //number of control points in both directions
+        private int s; //number of knots for u parameter
+        private int t; //number of knots for v parameter
+        private double[] knotsU;
+        private double[] knotsV;
+        private JSpinner spinnerP;
+        private JSpinner spinnerQ;
+        private JSpinner spinnerM;
+        private JSpinner spinnerN;
+        private JLabel jLabelP = new JLabel("Degree for u parameter");
+        private JLabel jLabelQ = new JLabel("Degree for v parameter");
+        private JLabel jLabelM = new JLabel("Number of control points for u parameter");
+        private JLabel jLabelN = new JLabel("Number of control points for v parameter");
+        private Button buttonCP = new Button("Edit control points");
+        private Button buttonKnotsU = new Button("Edit knots for u parameter");
+        private Button buttonKnotsV = new Button("Edit knots for v parameter");
+
+
+
+        public AddBSplineSurfaceFrame(Scene scene) {
+            super(scene);
+            initializeDataWithSample();
+            buttonCP.setActionCommand("open_edit_cp");
+            buttonCP.addActionListener(this);
+            buttonKnotsU.setActionCommand("open_edit_knots_u");
+            buttonKnotsU.addActionListener(this);
+            buttonKnotsV.setActionCommand("open_edit_knots_v");
+            buttonKnotsV.addActionListener(this);
+            spinnerP.addChangeListener(this);
+            spinnerQ.addChangeListener(this);
+            spinnerM.addChangeListener(this);
+            spinnerN.addChangeListener(this);
+            int gridy=0;
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(10, 10, 10, 10);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelP, c);
+            c.gridx=1;
+            mainPanel.add(spinnerP, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelQ, c);
+            c.gridx=1;
+            mainPanel.add(spinnerQ, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelM, c);
+            c.gridx=1;
+            mainPanel.add(spinnerM, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelN, c);
+            c.gridx=1;
+            mainPanel.add(spinnerN, c);
+
+
+            c.gridy=gridy++;
+            c.gridx=0;
+            mainPanel.add(buttonCP,c);
+            c.gridx=1;
+            mainPanel.add(buttonKnotsU,c);
+            c.gridx=2;
+            mainPanel.add(buttonKnotsV,c);
+
+
+            addOTWSubPanel(gridy++);
+            addMaterialComboBox(gridy++);
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+            addSendButton(gridy++);
+
+        }
+
+        @Override
+        GeometricObject createGeometricObject() {
+            int m = (int)spinnerM.getValue();
+            int n = (int)spinnerN.getValue();
+            int p = (int)spinnerP.getValue();
+            int q = (int)spinnerQ.getValue();
+            Vector3f[][] cp = new Vector3f[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    cp[i][j] = extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
+                }
+            }
+            return new BSurface(cp, knotsU, knotsV, p, q, getOTWMatrix());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            super.actionPerformed(e);
+            switch (e.getActionCommand()) {
+                case "open_edit_cp":
+                    controlPointsFrame.setVisible(true);
+                    break;
+                case "open_edit_knots_u":
+                    KnotsEditFrame knotsEditFrame = new KnotsEditFrame(p, knotsU);
+                    break;
+                case "open_edit_knots_v":
+                    KnotsEditFrame knotsEditFrame1 = new KnotsEditFrame(q, knotsV);
+                    break;
+            }
+        }
+
+        private void initializeDataWithSample() {
+            BSurface sample = SampleShapes.getBSplineSample1();
+            Vector3f[][] sampleCP = sample.getControlPoints();
+            Matrix4D sampleOTW = sample.getObjectToWorld();
+            this.m = sampleCP.length;
+            this.n = sampleCP[0].length;
+            this.knotsU = sample.getKnotsU();
+            this.knotsV = sample.getKnotsV();
+            controlPointsFrame = new ControlPointsFrame(m, n, sample.getControlPoints());
+            this.p = sample.getP();
+            this.q = sample.getQ();
+            this.s = m+p+1;
+            this.t = n+q+1;
+
+            //update spinners
+            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 10, 1);
+            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 10, 1);
+            SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
+            SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
+            spinnerM = new JSpinner(spinnerModelM);
+            spinnerN = new JSpinner(spinnerModelN);
+            spinnerP = new JSpinner(spinnerModelP);
+            spinnerQ = new JSpinner(spinnerModelQ);
+
+            //update otw
+            //For now I'm not considering rotation
+            //since I should implement a method that translates
+            //rotation matrix back to rotation angle around each axis
+            setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+
+        }
+    }
+
+    class KnotsEditFrame extends Frame implements WindowListener {
+
+        private int l; //number of editable knots (equal to number of knots - degree*2)
+        private double[] knots;
+        private int degree;
+        private TextField[] textFields;
+        private Panel mainPanel = new Panel(new GridBagLayout());
+
+        public KnotsEditFrame(int degree, double[] knots) {
+            addWindowListener(this);
+            int knotsLength = knots.length;
+            this.degree = degree;
+            this.knots = knots;
+            l = knotsLength - 2*degree;
+            textFields = new TextField[l];
+            GridBagConstraints c = new GridBagConstraints();
+            c.insets = new Insets(10, 10, 10, 10);
+            int gridy = 0;
+            for (int i = 0; i < l; i++, gridy++) {
+                c.gridy = gridy;
+                textFields[i] = new TextField(Double.toString(knots[i+degree]));
+                mainPanel.add(textFields[i], c);
+            }
+            textFields[0].setEditable(false);
+            textFields[l-1].setEditable(false);
+            this.add(mainPanel);
+            this.pack();
+            this.setSize(300, 50*l);
+            setVisible(true);
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            for (int i = 0; i < l; i++) {
+                knots[i+degree] = Double.parseDouble(textFields[i].getText());
+            }
+            setVisible(false);
+            this.dispose();
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
+
     }
 
 

@@ -13,8 +13,11 @@ public class BSurface extends GeometricObject {
         //check that number of control points in each direction >= (degree+1)
         //Note that if we have equality, then the bspline becomes a bezier curve
         //If equality is satisfied in both directions, then we have a bezier surface
-        //check that fundamental identities are satisfied
-        if (knotsU.length != (controlPoints.length + p +1) || knotsV.length != (controlPoints[0].length + q +1)) {
+        //check also that fundamental identities are satisfied
+        if (controlPoints.length <= p  || controlPoints[0].length <= q) {
+            throw new IllegalArgumentException("number of control points should be at least equal to degree+1");
+        }
+        else if (knotsU.length != (controlPoints.length + p +1) || knotsV.length != (controlPoints[0].length + q +1)) {
             throw new IllegalArgumentException("fundamental identities between knots number, control points number and degree is not satisfied in one or both directions");
         }
         this.objectToWorld = objectToWorld;
@@ -261,5 +264,30 @@ public class BSurface extends GeometricObject {
         //build surface
         return new BSurface(dataPoints, u, v, p, q, objectToWorld);
 
+    }
+
+    public double[] getKnotsU() {
+        return knotsU;
+    }
+
+    public double[] getKnotsV() {
+        return knotsV;
+    }
+
+    public int getP() {
+        return p;
+    }
+
+    public int getQ() {
+        return q;
+    }
+
+    public Vector3f[][] getControlPoints() {
+        return controlPoints;
+    }
+
+    @Override
+    public Matrix4D getObjectToWorld() {
+        return super.getObjectToWorld();
     }
 }
