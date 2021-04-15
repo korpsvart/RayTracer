@@ -1,10 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Presentazione</title>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/uikit.min.css" />
+    <script src="js/uikit.min.js"></script>
+    <script src="js/uikit-icons.min.js"></script>
 </head>
 <body>
+<div class="uk-container uk-container-small">
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <ul class="uk-navbar-nav">
+                <li class="uk-active"><a href=""></a></li>
+                <li class="uk-parent"><a href=""></a></li>
+                <li class="uk-position-left"><a href="index.html">Presentazione</a></li>
+                <li class="uk-position-center"><a href="theory.html">Teoria</a></li>
+                <li class="uk-position-right"><a href="download.html">Download</a></li>
+            </ul>
+        </div>
+    </nav>
+    <h1 class="uk-heading-large uk-heading-divider">Raytracing</h1>
+    <p>Il ray tracing è una tecnica di rendering in grado di produrre immagini virtuali con un elevato livello di realismo,
+        pur basandosi su un principio molto semplice. L'idea è quella di seguire il percorso della luce all'interno della scena,
+        che parte da una sorgente luminosa e interagisce con l'ambiente circostante
+        (attraverso fenomeni fisici come rifrazione, riflessione, diffusione....)
+        prima di raggiungere il nostro occhio, rendendo quindi visibili gli oggetti.
+        <br>
+        In realtà, a livello computazionale è molto più efficiente seguire questo percorso in direzione opposta, immaginando
+        che il raggio di luce parta dal nostro occhio, poichè solo una piccola parte dei raggi emessi da una sorgente luminosa
+        raggiunge effettivamente l'occhio.
+        Questo approccio prende in particolare il nome di <b>backward ray tracing</b>.
+        <br>
+        Per creare un immagine digitale 2D formata da pixel, un raggio di questo tipo (detto <b>primary </b> o <b>view ray</b>) viene
+        creato per ciascuno dei pixel. Se tale raggio interseca (<b><i>visibility problem</i></b>) un oggetto della scena, è possibile quindi calcolare
+        l'illuminazione di tale oggetto nel punto di intersezione (procedimento che prende il nome di <b>shading</b>) ed assegnare
+        il colore risultante al pixel d'interesse.
+        <img src="img/ray_tracing.png">
+    </p>
+    <h1 class="uk-heading-medium uk-heading-divider">Shading</h1>
+    <p>Il modo in cui viene calcolata l'illuminazione di un punto della scena dipende principalmente dalle proprietà del materiale
+    di cui è composto l'oggetto che stiamo guardando, che determinano il modo in cui la luce interagisce con esso.
+        Dal punto di vista della <b>riflessione</b>, possiamo identificare tre tipi di riflessione:
+    <ul class="uk-list uk-list-disc">
+        <li>Rifflessione speculare: si ottiene attraverso la <b>legge della riflessione</b>, che afferma
+            <ul class="uk-list uk-list-bullet">
+                <li>Il raggio di incidenza, la normale alla superficie e il raggio riflesso sono coplanari;</li>
+                <li>L'angolo di incidenza è uguale all'angolo di riflessione.</li>
+            </ul>
+            Questo tipo di riflessione è evidente negli specchi e più in generale nei materiali cosiddetti <i>lucidi</i>.
+        </li>
+        <li>Riflessione diffusa: si ha quando la luce proveniente da una direzione viene riflessa in molteplici direzioni diverse, invece che essere
+            concentrata in un'unica direzione come succede nel caso della riflessione speculare.
+            Questo tipo di riflessione è evidente negli oggetti detti <i>opachi</i>. Per un oggetto opaco ideale, la luce incidente viene riflessa equamente in tutte
+            le direzioni, ne consegue quindi che l'illuminazione percepita non cambia al variare della direzione da cui guardiamo l'oggetto (<i>view direction</i>).
+        </li>
+    </ul>
+    Chiaramente, gli oggetti reali esibiscono sempre una componente di riflessione specualare ed una di riflessione diffusa. Detto ciò, esistono oggetti che possono essere
+    ragionevolmente approssimati come perfettamente opachi o perfettamente lucidi, motivo per cui può avere senso provare a simulare questi materiali "ideali" in un'applicazione.
+    Inoltre, alcuni modelli empirici utilizzati per simulare l'illuminazione di oggetti "non ideali" funzionano combinando opportunamente l'illuminazione che si avrebbe da una superficie
+    perfettamente speculare con quella ottenibile da una perfettamente diffusa (vedi il <b>modello di Phong</b>).
 
+
+    </p>
+</div>
 </body>
 </html>
