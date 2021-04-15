@@ -1266,16 +1266,25 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             addWindowListener(this);
             textFieldsCP = new TextField[m][n];
             buttonsCP = new BasicArrowButton[m][n];
+
             this.setSize(1200, 1200);
             Panel mainPanel = new Panel(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
             c.fill = GridBagConstraints.HORIZONTAL;
             c.insets = new Insets(10, 10, 10, 10);
+            //we use the matrix actual dimensions instead of (m,n)
+            //to handle adding more control points but allowing
+            //to keep using the default control points where they can be used
+            //(i.e. for B-Spline surfaces if we want to "expand" the already existing surface)
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
-                    textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
-                            ","+defaultSampleCP[i][j].getY()+
-                            ","+defaultSampleCP[j][j].getZ()+"}", 15);
+                    if (i < defaultSampleCP.length && j < defaultSampleCP[0].length) {
+                        textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
+                                ","+defaultSampleCP[i][j].getY()+
+                                ","+defaultSampleCP[j][j].getZ()+"}", 15);
+                    } else {
+                        textFieldsCP[i][j] = new TextField("{0,0,0}");
+                    }
                     textFieldsCP[i][j].setEditable(false);
                     buttonsCP[i][j] = new BasicArrowButton(BasicArrowButton.BOTTOM);
                     buttonsCP[i][j].addActionListener(this);
@@ -1564,16 +1573,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
         private void initializeDataWithSample() {
-            BSurface sample = SampleShapes.getBSplineSample1();
-            Vector3f[][] sampleCP = sample.getControlPoints();
-            Matrix4D sampleOTW = sample.getObjectToWorld();
+            Vector3f[][] sampleCP = SampleShapes.getBSplineSample1CP();
+            Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
             this.m = sampleCP.length;
             this.n = sampleCP[0].length;
-            this.knotsU = sample.getKnotsU();
-            this.knotsV = sample.getKnotsV();
-            controlPointsFrame = new ControlPointsFrame(m, n, sample.getControlPoints());
-            this.p = sample.getP();
-            this.q = sample.getQ();
+            this.knotsU = SampleShapes.getBSplineSample1U();
+            this.knotsV = SampleShapes.getBSplineSample1V();
+            controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
+            this.p = SampleShapes.getBSplineSample1P();
+            this.q = SampleShapes.getBSplineSample1Q();
             this.s = m+p+1;
             this.t = n+q+1;
 
@@ -1583,9 +1591,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
             SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
             spinnerM = new JSpinner(spinnerModelM);
+            spinnerM.setName("m");
             spinnerN = new JSpinner(spinnerModelN);
+            spinnerN.setName("n");
             spinnerP = new JSpinner(spinnerModelP);
+            spinnerP.setName("p");
             spinnerQ = new JSpinner(spinnerModelQ);
+            spinnerQ.setName("q");
 
             //update otw
             //For now I'm not considering rotation
@@ -1594,9 +1606,84 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
         }
 
+        private void setControlPointsFrameDefault(int m, int n) {
+            controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSplineSample1CP());
+        }
+
         @Override
         public void stateChanged(ChangeEvent e) {
+            if (e.getSource() instanceof JSpinner) {
+                JSpinner source = (JSpinner)e.getSource();
+                switch (source.getName()) {
+                    case "p":
+                        int pNew = (int)source.getValue();
+                        if (pNew > p) {
+                            p = pNew;
+                            s++;
+                            if (m - pNew < 1) {
+                                m++;
+                                spinnerM.setValue(spinnerM.getNextValue());
+                            }
+                        } else {
+                            p = pNew;
+                            //decreasing degree
+                            s--;
+                        }
+                        knotsU = BSpline.uniformKnots(m, p);
+                        break;
+                    case "q":
+                        int qNew = (int)source.getValue();
+                        if (qNew > q) {
+                            q = qNew;
+                            t++;
+                            if (n - qNew < 1) {
+                                n++;
+                                spinnerN.setValue(spinnerN.getNextValue());
+                            }
+                        } else {
+                            //decreasing degree
+                            q = qNew;
+                            t--;
+                        }
+                        knotsV = BSpline.uniformKnots(n, q);
+                        break;
+                    case "m":
+                        //if m is decreasing, it could be necessary to decrease the degree number
+                        //anyway, we need to adjust the knot vector length
+                        int mNew = (int)source.getValue();
+                        if (mNew < m) {
+                            m = mNew;
+                            s--;
+                            if (mNew - p < 1) {
+                                p--;
+                                spinnerP.setValue(spinnerP.getPreviousValue());
+                            }
+                        } else {
+                            m = mNew;
+                            s++;
+                        }
+                        knotsU = BSpline.uniformKnots(m, p);
+                        setControlPointsFrameDefault(m, n);
+                        break;
+                    case "n":
+                        int nNew = (int)source.getValue();
+                        if (nNew < n) {
+                            n = nNew;
+                            t--;
+                            if (nNew - q < 1) {
+                                q--;
+                                spinnerQ.setValue(spinnerQ.getPreviousValue());
+                            }
+                        } else {
+                            n = nNew;
+                            t++;
+                        }
 
+                        knotsV = BSpline.uniformKnots(n, q);
+                        setControlPointsFrameDefault(m, n);
+                        break;
+                }
+            }
         }
     }
 

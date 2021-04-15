@@ -473,6 +473,66 @@ public class SampleShapes {
             return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
     }
 
+    public static Vector3f[][] getBSplineSample1CP() {
+        return new Vector3f[][] {
+                {
+                        new Vector3f(-1, -1, 0),
+                        new Vector3f(-0.9, -0.8, -0.2),
+                        new Vector3f(-0.8, -0.6, -0.2),
+                        new Vector3f(-0.8, -0.2, -0.3),
+                        new Vector3f(-0.7, 0, -0.2)
+                },
+                {
+                        new Vector3f(-0.5, -1.2, -0.5),
+                        new Vector3f(-0.4, -0.9, -0.6),
+                        new Vector3f(-0.43, -0.7, -0.6),
+                        new Vector3f(-0.38, -0.3, -0.5),
+                        new Vector3f(-0.34, -0.1, -0.7)
+                },
+                {
+                        new Vector3f(-0.2, -1, -0.1),
+                        new Vector3f(-0.25, -0.8, -0.9),
+                        new Vector3f(-0.27, -0.5, -0.7),
+                        new Vector3f(-0.21, -0.4, -0.9),
+                        new Vector3f(-0.18, -0.2, -1)
+                },
+                {
+                        new Vector3f(0, -1, -0.5),
+                        new Vector3f(0.1, -0.7, -0.6),
+                        new Vector3f(-0.1, -0.5, -0.2),
+                        new Vector3f(0, -0.2, -0.1),
+                        new Vector3f(0.1, 0, -0.3)
+                },
+                {
+                        new Vector3f(0.3, -1.3, -0.2),
+                        new Vector3f(0.4, -1, -0.8),
+                        new Vector3f(0.4, -0.8, -0.3),
+                        new Vector3f(0.6, -0.5, -0.0),
+                        new Vector3f(0.5, -0.2, -0.1)
+                },
+        };
+    }
+
+    public static int getBSplineSample1P() {
+        return 3;
+    }
+
+    public static int getBSplineSample1Q() {
+        return 3;
+    }
+
+    public static double[] getBSplineSample1U() {
+        return new double[]{0, 0, 0, 0, 0.5, 1, 1, 1, 1};
+    }
+
+    public static double[] getBSplineSample1V() {
+        return new double[]{0, 0, 0, 0, 0.5, 1, 1, 1, 1};
+    }
+
+    public static Matrix4D getBSplineSample1OTW() {
+        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -5));
+    }
+
     public static BSurface getInterpolatingSurfaceDonut() {
         //return a B-Spline surface obtained via interpolation of data points
         Vector3f[][] dataPoints = {{new Vector3f(2, 0, 0), new Vector3f(

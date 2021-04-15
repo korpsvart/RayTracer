@@ -451,6 +451,22 @@ public class BSpline {
         return knots;
     }
 
+    public static double[] uniformKnots(int n, int p) {
+        double[] knots = new double[n+p+1];
+        int s = n+p+1;
+        double step = (double)1/(n-p);
+        for(int i = 0; i <= p; i++) {
+            knots[i] = 0;
+        }
+        for(int i = p+1; i < n+1; i++) {
+            knots[i] = knots[i-1]+step;
+        }
+        for(int i = n+1; i < n + p + 1; i++) {
+            knots[i] = 1;
+        }
+        return knots;
+    }
+
 
     public static double[] getSplineBasis(int n, int p, double u, double[] knots) {
         //given u, a vector of m+1 knots (where m satisfies m=n+p+1)
