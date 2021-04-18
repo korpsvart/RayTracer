@@ -1,20 +1,28 @@
-public class BezierPatchesData {
+public class BezierPatchesData extends GeometricObject {
 
     private int numPatches;
     private int numCP;
     private int[][] patchesCP;
     private double[][] cP;
+    private Matrix4D objectToWorldInternal;
     private Matrix4D objectToWorld;
 
 
-    public BezierPatchesData(int numPatches, int numCP, int[][] patchesCP, double[][] cP, Matrix4D objectToWorld) {
+    public BezierPatchesData(int numPatches, int numCP, int[][] patchesCP, double[][] cP, Matrix4D objectToWorldInternal) {
         this.numPatches = numPatches;
         this.numCP = numCP;
         this.patchesCP = patchesCP;
         this.cP = cP;
+        this.objectToWorldInternal = objectToWorldInternal;
+    }
+
+    public void setObjectToWorld(Matrix4D objectToWorld) {
         this.objectToWorld = objectToWorld;
     }
 
+    public Matrix4D getObjectToWorld() {
+        return objectToWorld;
+    }
 
     public static Matrix4D getTeapotCTW() {
         //TODO: delete this
@@ -35,10 +43,20 @@ public class BezierPatchesData {
             for (int j = 0; j < 16; j++) {
                 controlPoints[j] = new Vector3f(cP[patchesCP[i][j]-1]);
             }
-            BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorld);
+            BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorldInternal);
             patches[i] = bSurface;
         }
         return patches;
     }
 
+    @Override
+    public TriangleMesh triangulate(int divs) {
+        BezierSurface33[] surfaces = getSurfaces();
+        TriangleMesh[] meshes = new TriangleMesh[surfaces.length];
+        for (int i = 0; i < meshes.length; i++) {
+            meshes[i] = surfaces[i].affineTransform(objectToWorld).triangulate(divs);
+        }
+        TriangleMesh merged = TriangleMesh.merge(meshes);
+        return merged;
+    }
 }

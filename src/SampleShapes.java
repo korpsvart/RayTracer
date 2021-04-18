@@ -360,13 +360,16 @@ public class SampleShapes {
                 {270, 270, 270, 270, 291, 298, 299, 300, 288, 295, 296, 297, 285, 292, 293, 294},
                 {270, 270, 270, 270, 300, 305, 306, 279, 297, 303, 304, 275, 294, 301, 302, 271}
         };
-        Matrix4D otw = new Matrix4D(new double[][]{
+        Matrix4D otw_internal = new Matrix4D(new double[][]{
                 {-0.3, 0, 0, 0},
                 {0, 0, 0.3, 0},
-                {0, 0.3, 0, -5},
+                {0, 0.3, 0, 0},
                 {0, 0, 0, 1}
         });
-        return new BezierPatchesData(numPatches, numCP, patchesCP, cP, otw);
+        Matrix4D otw = new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, -5));
+        BezierPatchesData bpd = new BezierPatchesData(numPatches, numCP, patchesCP, cP, otw_internal);
+        bpd.setObjectToWorld(otw);
+        return bpd;
     }
 
     public static BezierSurface33 getBezierSurfaceSample() {

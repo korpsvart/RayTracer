@@ -100,6 +100,38 @@ public class Matrix4D {
         return vTransform;
     }
 
+    public Vector3f[] transformVector(Vector3f[] v) {
+        Vector3f[] transformed = new Vector3f[v.length];
+        for (int i = 0; i < transformed.length; i++) {
+            transformed[i] = transformVector(v[i]);
+        }
+        return transformed;
+    }
+
+    public Vector3f transformVector(double[] v) {
+        Vector3f vector3f = new Vector3f(v);
+        return transformVector(vector3f);
+    }
+
+    public Vector3f[] transformVector(double[][] v) {
+        Vector3f[] result = new Vector3f[v.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = transformVector(v[i]);
+        }
+        return result;
+    }
+
+    public Vector3f[][] transformVector(Vector3f[][] v) {
+        Vector3f[][] transformed = new Vector3f[v.length][v[0].length];
+        for (int i = 0; i < transformed.length; i++) {
+            transformed[i] = transformVector(v[i]);
+        }
+        return transformed;
+    }
+
+
+
+
     public Matrix4D matrixMult(Matrix4D m2) {
         double result[][] = new double[4][4];
         double m2Internal[][] = m2.getmInternal();

@@ -2,6 +2,10 @@ import java.util.Optional;
 
 public class TriangleMesh {
 
+    public TriangleMesh() {
+
+    }
+
     public class Triangle extends GeometricObject {
 
         //Vertices must be given in CCW ordering
@@ -485,6 +489,27 @@ public class TriangleMesh {
 
     public boolean boundingVolumeCheck(Line3d ray) {
         return this.boundingVolume.intersect(ray);
+    }
+
+    public static TriangleMesh merge(TriangleMesh[] meshes) {
+        //merge multiple already existing triangle meshes
+        TriangleMesh result = new TriangleMesh();
+        int numTriangles = 0;
+        for (TriangleMesh mesh :
+                meshes) {
+            numTriangles += mesh.numTriangles;
+        }
+        result.numTriangles = numTriangles;
+        result.triangles = new Triangle[numTriangles];
+        int c = 0, j=0;
+        for (int i = 0; i < meshes.length; i++) {
+            Triangle[] triangles = meshes[i].getTriangles();
+            for (j = 0; j < triangles.length; j++) {
+                result.triangles[j+c] = triangles[j];
+            }
+            c+=j;
+        }
+        return result;
     }
 
 

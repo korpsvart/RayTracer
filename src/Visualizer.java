@@ -129,6 +129,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddBSplineSurfaceFrame addBSplineSurfaceFrame = new AddBSplineSurfaceFrame(this.scene);
         } else if (e.getActionCommand().equals("add_bSplineInterp"))  {
             AddSurfaceInterpolationFrame addSurfaceInterpolationFrame = new AddSurfaceInterpolationFrame(this.scene);
+        } else if (e.getActionCommand().equals("add_teapot")) {
+            AddTeapotFrame addTeapotFrame = new AddTeapotFrame(this.scene);
         }
 
     }
@@ -1946,6 +1948,33 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         private void setControlPointsFrameDefault(int m, int n) {
             controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSurfaceInterpolationSample1CP());
         }
+    }
+
+    class AddTeapotFrame extends AddObjectFrame {
+
+        public AddTeapotFrame(Scene scene) {
+            super(scene);
+            initializeWithTeapotData();
+            int gridy = 0;
+            addOTWSubPanel(gridy++);
+            addMaterialComboBox(gridy++);
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+            addSendButton(gridy++);
+
+        }
+
+        private void initializeWithTeapotData() {
+            BezierPatchesData bpd = SampleShapes.getTeapot();
+            setDefaultOTW(bpd.getObjectToWorld().getC(), new Vector3f(0, 0, 0));
+        }
+
+        @Override
+        GeometricObject createGeometricObject() {
+            BezierPatchesData bezierPatchesData = SampleShapes.getTeapot();
+            bezierPatchesData.setObjectToWorld(getOTWMatrix());
+            return bezierPatchesData;
+        }
+
     }
 
 

@@ -50,6 +50,19 @@ public class BezierSurface33 extends GeometricObject {
         }
     }
 
+    public BezierSurface33 affineTransform(Matrix4D transformation) {
+        //apply affine transformation to bezier surface
+        //by applying it to the control points
+        //This assumes we don't actually use the object to world matrix
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(transformation);
+            }
+        }
+        return this;
+    }
+
+
     public BezierSurface33(Vector3f controlPoints[][], Matrix4D objectToWorld) {
         //in case the points are given in a single array of 16 points
         //(we assume the points are ordered going first left to right
