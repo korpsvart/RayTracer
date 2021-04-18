@@ -533,6 +533,49 @@ public class SampleShapes {
         return new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -5));
     }
 
+
+    public static Vector3f[][] getBSurfaceInterpolationSample1CP() {
+        return MatrixUtilities.transpose2(new Vector3f[][]{
+                {
+                        new Vector3f(-1, -1, -0.33),
+                        new Vector3f(-0.8, -0.92, -0.2),
+                        new Vector3f(-0.7, -0.9, -0.2),
+                        new Vector3f(-0.6, -0.88, -0.3),
+                },
+                {
+                        new Vector3f(-1, -0.77, -0.31),
+                        new Vector3f(-0.7, -0.69, -0.3),
+                        new Vector3f(-0.6, -0.72, -0.1),
+                        new Vector3f(-0.61, -0.68, -0.3),
+                },
+                {
+                        new Vector3f(-1, -0.6, -0.33),
+                        new Vector3f(-0.8, -0.58, -0.3),
+                        new Vector3f(-0.7, -0.55, -0.2),
+                        new Vector3f(-0.66, -0.66, -0.2),
+                },
+                {
+                        new Vector3f(-1, -0.52, -0.30),
+                        new Vector3f(-0.82, -0.44, -0.3),
+                        new Vector3f(-0.77, -0.42, -0.1),
+                        new Vector3f(-0.65, -0.47, -0.3),
+                }
+        });
+    }
+
+    public static int getBSurfaceInterpolationSample1P() {
+        return 2;
+    }
+
+    public static int getBSurfaceInterpolationSample1Q() {
+        return 2;
+    }
+
+    public static Matrix4D getBSurfaceInterpolationSample1OTW() {
+        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, -4));
+    }
+
+
     public static BSurface getInterpolatingSurfaceDonut() {
         //return a B-Spline surface obtained via interpolation of data points
         Vector3f[][] dataPoints = {{new Vector3f(2, 0, 0), new Vector3f(

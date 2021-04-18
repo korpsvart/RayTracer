@@ -115,18 +115,20 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand()=="add_sphere") {
+        if (e.getActionCommand().equals("add_sphere")) {
             AddSphereFrame addSphereFrame = new AddSphereFrame(this.scene);
-        } else if (e.getActionCommand()=="add_box") {
+        } else if (e.getActionCommand().equals("add_box")) {
             AddBoxFrame addBoxFrame = new AddBoxFrame(this.scene);
-        } else if (e.getActionCommand()=="add_point_light") {
+        } else if (e.getActionCommand().equals("add_point_light")) {
             AddPointLightFrame addPointLightFrame = new AddPointLightFrame(this.scene);
-        } else if (e.getActionCommand()=="add_distant_light") {
+        } else if (e.getActionCommand().equals("add_distant_light")) {
             AddDistantLightFrame addDistantLightFrame = new AddDistantLightFrame(this.scene);
-        } else if (e.getActionCommand()=="add_bezSurf") {
+        } else if (e.getActionCommand().equals("add_bezSurf")) {
             AddBezierSurface addBezierSurface = new AddBezierSurface(this.scene);
-        } else if (e.getActionCommand()=="add_bSplineSurf")  {
+        } else if (e.getActionCommand().equals("add_bSplineSurf"))  {
             AddBSplineSurfaceFrame addBSplineSurfaceFrame = new AddBSplineSurfaceFrame(this.scene);
+        } else if (e.getActionCommand().equals("add_bSplineInterp"))  {
+            AddSurfaceInterpolationFrame addSurfaceInterpolationFrame = new AddSurfaceInterpolationFrame(this.scene);
         }
 
     }
@@ -1281,7 +1283,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     if (i < defaultSampleCP.length && j < defaultSampleCP[0].length) {
                         textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
                                 ","+defaultSampleCP[i][j].getY()+
-                                ","+defaultSampleCP[j][j].getZ()+"}", 15);
+                                ","+defaultSampleCP[i][j].getZ()+"}", 15);
                     } else {
                         textFieldsCP[i][j] = new TextField("{0,0,0}");
                     }
@@ -1759,6 +1761,195 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
+    class AddSurfaceInterpolationFrame extends AddObjectFrame implements ChangeListener {
+
+        private ControlPointsFrame controlPointsFrame;
+        private int p,q; //degrees in both directions. Default is 3
+        private int m,n; //number of control points in both directions
+        private JSpinner spinnerP;
+        private JSpinner spinnerQ;
+        private JSpinner spinnerM;
+        private JSpinner spinnerN;
+
+        private JLabel jLabelP = new JLabel("Degree for u parameter");
+        private JLabel jLabelQ = new JLabel("Degree for v parameter");
+        private JLabel jLabelM = new JLabel("Number of data points for u parameter");
+        private JLabel jLabelN = new JLabel("Number of data points for v parameter");
+        private Button buttonCP = new Button("Edit data points");
+
+        public AddSurfaceInterpolationFrame(Scene scene) {
+            super(scene);
+            initializeDataWithSample();
+            buttonCP.setActionCommand("open_edit_cp");
+            buttonCP.addActionListener(this);
+            spinnerP.addChangeListener(this);
+            spinnerQ.addChangeListener(this);
+            spinnerM.addChangeListener(this);
+            spinnerN.addChangeListener(this);
+            int gridy=0;
+            GridBagConstraints c = new GridBagConstraints();
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.insets = new Insets(10, 10, 10, 10);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelP, c);
+            c.gridx=1;
+            mainPanel.add(spinnerP, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelQ, c);
+            c.gridx=1;
+            mainPanel.add(spinnerQ, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelM, c);
+            c.gridx=1;
+            mainPanel.add(spinnerM, c);
+
+            c.gridx=0;
+            c.gridy=gridy++;
+            mainPanel.add(jLabelN, c);
+            c.gridx=1;
+            mainPanel.add(spinnerN, c);
+
+            c.gridy=gridy++;
+            c.gridx=0;
+            mainPanel.add(buttonCP,c);
+
+            addOTWSubPanel(gridy++);
+            addMaterialComboBox(gridy++);
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+            addSendButton(gridy++);
+        }
+
+        @Override
+        GeometricObject createGeometricObject() {
+            int m = (int)spinnerM.getValue();
+            int n = (int)spinnerN.getValue();
+            int p = (int)spinnerP.getValue();
+            int q = (int)spinnerQ.getValue();
+            Vector3f[][] dataPoints = new Vector3f[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    dataPoints[i][j] = extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
+                }
+            }
+            return BSurface.interpolate(dataPoints, p, q, getOTWMatrix());
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (e.getSource() instanceof JSpinner) {
+                JSpinner source = (JSpinner)e.getSource();
+                switch (source.getName()) {
+                    case "p":
+                        int pNew = (int)source.getValue();
+                        if (pNew > p) {
+                            p = pNew;
+                            if (m - pNew < 1) {
+                                m++;
+                                spinnerM.setValue(spinnerM.getNextValue());
+                            }
+                        } else {
+                            p = pNew;
+                            //decreasing degree
+                        }
+                        break;
+                    case "q":
+                        int qNew = (int)source.getValue();
+                        if (qNew > q) {
+                            q = qNew;
+                            if (n - qNew < 1) {
+                                n++;
+                                spinnerN.setValue(spinnerN.getNextValue());
+                            }
+                        } else {
+                            //decreasing degree
+                            q = qNew;
+                        }
+                        break;
+                    case "m":
+                        //if m is decreasing, it could be necessary to decrease the degree number
+                        //anyway, we need to adjust the knot vector length
+                        int mNew = (int)source.getValue();
+                        if (mNew < m) {
+                            m = mNew;
+                            if (mNew - p < 1) {
+                                p--;
+                                spinnerP.setValue(spinnerP.getPreviousValue());
+                            }
+                        } else {
+                            m = mNew;
+                        }
+                        setControlPointsFrameDefault(m, n);
+                        break;
+                    case "n":
+                        int nNew = (int)source.getValue();
+                        if (nNew < n) {
+                            n = nNew;
+                            if (nNew - q < 1) {
+                                q--;
+                                spinnerQ.setValue(spinnerQ.getPreviousValue());
+                            }
+                        } else {
+                            n = nNew;
+                        }
+                        setControlPointsFrameDefault(m, n);
+                        break;
+                }
+            }
+        }
+
+        private void initializeDataWithSample() {
+            Vector3f[][] sampleCP = SampleShapes.getBSurfaceInterpolationSample1CP();
+            Matrix4D sampleOTW = SampleShapes.getBSurfaceInterpolationSample1OTW();
+            this.m = sampleCP.length;
+            this.n = sampleCP[0].length;
+            controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
+            this.p = SampleShapes.getBSurfaceInterpolationSample1P();
+            this.q = SampleShapes.getBSurfaceInterpolationSample1Q();
+
+            //update spinners
+            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 10, 1);
+            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 10, 1);
+            SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
+            SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
+            spinnerM = new JSpinner(spinnerModelM);
+            spinnerM.setName("m");
+            spinnerN = new JSpinner(spinnerModelN);
+            spinnerN.setName("n");
+            spinnerP = new JSpinner(spinnerModelP);
+            spinnerP.setName("p");
+            spinnerQ = new JSpinner(spinnerModelQ);
+            spinnerQ.setName("q");
+
+            //update otw
+            //For now I'm not considering rotation
+            //since I should implement a method that translates
+            //rotation matrix back to rotation angle around each axis
+            setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            super.actionPerformed(e);
+            switch (e.getActionCommand()) {
+                case "open_edit_cp":
+                    controlPointsFrame.setVisible(true);
+                    break;
+            }
+        }
+
+        private void setControlPointsFrameDefault(int m, int n) {
+            controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSurfaceInterpolationSample1CP());
+        }
+    }
+
 
 
 }
+
+
