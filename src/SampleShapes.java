@@ -579,7 +579,7 @@ public class SampleShapes {
     }
 
 
-    public static BSurface getInterpolatingSurfaceDonut() {
+    public static Vector3f[][] getInterpolatingSurfaceDonutDP() {
         //return a B-Spline surface obtained via interpolation of data points
         Vector3f[][] dataPoints = {{new Vector3f(2, 0, 0), new Vector3f(
                 ((double)2/3)* (2 + Math.cos(1)), 0, ((double)2/3)* Math.sin(1)), new Vector3f(
@@ -661,17 +661,29 @@ public class SampleShapes {
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(5))) *Math.sin(6), ((double)2/3)*
                 Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(6)) *(2 + Math.cos(6)), (
                 ((double)2/3)* (2 + Math.cos(6))) *Math.sin(6), ((double)2/3)* Math.sin(6))}};
-        Matrix4D objectToWorld = new Matrix4D(new Matrix3D(new double[][]{
+        Matrix4D objectToWorld_internal = new Matrix4D(new Matrix3D(new double[][]{
                 {0, 1, 0},
                 {-1, 0, 0},
                 {0, 0, 1}
-        }), new Vector3f(-1, 1, -6));
+        }), new Vector3f(0, 0, 0));
         //note that depending on the order in which we gave the data points,
         //it could be necessary to transpose the data points matrix
         //my function assumes that the u direction increases with the row index
         //while it usually comes more natural to write the points manually with u increasing with column index
-        BSurface interpolantSurface = BSurface.interpolate(dataPoints, 6, 6, objectToWorld);
-        return interpolantSurface;
+        dataPoints = objectToWorld_internal.transformVector(dataPoints);
+        return dataPoints;
+    }
+
+    public static int getInterpolatingSurfaceDonutP() {
+        return 6;
+    }
+
+    public static int getInterpolatingSurfaceDonutQ() {
+        return 6;
+    }
+
+    public static Matrix4D getInterpolatingSurfaceDonutOTW() {
+        return new Matrix4D(Matrix3D.identity, new Vector3f(-1, 0, -10));
     }
 
 }

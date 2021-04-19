@@ -51,6 +51,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         sphereMenuItem.setActionCommand("add_sphere");
         MenuItem boxMenuitem = new MenuItem("Box");
         boxMenuitem.setActionCommand("add_box");
+        MenuItem planeMenuitem = new MenuItem("Plane");
+        planeMenuitem.setActionCommand("add_plane");
         MenuItem bezierItem = new MenuItem("Bezier Surface");
         bezierItem.setActionCommand("add_bezSurf");
         MenuItem bSplineItem = new MenuItem("B-Spline Surface");
@@ -66,6 +68,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         sphereMenuItem.addActionListener(this);
         addFigureSubMenu.add(boxMenuitem);
         boxMenuitem.addActionListener(this);
+        addFigureSubMenu.add(planeMenuitem);
+        planeMenuitem.addActionListener(this);
         addFigureSubMenu.add(bezierItem);
         bezierItem.addActionListener(this);
         addFigureSubMenu.add(bSplineItem);
@@ -131,6 +135,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddSurfaceInterpolationFrame addSurfaceInterpolationFrame = new AddSurfaceInterpolationFrame(this.scene);
         } else if (e.getActionCommand().equals("add_teapot")) {
             AddTeapotFrame addTeapotFrame = new AddTeapotFrame(this.scene);
+        }  else if (e.getActionCommand().equals("add_donut")) {
+            AddDonutFrame addDonutFrame = new AddDonutFrame(this.scene);
+        } else if (e.getActionCommand().equals("add_plane")) {
+            AddPlaneFrame addPlaneFrame = new AddPlaneFrame(this.scene);
         }
 
     }
@@ -548,6 +556,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected TextField textFieldXRotation = new TextField("0", 10);
         protected TextField textFieldYRotation = new TextField("0", 10);
         protected TextField textFieldZRotation = new TextField("0", 10);
+        protected TextField textFieldXScaling = new TextField("1", 10);
+        protected TextField textFieldYScaling = new TextField("1", 10);
+        protected TextField textFieldZScaling = new TextField("1", 10);
         protected Panel otwSubPanel = createOTWSubPanel();
         protected Panel transparentSubPanel;
         protected Color currentColor = Color.white;
@@ -607,6 +618,18 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             textFieldZRotation.setText(Double.toString(rotation.getX()));
         }
 
+        protected void setDefaultOTW(Vector3f translation, Vector3f rotation, Vector3f scaling) {
+            textFieldXTranslation.setText(Double.toString(translation.getX()));
+            textFieldYTranslation.setText(Double.toString(translation.getY()));
+            textFieldZTranslation.setText(Double.toString(translation.getZ()));
+            textFieldXRotation.setText(Double.toString(rotation.getX()));
+            textFieldYRotation.setText(Double.toString(rotation.getX()));
+            textFieldZRotation.setText(Double.toString(rotation.getX()));
+            textFieldXRotation.setText(Double.toString(scaling.getX()));
+            textFieldYRotation.setText(Double.toString(scaling.getX()));
+            textFieldZRotation.setText(Double.toString(scaling.getX()));
+        }
+
         private Panel createOTWSubPanel() {
             Panel panel = new Panel(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
@@ -614,12 +637,16 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             int gridy = 0;
             JLabel translationLabel = new JLabel("Insert origin (translation to world coordinates)");
             JLabel rotationLabel = new JLabel("Insert rotation around the three main axis");
+            JLabel scalingLabel = new JLabel("Insert scaling");
             JLabel x = new JLabel("X");
             JLabel y = new JLabel("Y");
             JLabel z = new JLabel("Z");
             JLabel x2 = new JLabel("X");
             JLabel y2 = new JLabel("Y");
             JLabel z2 = new JLabel("Z");
+            JLabel x3 = new JLabel("X");
+            JLabel y3 = new JLabel("Y");
+            JLabel z3 = new JLabel("Z");
 
 
             //translation
@@ -687,6 +714,40 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             c.gridx=2;
             c.insets = new Insets(0, 0, 10, 0);
             panel.add(textFieldZRotation, c);
+
+
+            //rotation
+            c.insets = new Insets(10, 0, 10, 0);
+            c.gridy=gridy;
+            c.gridx=0;
+            c.gridwidth = 1;
+            c.gridheight = 3;
+            c.weightx = 0.6;
+            panel.add(scalingLabel, c);
+
+            c.insets = new Insets(10, 0, 0, 0);
+            c.gridx=1;
+            c.gridy=gridy++;
+            c.gridwidth=1;
+            c.gridheight=1;
+            c.weightx=0.2;
+            panel.add(x3, c);
+            c.gridx=2;
+            panel.add(textFieldXScaling, c);
+
+            c.insets = new Insets(0, 0, 0, 0);
+            c.gridy=gridy++;
+            c.gridx=1;
+            panel.add(y3, c);
+            c.gridx=2;
+            panel.add(textFieldYScaling, c);
+
+            c.gridy=gridy++;
+            c.gridx=1;
+            panel.add(z3, c);
+            c.gridx=2;
+            c.insets = new Insets(0, 0, 10, 0);
+            panel.add(textFieldZScaling, c);
             return panel;
         }
 
@@ -898,16 +959,28 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
         }
 
+        protected Vector3f getScaling() {
+            return new Vector3f(Double.parseDouble(textFieldXScaling.getText()),
+                    Double.parseDouble(textFieldYScaling.getText()), Double.parseDouble(textFieldZScaling.getText()));
+        }
+
         protected Matrix4D getOTWMatrix() {
             Vector3f translation = getTranslation();
             Vector3f rotation = getRotation();
+            Vector3f scaling = getScaling();
             double anglex = rotation.getX();
             double angley = rotation.getY();
             double anglez = rotation.getZ();
             Matrix3D rotationMatrix = Matrix3D.rotationAroundzAxis(anglez).matrixMult(
                     Matrix3D.rotationAroundyAxis(angley)
             ).matrixMult(Matrix3D.rotationAroundxAxis(anglex));
-            Matrix4D objectToWorld = new Matrix4D(rotationMatrix, translation);
+            Matrix3D scalingMatrix = new Matrix3D(new Vector3f[]{
+                    new Vector3f(scaling.getX(), 0, 0),
+                    new Vector3f(0, scaling.getY(), 0),
+                    new Vector3f(0, 0, scaling.getZ())
+            }, Matrix3D.COL_VECTOR);
+            Matrix3D a = scalingMatrix.matrixMult(rotationMatrix);
+            Matrix4D objectToWorld = new Matrix4D(a, translation);
             return objectToWorld;
         }
 
@@ -1905,18 +1978,35 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             }
         }
 
+        protected Vector3f[][] getSampleDP() {
+            return SampleShapes.getBSurfaceInterpolationSample1CP();
+        }
+
+        protected Matrix4D getSampleOTW() {
+            return SampleShapes.getBSurfaceInterpolationSample1OTW();
+        }
+
+        protected int getSampleP() {
+            return SampleShapes.getBSurfaceInterpolationSample1P();
+        }
+
+        protected int getSampleQ() {
+            return SampleShapes.getBSurfaceInterpolationSample1Q();
+        }
+
+
         private void initializeDataWithSample() {
-            Vector3f[][] sampleCP = SampleShapes.getBSurfaceInterpolationSample1CP();
-            Matrix4D sampleOTW = SampleShapes.getBSurfaceInterpolationSample1OTW();
+            Vector3f[][] sampleCP = getSampleDP();
+            Matrix4D sampleOTW = getSampleOTW();
             this.m = sampleCP.length;
             this.n = sampleCP[0].length;
             controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
-            this.p = SampleShapes.getBSurfaceInterpolationSample1P();
-            this.q = SampleShapes.getBSurfaceInterpolationSample1Q();
+            this.p = getSampleP();
+            this.q = getSampleQ();
 
             //update spinners
-            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 10, 1);
-            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 10, 1);
+            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 100, 1);
+            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 100, 1);
             SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
             SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
             spinnerM = new JSpinner(spinnerModelM);
@@ -1975,6 +2065,63 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             return bezierPatchesData;
         }
 
+    }
+
+
+    class AddDonutFrame extends AddSurfaceInterpolationFrame {
+
+        public AddDonutFrame(Scene scene) {
+            super(scene);
+        }
+
+        @Override
+        protected Vector3f[][] getSampleDP() {
+            return SampleShapes.getInterpolatingSurfaceDonutDP();
+        }
+
+        @Override
+        protected Matrix4D getSampleOTW() {
+            return SampleShapes.getInterpolatingSurfaceDonutOTW();
+        }
+
+        @Override
+        protected int getSampleP() {
+            return SampleShapes.getInterpolatingSurfaceDonutP();
+        }
+
+        @Override
+        protected int getSampleQ() {
+            return SampleShapes.getInterpolatingSurfaceDonutQ();
+        }
+    }
+
+    class AddPlaneFrame extends AddObjectFrame {
+
+        private Vector3f normal = new Vector3f(0, 1, 0); //default is y axis
+        private Vector3f position = new Vector3f(0, -3, 0); //default is y=-3 (other coords don't matter)
+
+        public AddPlaneFrame(Scene scene) {
+            super(scene);
+            setDefaultOTW(position, new Vector3f(0, 0, 0));
+            int gridy = 0;
+            addOTWSubPanel(gridy++);
+            addMaterialComboBox(gridy++);
+            addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+            addSendButton(gridy++);
+        }
+
+        @Override
+        GeometricObject createGeometricObject() {
+            Vector3f n = normal.matrixAffineTransform(getOTWMatrix().getA());
+            Vector3f p = getOTWMatrix().getC();
+            try {
+                return new Plane3d(p, n);
+            } catch (Exception e) {
+                System.out.println("Invalid plane");
+                //TODO: handle this
+                return null;
+            }
+        }
     }
 
 

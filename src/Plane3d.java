@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.Optional;
 
 public class Plane3d extends GeometricObject {
@@ -9,7 +10,9 @@ public class Plane3d extends GeometricObject {
     //It would be sufficient to store only n or e1 and e2
     //Right now i don't know which form will be more useful
 
+
     public Plane3d(Vector3f point, Vector3f e1, Vector3f e2) throws ArithmeticException {
+        this.triangulated = false;
         this.point = point;
         try {
             this.e1 = e1.normalize();
@@ -20,9 +23,11 @@ public class Plane3d extends GeometricObject {
         this.n = e1.crossProduct(e2);
     }
 
+
     public Plane3d(Vector3f point, Vector3f n) throws Exception {
         //If I did everything right
         //This version should also guarantee that e1, e2, n is a castesian reference frame
+        this.triangulated = false;
         this.point = point;
         this.n = n.normalize();
         double a = this.n.getX();
@@ -44,6 +49,7 @@ public class Plane3d extends GeometricObject {
     }
 
     public Plane3d(double a, double b, double c, double d) throws Exception {
+        this.triangulated = false;
         Plane3d p = cartesianToParametric(a,b,c,d);
         this.point = p.point;
         this.e1 = p.e1;
