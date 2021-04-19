@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="css/uikit.min.css" />
     <script src="js/uikit.min.js"></script>
     <script src="js/uikit-icons.min.js"></script>
+    <script src="https://fred-wang.github.io/mathml.css/mspace.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
 </head>
 <body>
 <div class="uk-container uk-container-small">
@@ -55,15 +60,51 @@
             concentrata in un'unica direzione come succede nel caso della riflessione speculare.
             Questo tipo di riflessione è evidente negli oggetti detti <i>opachi</i>. Per un oggetto opaco ideale, la luce incidente viene riflessa equamente in tutte
             le direzioni, ne consegue quindi che l'illuminazione percepita non cambia al variare della direzione da cui guardiamo l'oggetto (<i>view direction</i>).
+            Questo tipo di superficie ideale è anche nota come <b>superficie Lambertiana</b>.
         </li>
     </ul>
-    Chiaramente, gli oggetti reali esibiscono sempre una componente di riflessione specualare ed una di riflessione diffusa. Detto ciò, esistono oggetti che possono essere
-    ragionevolmente approssimati come perfettamente opachi o perfettamente lucidi, motivo per cui può avere senso provare a simulare questi materiali "ideali" in un'applicazione.
-    Inoltre, alcuni modelli empirici utilizzati per simulare l'illuminazione di oggetti "non ideali" funzionano combinando opportunamente l'illuminazione che si avrebbe da una superficie
-    perfettamente speculare con quella ottenibile da una perfettamente diffusa (vedi il <b>modello di Phong</b>).
-
-
+    Chiaramente, gli oggetti reali esibiscono sempre una componente di riflessione specualare ed una di riflessione diffusa.
+    Alcuni modelli empirici utilizzati per simulare l'illuminazione di oggetti reali funzionano combinando
+    opportunamente l'illuminazione che si avrebbe da una superficie perfettamente speculare con quella
+    ottenibile da una perfettamente diffusa (vedi il <b>modello di Phong</b>).
+    <br>
+    Il programma prevede tre tipi di oggetti, a seconda del modo in cui interagiscono con la luce:
+    <ul class="uk-list uk-list-disc">
+        <li>Oggetti <i>diffuse</i> (opachi, o <i>diffondenti</i>)</li>
+        <li>Oggetti <i>Phong</i> (seguono il modello di Phong)</li>
+        <li>Oggetti <i>mirror-like</i> (specchi)</li>
+        <li>Oggetti <i>trasparenti</i> (e.g.: acqua, vetro, ...)</li>
+    </ul>
     </p>
+    <h1 class="uk-heading-small uk-heading-divider">Fonti luminose</h1>
+    <p>
+    Sono previsti due tipi di fonti luminose:
+    <ul class="uk-list uk-list-disc">
+        <li>Luci puntiformi (o luci sferiche): definite unicamente dalla loro posizione nello spazio (non sono influenzate
+        da rotazioni o scalature, in quanto adimensionali). Utili per rappresentare piccole fonti di luce come
+        lampadine, di cui però viene ignorata la "fisicità" per maggiore semplicità.</li>
+        <li>Luci distanti: definite unicamente dalla loro direzione (non sono influenzate da traslazioni
+        o scalature). Utili per rappresentare fonti luminose molto distanti, come il Sole, per cui si possono
+        considerare tutti i raggi emessi come paralleli tra loro.</li>
+    </ul>
+    Oltre alle proprietà sopra descritte, ogni fonte luminosa è definita da <b>colore</b> ed <b>intensità</b>.
+    <h2 class="uk-heading-small uk-heading-divider">Square rolloff</h2>
+    Per le luci sferiche , l'illuminazione dipende anche dalla distanza a cui un oggetto si trova.
+    Più precisamente, si può considerare una luce sferica puntiforme come una fonte luminosa isotropa, che emette luce in maniera
+    uguale in tutte le direzioni. In tal caso, si può applicare la seguente legge di proporzionalità:
+    <br>
+    \(I = \frac{P}{4\pi r^{2} }\)
+    <br>
+    Dove \(I\) è l'intensità luminosa, \(r\) è la distanza dalla sorgente e \(P\) è la potenza totale.
+    </p>
+    <h2>Illuminazione su superfici lambertiane</h2>
+
+
+
+
+
+
+
 </div>
 </body>
 </html>

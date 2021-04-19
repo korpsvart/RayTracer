@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class MonteCarloSampling {
 
-    private static final int SAMPLING_N = 16;
+    private static final int SAMPLING_N = 32;
 
     public static Vector3f uniformSamplingHemisphere(double r1, double r2) {
         //given two random numbers r1, r2 in [0, 1]
