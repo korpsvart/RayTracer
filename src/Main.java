@@ -78,7 +78,7 @@ public class Main {
         //Screen is placed at z=-1
 
         int width = 1024;
-        int height = 768;
+        int height = 1024;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);
@@ -105,7 +105,7 @@ public class Main {
 //        }
         PointLight pointLight1 = new PointLight(color1, 200, new Vector3f(0.5, 0.6, -4.5));
         PointLight pointLight2 = new PointLight(color2, 200, new Vector3f(-0.6, 1.3, -9));
-        PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(-1, 0, -4));
+        PointLight pointLight3 = new PointLight(color1, 150, new Vector3f(0, 0, 0));
         Matrix3D lightRotation = new Matrix3D(new double[][] {
             {0,0,-1},
             {0,0,1},
@@ -118,13 +118,13 @@ public class Main {
 //        scene.addLightSource(distantLight1);
 
         //test parallelepiped rendering
-        Matrix4D boxToWorld = new Matrix4D(
-                Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(0.6, 0.8, -5)
-        );
-        PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, 0.7), boxToWorld);
-        Diffuse diffuseBox = new Diffuse(box);
-        diffuseBox.setAlbedo(new Vector3f(0.5, 0, 0.2));
-        scene.triangulateAndAddSceneObject(diffuseBox, -1); //divs makes no sense here
+//        Matrix4D boxToWorld = new Matrix4D(
+//                Matrix3D.rotationAroundArbitraryAxis(30, new Vector3f(1,1,1)), new Vector3f(0.6, 0.8, -5)
+//        );
+//        PhysicalBox box = new PhysicalBox(new Vector3f(0, 0, 0), new Vector3f(0.5, 0.7, 0.7), boxToWorld);
+//        Diffuse diffuseBox = new Diffuse(box);
+//        diffuseBox.setAlbedo(new Vector3f(0.5, 0, 0.2));
+//        scene.triangulateAndAddSceneObject(diffuseBox, -1); //divs makes no sense here
 
 
         //create BVH

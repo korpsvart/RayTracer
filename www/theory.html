@@ -97,11 +97,62 @@
     <br>
     Dove \(I\) è l'intensità luminosa, \(r\) è la distanza dalla sorgente e \(P\) è la potenza totale.
     </p>
-    <h2>Illuminazione su superfici lambertiane</h2>
 
-
-
-
+    <h2 class="uk-heading-small uk-heading-divider">Illuminazione su superfici lambertiane</h2>
+    <p>
+    La legge di Lambert afferma che l'illuminamento prodotto da una sorgente su una superficie è direttamente
+    proporzionale all'intensità luminosa della sorgente e al coseno dell'angolo che la normale alla superficie forma
+    con la direzione dei raggi luminosi.
+    <br>
+    \( E = I\cdot \cos \alpha = I \cdot \textbf{n} \boldsymbol{\cdot}\textbf{l} \)
+    <br>
+    Dove \(\textbf{n} \) è il versore normale alla superficie, mentre \(\textbf{l} \) è il versore della direzione
+    dei raggi luminosi.
+    .Più precisamente, per una luce puntiforme \( \textbf{l} = \frac{\textbf{P}_{light} - \textbf{P}_{hit}}
+    {\left \|  \textbf{P}_{light} - \textbf{P}_{hit}\right \|} \), dove \(\textbf{P}_{hit} \) è il punto
+    considerato sulla superficie, mentre \( \textbf{P}_{light}\) è il punto che identifica la posizione di una sorgente
+    luminosa puntiforme. Per una luce distante, invece, la direzione è una proprietà intrinseca della sorgente luminosa.
+    <br>
+    L'intensità luminosa che compare nella formula, \( I \), è calcolata per le sorgenti puntiformi utilizzando la legge inversa
+    del quadrato descritta precedentemente, mentre per le luci distanti si utilizza direttamente l'intensità luminosa alla
+    sorgente.
+    <br>
+    L'intensità luminosa della superficie dipende poi, ovviamente, anche da quanta della luce ricevuta viene riflessa
+    nelle varie direzioni e da quanta viene invece assorbita. Il rapporto tra la quantità di luce emessa e quella ricevuta
+    è detta <b>albedo</b>.
+    Quindi, l'ammontare totale di energia luminosa riflessa dalla superficie diffondente è dato da:
+    <br>
+    \( F_{tot} = albedo \cdot E = albedo \cdot I\cdot \cos \alpha \)
+    <br>
+    Poichè questa energia viene distribuita uniformemente su un emisfero centrato sul punto osservato ed orientato
+    nella direzione della normale alla superficie, per ottenere la quantità di luce riflessa nella direzione della visuale
+    bisogna dividere per \( \pi \).
+    <br>
+    \( L = \frac{F_{tot}}{\pi} \)
+    <br>
+    Come anticipato, la quantità di luce riflessa è indipendente dalla direzione della visuale.
+    <img src="img/diffuse_example.PNG">
+    </p>
+    <h2 class="uk-heading-small uk-heading-divider">Riflessione speculare</h2>
+    Usando la legge della riflessione, date la direzione incidente \( \textbf{l} \) e la normale \( \textbf{n} \)
+    (si assume entrambi siano vettori di norma unitaria) è facile calcolare la direzione della riflessione:
+    <br>
+    \( \textbf{r} = 2(\textbf{n}\cdot \textbf{i})\textbf{n} - \textbf{i} \)
+    <br>
+    <img src="img/reflection_dir.png">
+    <br>
+    A livello implementativo, quando la direzione della visuale interseca una superficie riflettente, calcoliamo
+    la direzione di riflessione e generiamo un nuovo "raggio", avente come origine il punto di intersezione e come
+    direzione quella di riflessione. Questo raggio può potenzialmente intersecare a sua volta una superficie riflettente,
+    di conseguenza il processo è ricorsivo. Potenzialmente, una scena potrebbe causare una ricorsione infinita, o comunque
+    generare un numero così elevato di riflessioni da rendere la computazione molto lenta (senza particolari miglioramnti
+    dal punto di vista del realismo dell'immagine ottenuta).
+    Per questo motivo, si definisce una costante che limita il numero massimo di livelli che può raggiungere questo
+    procedimento ricorsivo (le immagini di esempio sono state generate usando come limite 5 livelli).
+    <br>
+    <img src="img/reflection_ex.PNG">
+    <br>
+    <h2 class="uk-heading-small uk-heading-divider">Rifrazione</h2>
 
 
 
