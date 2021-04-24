@@ -78,13 +78,13 @@ public class MirrorTransparent extends SceneObject {
         Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
         Vector3f refractionDir;
         double fr; //ratio of reflected light
-        double c1 = incident.dotProduct(surfaceNormal);
-        if (c1 < 0) {
-            c1 = -c1;
+        double cosi = incident.dotProduct(surfaceNormal);
+        if (cosi < 0) {
+            cosi = -cosi;
         } else {
             //we are going outside the object
             //reverse normal
-            //(dont invert c1 cause its already positive)
+            //(dont invert cosi cause its already positive)
             //Also swap indexes of refraction!
             double temp = ior1;
             ior1=ior2;
@@ -92,7 +92,7 @@ public class MirrorTransparent extends SceneObject {
             surfaceNormal = surfaceNormal.mul(-1);
         }
         double eta = ior1 / ior2;
-        double c = 1 - Math.pow(ior1/ior2, 2)*(1-Math.pow(c1, 2));
+        double c = 1 - Math.pow(ior1/ior2, 2)*(1-Math.pow(cosi, 2));
         Vector3f hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
         Vector3f hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
         if (c < 0) {
@@ -103,15 +103,17 @@ public class MirrorTransparent extends SceneObject {
         } else {
             double c2 = Math.sqrt(c);
             //compute refraction direction
-            refractionDir = incident.mul(eta).add(surfaceNormal.mul(eta*c1 - c2));
+            refractionDir = incident.mul(eta).add(surfaceNormal.mul(eta*cosi - c2));
             //compute fr using Fresnel equations
-            double cosRefr = -refractionDir.dotProduct(surfaceNormal); //cosine of angle of refraction
-            assert (cosRefr>0);
-            double x12 = ior1*cosRefr;
-            double x21 = ior2*c1;
-            double fr_parallel = Math.pow((x21-x12)/(x21+x12), 2);
-            double fr_perpendicular = Math.pow((x12-x21)/(x12+x21), 2);
-            fr = (fr_parallel+fr_perpendicular)/2;
+            double cost = -refractionDir.dotProduct(surfaceNormal); //cosine of angle of refraction
+            assert (cost>0);
+            double x11 = ior1*cosi;
+            double x22 = ior2*cost;
+            double x12 = ior1*cost;
+            double x21 = ior2*cosi;
+            double rS = Math.pow((x11-x22)/(x11+x22), 2);
+            double rP = Math.pow((x12-x21)/(x12+x21), 2);
+            fr = (rS+rP)/2;
             Vector3f reflectionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
             Vector3f refractionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
             return reflectionColor.add(refractionColor);
