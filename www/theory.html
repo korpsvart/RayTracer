@@ -153,6 +153,56 @@
     <img src="img/reflection_ex.PNG">
     <br>
     <h2 class="uk-heading-small uk-heading-divider">Rifrazione</h2>
+    Quando un raggio di luce "passa" da un mezzo trasparente ad un altro, la sua direzione viene alterata. La nuova direzione
+    dipende dalla direzione incidente e dagli indici di rifrazione dei due mezzi. L'indice di rifrazione è un numero adimensionale
+    definito come il rapporto tra la velocità della luce nel vuoto e la velocità di fase della radiazione che attraversa il mezzo:
+    <br>
+    \(  \eta = \frac{c}{v} \)
+    <br>
+    Per ricavare la direzione di rifrazione si utilizza la legge di Snell:
+    <br>
+    \( \frac{\sin{\theta_1}}{\sin{\theta_2}} = \frac{\eta_2}{\eta_1} \)
+    <br>
+    dove \( \theta_1 \) è l'angolo di incidenza, mentre \( \theta_2 \) è l'angolo di rifrazione.
+    <br>
+    <img src="img/refraction_dir.PNG">
+    <br>
+    Data la direzione incidente \( \textbf{i} \) e quella della normale \( \textbf{n} \), con alcuni passaggi si ricava
+    la direzione del raggio rifratto:
+    <br>
+    \(
+    \textbf{t} = \eta \textbf{i} + (\eta c - \sqrt{h} )\textbf{n} \\
+    \)
+    <br>
+    \(
+    dove \quad \eta = \frac{\eta_1}{\eta_2} ; \quad
+    c = \textbf{n} \cdot \textbf{i} = \cos{\theta_1} ; \quad
+    h = 1 - \eta^2 (1-c^2)
+    \)
+    <br>
+    Quando passando da un mezzo ad un altro l'indice di rifrazione aumenta, se l'angolo di incidenza supera l'
+    <b>angolo critico</b>, si verifica un fenomeno detto <b>riflessione interna totale</b>: la luce viene completamente
+    riflessa e non si ha rifrazione. L'angolo critico si ottiene partendo dalla legge di Snell ed imponendo
+    \(
+    \theta_2 = \frac{\pi}{2}  \Rightarrow \sin{\theta_2} = 1  \Rightarrow
+    \theta_{crit} = \arcsin{(\frac{\eta_1}{\eta_2})}
+    \)
+    <br>
+    Si ha quindi riflessione interna totale quando
+    <br>
+    \(
+    \theta_1 > \theta_{crit}
+    \)
+    <br>
+    che è analogo a verificare
+    <br>
+    \(
+    h < 0
+    \)
+    <br>
+
+
+
 
 
 
