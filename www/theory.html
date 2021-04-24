@@ -148,7 +148,7 @@
     generare un numero così elevato di riflessioni da rendere la computazione molto lenta (senza particolari miglioramnti
     dal punto di vista del realismo dell'immagine ottenuta).
     Per questo motivo, si definisce una costante che limita il numero massimo di livelli che può raggiungere questo
-    procedimento ricorsivo (le immagini di esempio sono state generate usando come limite 5 livelli).
+    procedimento ricorsivo (le immagini dimostrative sono state generate usando come limite 5 livelli).
     <br>
     <img src="img/reflection_ex.PNG">
     <br>
@@ -237,6 +237,12 @@
     \)
     <br>
     Questi due sono i coefficienti che utilizziamo nella pratica per "pesare" le due componenti di rifrazione e di riflessione.
+    <br>
+    Anche calcolare l'illuminazione di una superficie trasparente, avendo sempre una componente riflettente, è un procedimento
+    ricorsivo. Per oggetti geometrici molto semplici, come le sfere visibili nell'immagine seguente, il limite di 5 <i>livelli</i>
+    che imponiamo alla ricorsione è sufficiente per ottenere ottimi risultati. Tuttavia, lo stesso non si può dire nel
+    caso di oggetti trasparenti complicati, come un oggetto ottenuto tramite incollamento di più superfici (di Bézier o spline,
+    ad esempio) e triangolazione.
     <img src="img/fresnel_eq_graph.png">
     <img src="img/transparent_ex.PNG">
     <h2 class="uk-heading-small uk-heading-divider">Superfici di Bézier</h2>
@@ -342,6 +348,7 @@
     <br>
     <img src="img/surface_triangulation.png">
     <br>
+    <h2 class="uk-heading-small uk-heading-divider">Curve e superfici B-Spline</h2>
 
 
 
