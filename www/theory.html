@@ -205,6 +205,145 @@
     o rifratta dipende dall'angolo di incidenza. All'aumentare dell'angolo di incidenza la quantità di luce rifratta
     diminuisce sempre più, fino a diventare nulla nel caso della riflessione totale interna.
     Precisamente, la frazione di luce che viene riflessa si può calcolare usando la <b>legge di Fresnel</b>:
+    <br>
+    \(
+    R = \frac{I_r}{I_i}
+    \)
+    <br>
+    \(R \) è il coefficiente di riflessione, rapporto tra l'intensità della radiazione riflessa
+    \((I_r)\) e della radiazione incidente \((I_i)\).
+    <br>
+    Questo viene separato in due componenti con polarizzazione perpendicolare tra loro:
+    <br>
+    \(
+    R_s = (\frac{\eta_1 \cos{\theta_1} - \eta_2 \cos{\theta_2}}
+    {\eta_1 \cos{\theta_1} + \eta_2 \cos{\theta_2}})^2
+    \quad
+    R_p = (\frac{\eta_1 \cos{\theta_2} - \eta_2 \cos{\theta_1}}
+    {\eta_1 \cos{\theta_2} + \eta_2 \cos{\theta_1}})^2
+    \)
+    <br>
+    Per ottenere il coefficiente di riflessione effettivo per una luce "naturale"
+    (che viene solitamente descritta come non polarizzata), si calcola una media delle due componenti:
+    <br>
+    \(
+    R_{eff} = \frac{R_s + R_p}{2}
+    \)
+    <br>
+    La frazione di luce rifratta si calcola semplicemente come:
+    <br>
+    \(
+    T_{eff} = 1 - R_{eff}
+    \)
+    <br>
+    Questi due sono i coefficienti che utilizziamo nella pratica per "pesare" le due componenti di rifrazione e di riflessione.
+    <img src="img/fresnel_eq_graph.png">
+    <img src="img/transparent_ex.PNG">
+    <h2 class="uk-heading-small uk-heading-divider">Superfici di Bézier</h2>
+    Una superficie di Bézier di bigrado (m,n) è definita da una griglia bidimensionale di (m+1)*(n+1) punti di controllo
+    \( \{ \textbf{P}_{i,j} \} \), che costituiscono il cosiddetto <b>poliedro di controllo</b>.
+    Come superficie parametrica, una superficie di Bézier è una funzione di due parametri \( (u, v) \), dove il valore
+    della superficie nel punto \( \textbf{P}(u,v) \) è così calcolabile:
+    <br>
+    \(
+    \textbf{P}(u,v) =
+    \sum_{i=0}^{m}
+    \sum_{j=0}^{n}
+    B_i^m(u)
+    B_j^n(v)
+    \textbf{P}_{i,j}
+
+    \quad\quad
+    u, v  \in [0,1]
+
+    \)
+    <br>
+    Dove \( B_i^m(u) \) è un polinomio di Bernstein, così definito in generale:
+    <br>
+    \(
+    B_i^m(u) =  \binom{m}{i}u^i(1-u)^{n-i}
+    \)
+    <br>
+    Come le curve di Bézier, le superfici godono di diverse proprietà utili:
+    <ul class="uk-list uk-list-disc">
+        <li>Sono invarianti rispetto alle trasformazioni affini dei punti di controllo</li>
+        <li>Iniziano e finiscono nei punti di controllo, ovvero:
+            <br>
+            \(
+            \textbf{P}(0,0) = \textbf{P}_{0,0}
+            \quad
+            \textbf{P}(1,0) = \textbf{P}_{m,0}
+            \quad
+            \textbf{P}(0,1) = \textbf{P}_{0,n}
+            \quad
+            \textbf{P}(1,1) = \textbf{P}_{m,n}
+            \)
+           <br>
+        </li>
+        <li>Sono sempre contenute nell'inviluppo convesso dei punti di controllo.</li>
+    </ul>
+    Oltre che utilizzando l'equazione parametrica illustrata sopra, è possibile calcolare un punto di una superficie di Bèzier
+    anche applicando due volte l'<b>algoritmo di de Casteljau per le curve di Bézier</b>. Infatti, data una coppia di parametri
+    \( (\bar{u},\bar{v}) \) si può procedere così:
+    <ul class="uk-list uk-list-disc">
+        <li>Portiamo fuori dalla sommatoria più interna i polinomi di Bernstein di grado \( m \), che non dipendono
+        dall'indice \( j \):
+            <br>
+            \(
+            \textbf{P}(u,v) =
+            \sum_{i=0}^{m}
+            B_i^m(u)
+            (
+            \sum_{j=0}^{n}
+            B_j^n(v)
+            \textbf{P}_{i,j}
+            )
+            \)
+            <br>
+        </li>
+        <li>
+            Definiamo, per ogni \( i \in \{0, ..., m\} \)
+            <br>
+            \( \textbf{Q}_i(v) = \sum_{j=0}^{n}
+            B_j^n(v)
+            \textbf{P}_{i,j} \)
+            <br>
+            Abbiamo quindi \( m+1 \) curve di Bézier di grado \( n+1 \), ciascuna definita rispettivamente dai punti di controllo
+            \( \textbf{P}_{i,0}, ..., \textbf{P}_{i,n} \) (l'\(i\)-esima colonna del poliedro di controllo).
+        </li>
+        <li>
+            Possiamo quindi valutare ciascuna di queste curve (usando l'algoritmo di de Casteljau) per \( v = \bar{v} \) ed ottenere \( m+1 \) punti, ricavando quindi:
+            <br>
+            \(
+            \textbf{P}(u,\bar{v}) =
+            \sum_{i=0}^{m}
+            B_i^m(u)
+            \textbf{Q}_i(\bar{v})
+            \)
+        </li>
+        <li>
+            Quella ottenuta così è una curva di Bézier nella direzione \( u \), di grado \( m+1 \), che possiamo facilmente
+            valutare per \( u = \bar{u} \)
+        </li>
+    </ul>
+    Sebbene l'algoritmo di de Casteljau sia più lento del metodo "diretto" per calcolare un punto su una curva di Bézier,
+    è numericamente più stabile e permette di calcolare al tempo stesso il vettore tangente alla curva.
+    Applicato alle superfici di Bézier, questo ci permette di evitare di dover calcolare separatamente uno dei due vettori
+    tangenti (a seconda di quale parametro "fissiamo" per primo), necessari a calcolare il vettore normale alla superficie.
+    <h3 class="uk-heading-small uk-heading-divider">Triangolazione di superfici</h3>
+    Calcolare direttamente l'intersezione di una retta con una superficie di Bézier è difficile e computazionalmente inefficiente,
+    per cui solitamente queste vengono triangolate prima di farne un rendering tramite ray tracing.
+    Per triangolare una superficie di Bézier, è più semplice triangolare il suo dominio (il quadrato unitario, normalmente),
+    suddividendolo prima in rettangoli e successivamente suddividendo ogni rettangolo in due triangoli.
+    Per semplicità, il programma di rendering sviluppato prevede una suddivisione uniforme e uguale in entrambe le direzioni
+    \( u \) e \( v \). Poichè l'effettiva forma ed estensione della porzione di superficie su cui ogni triangolo viene mappato
+    è ignorata, questo approccio può essere inefficiente o dare risultati esteticamente meno piacevoli rispetto
+    ad un algoritmo "adattivo".
+    <br>
+    <img src="img/surface_triangulation.png">
+    <br>
+
+
 
 
 

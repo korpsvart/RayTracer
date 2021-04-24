@@ -92,7 +92,7 @@ public class MirrorTransparent extends SceneObject {
             surfaceNormal = surfaceNormal.mul(-1);
         }
         double eta = ior1 / ior2;
-        double c = 1 - Math.pow(ior1/ior2, 2)*(1-Math.pow(cosi, 2));
+        double c = 1 - Math.pow(eta, 2)*(1-Math.pow(cosi, 2));
         Vector3f hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
         Vector3f hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
         if (c < 0) {

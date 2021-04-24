@@ -142,7 +142,6 @@ public class BezierSurface33 extends GeometricObject {
         }
 
         //create connectivity information in CCW order
-        //I'll probably fuck this up in so many ways
         for (int i = 0, k = 0; i < divs; i++) {
             for (int j = 0; j < divs; j++, k++) {
                 faceIndex[k] = 4;
