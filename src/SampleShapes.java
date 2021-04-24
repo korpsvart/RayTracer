@@ -683,7 +683,7 @@ public class SampleShapes {
     }
 
     public static Matrix4D getInterpolatingSurfaceDonutOTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3f(-1, 0, -10));
+        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 1, -10));
     }
 
 }

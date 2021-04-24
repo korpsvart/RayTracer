@@ -70,6 +70,7 @@ public class MirrorTransparent extends SceneObject {
 
     public Vector3f reflectionRefraction(Vector3f hitPoint, Vector3f incident, Vector3f surfaceNormal, double ior1, double ior2, int rayDepth,
                                          Scene currentScene) {
+
         //compute refraction and reflection
 
         //compute ratio of reflected and refracted light

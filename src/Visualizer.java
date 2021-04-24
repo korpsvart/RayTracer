@@ -563,7 +563,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         protected Panel transparentSubPanel;
         protected Color currentColor = Color.white;
         protected JComboBox materialComboBox;
-        protected int divs = 12;
+        protected int divs = 16;
 
         public AddObjectFrame(Scene scene) {
 
@@ -2098,7 +2098,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     class AddPlaneFrame extends AddObjectFrame {
 
         private Vector3f normal = new Vector3f(0, 1, 0); //default is y axis
-        private Vector3f position = new Vector3f(0, -3, 0); //default is y=-3 (other coords don't matter)
+        private Vector3f position = new Vector3f(0, -1, 0); //default is y=-3 (other coords don't matter)
 
         public AddPlaneFrame(Scene scene) {
             super(scene);
