@@ -266,6 +266,23 @@ public class BSurface extends GeometricObject {
 
     }
 
+    public BSurface knotInsertionU(double t) {
+        int m = controlPoints.length;
+        int n = controlPoints[0].length;
+        //use the transposed version for easier access
+        Vector3f[][] newCP = new Vector3f[n][m+1];
+        double[] newKnots = new double[knotsU.length+1];
+        BSpline bSpline;
+        for (int i = 0; i < n; i++) {
+            bSpline = new BSpline(transposed[i],knotsU, p);
+            bSpline = bSpline.knotInsertionClamped(t);
+            if (i==0) newKnots = bSpline.getKnots(); //checking i==0 just cause it's always the same knot vector
+            newCP[i] = bSpline.getControlPoints();
+        }
+
+        return new BSurface(MatrixUtilities.transpose2(newCP), newKnots, knotsV, p, q , objectToWorld);
+    }
+
     public double[] getKnotsU() {
         return knotsU;
     }
@@ -290,4 +307,6 @@ public class BSurface extends GeometricObject {
     public Matrix4D getObjectToWorld() {
         return super.getObjectToWorld();
     }
+
+
 }

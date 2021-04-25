@@ -525,8 +525,11 @@ public class BSpline {
         return interpolant;
     }
 
+    public Vector3f[] getControlPoints() {
+        return controlPoints;
+    }
 
-
-
-
+    public double[] getKnots() {
+        return knots;
+    }
 }

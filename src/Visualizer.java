@@ -1339,8 +1339,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         private TextField[][] textFieldsCP;
         private BasicArrowButton[][] buttonsCP;
 
-        public ControlPointsFrame(int m, int n, Vector3f[][] defaultSampleCP) {
+        public ControlPointsFrame(Vector3f[][] defaultSampleCP) {
             addWindowListener(this);
+            int m = defaultSampleCP.length;
+            int n = defaultSampleCP.length;
             textFieldsCP = new TextField[m][n];
             buttonsCP = new BasicArrowButton[m][n];
 
@@ -1355,6 +1357,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             //(i.e. for B-Spline surfaces if we want to "expand" the already existing surface)
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
+                    //TODO: we don't actually call this method anymore with
+                    //a bigger dimension than the control points matrix
+                    //so it needs a bit of refactoring
                     if (i < defaultSampleCP.length && j < defaultSampleCP[0].length) {
                         textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
                                 ","+defaultSampleCP[i][j].getY()+
@@ -1539,12 +1544,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     class AddBSplineSurfaceFrame extends AddObjectFrame implements ChangeListener {
 
         private ControlPointsFrame controlPointsFrame;
-        private int p,q; //degrees in both directions. Default is 3
-        private int m,n; //number of control points in both directions
-        private int s; //number of knots for u parameter
-        private int t; //number of knots for v parameter
-        private double[] knotsU;
-        private double[] knotsV;
+        private BSurface bSurface;
+//        private int p,q; //degrees in both directions. Default is 3
+//        private int m,n; //number of control points in both directions
+//        private int s; //number of knots for u parameter
+//        private int t; //number of knots for v parameter
+//        private double[] knotsU;
+//        private double[] knotsV;
         private JSpinner spinnerP;
         private JSpinner spinnerQ;
         private JSpinner spinnerM;
@@ -1620,17 +1626,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         GeometricObject createGeometricObject() {
-            int m = (int)spinnerM.getValue();
-            int n = (int)spinnerN.getValue();
-            int p = (int)spinnerP.getValue();
-            int q = (int)spinnerQ.getValue();
-            Vector3f[][] cp = new Vector3f[m][n];
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
-                    cp[i][j] = extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
-                }
-            }
-            return new BSurface(cp, knotsU, knotsV, p, q, getOTWMatrix());
+
+            return new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), bSurface.getKnotsV(),
+                    bSurface.getP(), bSurface.getQ(),getOTWMatrix());
         }
 
         @Override
@@ -1641,10 +1639,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     controlPointsFrame.setVisible(true);
                     break;
                 case "open_edit_knots_u":
-                    KnotsEditFrame knotsEditFrame = new KnotsEditFrame(p, knotsU);
+                    KnotsEditFrame knotsEditFrame = new KnotsEditFrame(bSurface, this, "u");
                     break;
                 case "open_edit_knots_v":
-                    KnotsEditFrame knotsEditFrame1 = new KnotsEditFrame(q, knotsV);
+                    KnotsEditFrame knotsEditFrame1 = new KnotsEditFrame(bSurface, this, "v");
                     break;
             }
         }
@@ -1652,19 +1650,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         private void initializeDataWithSample() {
             Vector3f[][] sampleCP = SampleShapes.getBSplineSample1CP();
             Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
-            this.m = sampleCP.length;
-            this.n = sampleCP[0].length;
-            this.knotsU = SampleShapes.getBSplineSample1U();
-            this.knotsV = SampleShapes.getBSplineSample1V();
+            double[] u = SampleShapes.getBSplineSample1U();
+            double[ ]v = SampleShapes.getBSplineSample1V();
+            int p = SampleShapes.getBSplineSample1P();
+            int q = SampleShapes.getBSplineSample1Q();
+            bSurface = new BSurface(sampleCP, u, v,
+                    p, q, Matrix4D.identity);
             controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
-            this.p = SampleShapes.getBSplineSample1P();
-            this.q = SampleShapes.getBSplineSample1Q();
-            this.s = m+p+1;
-            this.t = n+q+1;
 
             //update spinners
-            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 10, 1);
-            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 10, 1);
+            SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(sampleCP.length, 3, 10, 1);
+            SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(sampleCP[0].length, 3, 10, 1);
             SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
             SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
             spinnerM = new JSpinner(spinnerModelM);
@@ -1694,89 +1690,118 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                 switch (source.getName()) {
                     case "p":
                         int pNew = (int)source.getValue();
-                        if (pNew > p) {
-                            p = pNew;
-                            s++;
-                            if (m - pNew < 1) {
-                                m++;
-                                spinnerM.setValue(spinnerM.getNextValue());
-                            }
+                        if (pNew > bSurface.getP()) {
+//                            if (bSurface.getControlPoints().length - pNew < 1) {
+//                                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+//                                bSurface = bSurface.knotInsertionU(newKnot);
+//                            } else {
+//                                bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), bSurface.getKnotsV(),
+//                                        pNew, bSurface.getQ(), bSurface.objectToWorld);
+//                            }
+                            bSurface = bSurface.knotInsertionU(0).knotInsertionU(1);
                         } else {
-                            p = pNew;
-                            //decreasing degree
-                            s--;
+//                            p = pNew;
+//                            //decreasing degree
+//                            s--;
                         }
-                        knotsU = BSpline.uniformKnots(m, p);
                         break;
                     case "q":
-                        int qNew = (int)source.getValue();
-                        if (qNew > q) {
-                            q = qNew;
-                            t++;
-                            if (n - qNew < 1) {
-                                n++;
-                                spinnerN.setValue(spinnerN.getNextValue());
-                            }
-                        } else {
-                            //decreasing degree
-                            q = qNew;
-                            t--;
-                        }
-                        knotsV = BSpline.uniformKnots(n, q);
+//                        int qNew = (int)source.getValue();
+//                        if (qNew > q) {
+//                            q = qNew;
+//                            t++;
+//                            if (n - qNew < 1) {
+//                                n++;
+//                                spinnerN.setValue(spinnerN.getNextValue());
+//                            }
+//                        } else {
+//                            //decreasing degree
+//                            q = qNew;
+//                            t--;
+//                        }
+//                        knotsV = BSpline.uniformKnots(n, q);
                         break;
-                    case "m":
-                        //if m is decreasing, it could be necessary to decrease the degree number
-                        //anyway, we need to adjust the knot vector length
-                        int mNew = (int)source.getValue();
-                        if (mNew < m) {
-                            m = mNew;
-                            s--;
-                            if (mNew - p < 1) {
-                                p--;
-                                spinnerP.setValue(spinnerP.getPreviousValue());
-                            }
-                        } else {
-                            m = mNew;
-                            s++;
-                        }
-                        knotsU = BSpline.uniformKnots(m, p);
-                        setControlPointsFrameDefault(m, n);
-                        break;
-                    case "n":
-                        int nNew = (int)source.getValue();
-                        if (nNew < n) {
-                            n = nNew;
-                            t--;
-                            if (nNew - q < 1) {
-                                q--;
-                                spinnerQ.setValue(spinnerQ.getPreviousValue());
-                            }
-                        } else {
-                            n = nNew;
-                            t++;
-                        }
-
-                        knotsV = BSpline.uniformKnots(n, q);
-                        setControlPointsFrameDefault(m, n);
-                        break;
+//                    case "m":
+//                        //if m is decreasing, it could be necessary to decrease the degree number
+//                        //anyway, we need to adjust the knot vector length
+//                        int mNew = (int)source.getValue();
+//                        if (mNew < m) {
+//                            m = mNew;
+//                            s--;
+//                            if (mNew - p < 1) {
+//                                p--;
+//                                spinnerP.setValue(spinnerP.getPreviousValue());
+//                            }
+//                        } else {
+//                            m = mNew;
+//                            s++;
+//                        }
+//                        knotsU = BSpline.uniformKnots(m, p);
+//                        setControlPointsFrameDefault(m, n);
+//                        break;
+//                    case "n":
+//                        int nNew = (int)source.getValue();
+//                        if (nNew < n) {
+//                            n = nNew;
+//                            t--;
+//                            if (nNew - q < 1) {
+//                                q--;
+//                                spinnerQ.setValue(spinnerQ.getPreviousValue());
+//                            }
+//                        } else {
+//                            n = nNew;
+//                            t++;
+//                        }
+//
+//                        knotsV = BSpline.uniformKnots(n, q);
+//                        setControlPointsFrameDefault(m, n);
+//                        break;
                 }
             }
         }
+
+        public void setBSurface(BSurface bSurface) {
+            this.bSurface = bSurface;
+//            this.knotsU = bSurface.getKnotsU();
+//            this.knotsV = bSurface.getKnotsV();
+//            this.s = knotsU.length;
+//            this.t = knotsV.length;
+//            Vector3f[][] newCP = bSurface.getControlPoints();
+//            this.m = newCP.length;
+//            this.n = newCP[0].length;
+//            this.controlPointsFrame = new ControlPointsFrame(m, n, newCP);
+//            this.spinnerM.setValue(m);
+//            this.spinnerN.setValue(n);
+        }
     }
 
-    class KnotsEditFrame extends Frame implements WindowListener {
+    class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
 
         private int l; //number of editable knots (equal to number of knots - degree*2)
+        boolean addedKnot = false;
+        private BSurface bSurface;
+        private AddBSplineSurfaceFrame callerFrame;
         private double[] knots;
         private int degree;
         private TextField[] textFields;
         private Panel mainPanel = new Panel(new GridBagLayout());
+        private Button insertKnotButton = new Button("Insert new knot");
 
-        public KnotsEditFrame(int degree, double[] knots) {
+        public KnotsEditFrame(BSurface bSurface, AddBSplineSurfaceFrame callerFrame, String direction) {
+            this.callerFrame = callerFrame;
+            this.bSurface = bSurface;
+            if (direction.equals("u")) {
+                this.degree = bSurface.getP();
+                this.knots = bSurface.getKnotsU();
+            } else {
+                this.degree = bSurface.getQ();
+                this.knots = bSurface.getKnotsV();
+            }
             addWindowListener(this);
+            insertKnotButton.setActionCommand("insert_knot");
+            insertKnotButton.addActionListener(this);
             int knotsLength = knots.length;
-            this.degree = degree;
-            this.knots = knots;
+
             l = knotsLength - 2*degree;
             textFields = new TextField[l];
             GridBagConstraints c = new GridBagConstraints();
@@ -1789,6 +1814,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             }
             textFields[0].setEditable(false);
             textFields[l-1].setEditable(false);
+            mainPanel.add(insertKnotButton);
             this.add(mainPanel);
             this.pack();
             this.setSize(300, 50*l);
@@ -1802,8 +1828,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void windowClosing(WindowEvent e) {
-            for (int i = 0; i < l; i++) {
-                knots[i+degree] = Double.parseDouble(textFields[i].getText());
+            if (addedKnot) {
+                callerFrame.setBSurface(bSurface);
+            } else {
+                for (int i = 0; i < l; i++) {
+                    knots[i+degree] = Double.parseDouble(textFields[i].getText());
+                }
             }
             setVisible(false);
             this.dispose();
@@ -1834,6 +1864,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         }
 
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            if (actionEvent.getActionCommand().equals("insert_knot")) {
+                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                bSurface = bSurface.knotInsertionU(newKnot);
+                addedKnot = true;
+            }
+        }
     }
 
     class AddSurfaceInterpolationFrame extends AddObjectFrame implements ChangeListener {

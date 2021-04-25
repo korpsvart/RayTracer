@@ -12,8 +12,8 @@ public class MatrixUtilities {
     }
 
     static void transpose(double[][] m) {
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
+        for (int i = 0; i < m[0].length; i++) {
+            for (int j = 0; j < m.length; j++) {
                 m[i][j] = m[j][i];
             }
         }
@@ -22,8 +22,8 @@ public class MatrixUtilities {
     static double[][] transpose2(double[][] m) {
         //not in place
         double[][] t = new double[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
+        for (int i = 0; i < t.length; i++) {
+            for (int j = 0; j < t[0].length; j++) {
                 t[i][j] = m[j][i];
             }
         }
@@ -33,8 +33,8 @@ public class MatrixUtilities {
     static Vector3f[][] transpose2(Vector3f[][] m) {
         //not in place
         Vector3f[][] t = new Vector3f[m[0].length][m.length];
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
+        for (int i = 0; i < t.length; i++) {
+            for (int j = 0; j < t[0].length; j++) {
                 t[i][j] = m[j][i];
             }
         }
