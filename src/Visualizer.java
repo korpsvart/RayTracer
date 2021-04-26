@@ -1286,9 +1286,18 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
-    class AddBezierSurface extends AddObjectFrame {
+    abstract class ControlPointsSurfaceFrame extends AddObjectFrame {
 
-        private ControlPointsFrame controlPointsFrame = new ControlPointsFrame(4, 4, SampleShapes.getBezierSurfaceSampleCP());
+        public ControlPointsSurfaceFrame(Scene scene) {
+            super(scene);
+        }
+
+        abstract void updateControlPoints(Vector3f[][] cp);
+    }
+
+    class AddBezierSurface extends ControlPointsSurfaceFrame {
+
+        private ControlPointsFrame controlPointsFrame = new ControlPointsFrame(SampleShapes.getBezierSurfaceSampleCP(), this);
         private Button buttonCP = new Button("Edit control points");
 
 
@@ -1306,6 +1315,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             addMaterialComboBox(gridy++);
             addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
             addSendButton(gridy++);
+
+        }
+
+        @Override
+        void updateControlPoints(Vector3f[][] cp) {
 
         }
 
@@ -1337,12 +1351,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     class ControlPointsFrame extends Frame implements WindowListener, ActionListener {
 
         private TextField[][] textFieldsCP;
+        int m, n;
         private BasicArrowButton[][] buttonsCP;
+        private ControlPointsSurfaceFrame callerFrame;
 
-        public ControlPointsFrame(Vector3f[][] defaultSampleCP) {
+        public ControlPointsFrame(int m, int n, Vector3f[][] defaultSampleCP, ControlPointsSurfaceFrame callerFrame) {
+            this.m = m;
+            this.n = n;
+            this.callerFrame = callerFrame;
             addWindowListener(this);
-            int m = defaultSampleCP.length;
-            int n = defaultSampleCP.length;
             textFieldsCP = new TextField[m][n];
             buttonsCP = new BasicArrowButton[m][n];
 
@@ -1383,6 +1400,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             this.pack();
         }
 
+        public ControlPointsFrame(Vector3f[][] cp, ControlPointsSurfaceFrame callerFrame) {
+            this(cp.length, cp[0].length, cp, callerFrame);
+        }
+
         public BasicArrowButton[][] getButtonsCP() {
             return buttonsCP;
         }
@@ -1398,6 +1419,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void windowClosing(WindowEvent windowEvent) {
+            Vector3f[][] cp = new Vector3f[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    cp[i][j] = extractVectorFromTextField(getTextFieldsCP()[i][j]);
+                }
+            }
+            callerFrame.updateControlPoints(cp);
             setVisible(false);
             this.dispose();
         }
@@ -1541,7 +1569,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     }
 
 
-    class AddBSplineSurfaceFrame extends AddObjectFrame implements ChangeListener {
+    class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements ChangeListener {
 
         private ControlPointsFrame controlPointsFrame;
         private BSurface bSurface;
@@ -1631,11 +1659,17 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     bSurface.getP(), bSurface.getQ(),getOTWMatrix());
         }
 
+        public void updateControlPoints(Vector3f[][] cp) {
+            bSurface = new BSurface(cp, bSurface.getKnotsU(), bSurface.getKnotsV(),
+                    bSurface.getP(), bSurface.getQ(), Matrix4D.identity);
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             super.actionPerformed(e);
             switch (e.getActionCommand()) {
                 case "open_edit_cp":
+                    controlPointsFrame = new ControlPointsFrame(bSurface.getControlPoints(), this);
                     controlPointsFrame.setVisible(true);
                     break;
                 case "open_edit_knots_u":
@@ -1656,7 +1690,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             int q = SampleShapes.getBSplineSample1Q();
             bSurface = new BSurface(sampleCP, u, v,
                     p, q, Matrix4D.identity);
-            controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
+            controlPointsFrame = new ControlPointsFrame(sampleCP, this);
 
             //update spinners
             SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(sampleCP.length, 3, 10, 1);
@@ -1680,7 +1714,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
         private void setControlPointsFrameDefault(int m, int n) {
-            controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSplineSample1CP());
+            controlPointsFrame = new ControlPointsFrame(bSurface.getControlPoints(), this);
         }
 
         @Override
@@ -1690,20 +1724,29 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                 switch (source.getName()) {
                     case "p":
                         int pNew = (int)source.getValue();
-                        if (pNew > bSurface.getP()) {
-//                            if (bSurface.getControlPoints().length - pNew < 1) {
-//                                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
-//                                bSurface = bSurface.knotInsertionU(newKnot);
-//                            } else {
-//                                bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), bSurface.getKnotsV(),
-//                                        pNew, bSurface.getQ(), bSurface.objectToWorld);
-//                            }
-                            bSurface = bSurface.knotInsertionU(0).knotInsertionU(1);
-                        } else {
-//                            p = pNew;
-//                            //decreasing degree
-//                            s--;
+                        int m = bSurface.getControlPoints().length;
+                        if (pNew == m) {
+                                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                                bSurface = bSurface.knotInsertionU(newKnot);
                         }
+                        double[] newKnots = BSpline.uniformKnots(m, pNew);
+                        bSurface = new BSurface(bSurface.getControlPoints(), newKnots, bSurface.getKnotsV(),
+                                pNew, bSurface.getQ(), Matrix4D.identity);
+                        System.out.println("aaaa");
+//                        if (pNew > bSurface.getP()) {
+////                            if (bSurface.getControlPoints().length - pNew < 1) {
+////                                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+////                                bSurface = bSurface.knotInsertionU(newKnot);
+////                            } else {
+////                                bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), bSurface.getKnotsV(),
+////                                        pNew, bSurface.getQ(), bSurface.objectToWorld);
+////                            }
+//                            bSurface = bSurface.knotInsertionU(0).knotInsertionU(1);
+//                        } else {
+////                            p = pNew;
+////                            //decreasing degree
+////                            s--;
+//                        }
                         break;
                     case "q":
 //                        int qNew = (int)source.getValue();
@@ -1875,7 +1918,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
     }
 
-    class AddSurfaceInterpolationFrame extends AddObjectFrame implements ChangeListener {
+    class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements ChangeListener {
 
         private ControlPointsFrame controlPointsFrame;
         private int p,q; //degrees in both directions. Default is 3
@@ -1937,6 +1980,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             addMaterialComboBox(gridy++);
             addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
             addSendButton(gridy++);
+        }
+
+        @Override
+        void updateControlPoints(Vector3f[][] cp) {
+
         }
 
         @Override
@@ -2039,7 +2087,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             Matrix4D sampleOTW = getSampleOTW();
             this.m = sampleCP.length;
             this.n = sampleCP[0].length;
-            controlPointsFrame = new ControlPointsFrame(m, n, sampleCP);
+            controlPointsFrame = new ControlPointsFrame(m,n,sampleCP, this);
             this.p = getSampleP();
             this.q = getSampleQ();
 
@@ -2075,7 +2123,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         }
 
         private void setControlPointsFrameDefault(int m, int n) {
-            controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSurfaceInterpolationSample1CP());
+            controlPointsFrame = new ControlPointsFrame(m, n, SampleShapes.getBSurfaceInterpolationSample1CP(), this);
         }
     }
 

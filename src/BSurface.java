@@ -14,6 +14,7 @@ public class BSurface extends GeometricObject {
         //Note that if we have equality, then the bspline becomes a bezier curve
         //If equality is satisfied in both directions, then we have a bezier surface
         //check also that fundamental identities are satisfied
+
         if (controlPoints.length <= p  || controlPoints[0].length <= q) {
             throw new IllegalArgumentException("number of control points should be at least equal to degree+1");
         }
@@ -21,18 +22,18 @@ public class BSurface extends GeometricObject {
             throw new IllegalArgumentException("fundamental identities between knots number, control points number and degree is not satisfied in one or both directions");
         }
         this.objectToWorld = objectToWorld;
+        this.controlPoints = new Vector3f[controlPoints.length][controlPoints[0].length];
         if (objectToWorld != null) {
             for (int i = 0; i < controlPoints.length; i++) {
                 for (int j = 0; j < controlPoints[i].length; j++) {
-                    controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
+                    this.controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
                 }
             }
         }
-        this.controlPoints = controlPoints;
         this.transposed = new Vector3f[controlPoints[0].length][controlPoints.length];
         for (int i = 0; i < controlPoints.length; i++) {
             for (int j = 0; j < controlPoints[0].length; j++) {
-                this.transposed[j][i] = controlPoints[i][j];
+                this.transposed[j][i] = this.controlPoints[i][j];
             }
         }
         this.knotsU = knotsU;
