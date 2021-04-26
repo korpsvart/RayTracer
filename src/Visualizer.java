@@ -1725,44 +1725,30 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                     case "p":
                         int pNew = (int)source.getValue();
                         int m = bSurface.getControlPoints().length;
+                        double[] newKnotsU;
                         if (pNew == m) {
                                 double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
                                 bSurface = bSurface.knotInsertionU(newKnot);
+                                newKnotsU = BSpline.uniformKnots(m+1, pNew);
+                        } else {
+                            newKnotsU = BSpline.uniformKnots(m, pNew);
                         }
-                        double[] newKnots = BSpline.uniformKnots(m, pNew);
-                        bSurface = new BSurface(bSurface.getControlPoints(), newKnots, bSurface.getKnotsV(),
+                        bSurface = new BSurface(bSurface.getControlPoints(), newKnotsU, bSurface.getKnotsV(),
                                 pNew, bSurface.getQ(), Matrix4D.identity);
-                        System.out.println("aaaa");
-//                        if (pNew > bSurface.getP()) {
-////                            if (bSurface.getControlPoints().length - pNew < 1) {
-////                                double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
-////                                bSurface = bSurface.knotInsertionU(newKnot);
-////                            } else {
-////                                bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), bSurface.getKnotsV(),
-////                                        pNew, bSurface.getQ(), bSurface.objectToWorld);
-////                            }
-//                            bSurface = bSurface.knotInsertionU(0).knotInsertionU(1);
-//                        } else {
-////                            p = pNew;
-////                            //decreasing degree
-////                            s--;
-//                        }
                         break;
                     case "q":
-//                        int qNew = (int)source.getValue();
-//                        if (qNew > q) {
-//                            q = qNew;
-//                            t++;
-//                            if (n - qNew < 1) {
-//                                n++;
-//                                spinnerN.setValue(spinnerN.getNextValue());
-//                            }
-//                        } else {
-//                            //decreasing degree
-//                            q = qNew;
-//                            t--;
-//                        }
-//                        knotsV = BSpline.uniformKnots(n, q);
+                        int qNew = (int)source.getValue();
+                        int n = bSurface.getControlPoints()[0].length;
+                        double[] newKnotsV;
+                        if (qNew == n) {
+                            double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                            bSurface = bSurface.knotInsertionV(newKnot);
+                            newKnotsV = BSpline.uniformKnots(n+1, qNew);
+                        } else {
+                            newKnotsV = BSpline.uniformKnots(n, qNew);
+                        }
+                        bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), newKnotsV,
+                                bSurface.getP(), qNew, Matrix4D.identity);
                         break;
 //                    case "m":
 //                        //if m is decreasing, it could be necessary to decrease the degree number
@@ -1821,7 +1807,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
 
         private int l; //number of editable knots (equal to number of knots - degree*2)
-        boolean addedKnot = false;
+        private boolean addedKnot = false;
+        private String direction;
         private BSurface bSurface;
         private AddBSplineSurfaceFrame callerFrame;
         private double[] knots;
@@ -1833,6 +1820,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         public KnotsEditFrame(BSurface bSurface, AddBSplineSurfaceFrame callerFrame, String direction) {
             this.callerFrame = callerFrame;
             this.bSurface = bSurface;
+            this.direction = direction;
             if (direction.equals("u")) {
                 this.degree = bSurface.getP();
                 this.knots = bSurface.getKnotsU();
@@ -1875,7 +1863,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                 callerFrame.setBSurface(bSurface);
             } else {
                 for (int i = 0; i < l; i++) {
-                    knots[i+degree] = Double.parseDouble(textFields[i].getText());
+                    this.knots[i+degree] = Double.parseDouble(textFields[i].getText());
+                    if (direction.equals("u")) {
+                        bSurface.setKnotsU(this.knots);
+                    } else {
+                        bSurface.setKnotsV(this.knots);
+                    }
+
                 }
             }
             setVisible(false);
@@ -1911,9 +1905,25 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             if (actionEvent.getActionCommand().equals("insert_knot")) {
+                //first update the spline knots, in case they have been modified before
+                //the insert new knot button is pressed
+                for (int i = 0; i < l; i++) {
+                    this.knots[i + degree] = Double.parseDouble(textFields[i].getText());
+                    if (direction.equals("u")) {
+                        bSurface.setKnotsU(this.knots);
+                    } else {
+                        bSurface.setKnotsV(this.knots);
+                    }
+                }
                 double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
-                bSurface = bSurface.knotInsertionU(newKnot);
+                if (direction.equals("u")) {
+                    bSurface = bSurface.knotInsertionU(newKnot);
+                } else {
+
+                    bSurface = bSurface.knotInsertionV(newKnot);
+                }
                 addedKnot = true;
+                this.windowClosing(null);
             }
         }
     }
