@@ -155,7 +155,7 @@ public class TriangleMesh {
                 //If u=1 then we are on vertex B
                 //If v =1 then we are on vertex C
                 double w = 1-u-v;
-                return vertexNormal[0].mul(w).add(vertexNormal[1].mul(u).add(vertexNormal[2].mul(v))).normalize();
+                return (vertexNormal[0].mul(w).add(vertexNormal[1].mul(u).add(vertexNormal[2].mul(v)))).normalize();
             }
         }
 

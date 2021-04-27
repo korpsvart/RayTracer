@@ -14,6 +14,8 @@ public class Main {
         return rayTriangleIntersections;
     }
 
+
+
     //variables for evaluating performance
     //and acceleration structures
     private static AtomicLong rayTriangleTests = new AtomicLong(0);

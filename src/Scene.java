@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Scene {
 
-    private static final int MAX_RAY_DEPTH = 40; //max depth of ray tracing recursion
+    private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
     private static boolean SIMULATE_INDIRECT_DIFFUSE = false;
@@ -344,7 +344,6 @@ public class Scene {
                 Vector3f rayDirectionWorld = camera.convertToFixedSystem(rayDirection).normalize();
                 Line3d ray = new Line3d(camera.getPosition(), rayDirectionWorld);
                 Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
-                //which can be considered as vacuum for simplicity
                 Color color1 = color.vectorToColor();
                 img.setRGB(i-startX,j-startY,color1.getRGB());
             }
