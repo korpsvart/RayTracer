@@ -291,7 +291,7 @@ public class BSurface extends GeometricObject {
         Vector3f[][] newCP = new Vector3f[m][n+1];
         double[] newKnots = new double[knotsV.length+1];
         BSpline bSpline;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             bSpline = new BSpline(controlPoints[i],knotsV, q);
             bSpline = bSpline.knotInsertionClamped(t);
             if (i==0) newKnots = bSpline.getKnots(); //checking i==0 just cause it's always the same knot vector

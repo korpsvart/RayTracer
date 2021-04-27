@@ -1719,6 +1719,27 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
         @Override
         public void stateChanged(ChangeEvent e) {
+            //how does b-spline editing works:
+            //Knots: you can edit the existing knots, but only when knots different from 0 and 1 exist
+            //you can also insert a new knot, which will increase the number of control points in that direction
+            //(the degree is left unchanged)
+            //There is no option to remove existing knots
+            //Degree: you can increase or decrease the degree. Changing the degree WILL NOT preserve knots information
+            //(knots will be reset to uniform spacing).
+            //As long as the degree doesn't reach the number of control points, increasing it will not change the
+            //number of control points nor will modify the existing control points.
+            //When the degree reaches the number of control points, it's necessary to create a new control point.
+            //The newly added control point is not chosen by the user, but it's generated with the following procedure:
+            //The program will require the user to input a new knot value. This knot is used to perform a knot insertion,
+            //which consequently will add a new point to the spline. After this, the knots will be reset to uniform when
+            //actually increasing the degree, so the knot inserted by the user will only affect where the surface
+            //will be slightly changed.
+            //Control points: adding control points can be done in two ways (three ways if we count the "indirect" one):
+            //-by inserting new knots (control points added "inside" the surface)
+            //-by increasing the number of control points (control points are "appended" at the start/end)
+            //-by increasing the degree, when this causes a knot insertion (see above explanation)
+            //Only the first way will preserve the existing knot spacing. Appending new control points will reset
+            //the existing knot spacing, making it uniform.
             if (e.getSource() instanceof JSpinner) {
                 JSpinner source = (JSpinner)e.getSource();
                 switch (source.getName()) {
@@ -1741,7 +1762,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
                         int n = bSurface.getControlPoints()[0].length;
                         double[] newKnotsV;
                         if (qNew == n) {
-                            double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                            double newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
                             bSurface = bSurface.knotInsertionV(newKnot);
                             newKnotsV = BSpline.uniformKnots(n+1, qNew);
                         } else {
