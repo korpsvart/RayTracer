@@ -1740,88 +1740,73 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             //-by increasing the degree, when this causes a knot insertion (see above explanation)
             //Only the first way will preserve the existing knot spacing. Appending new control points will reset
             //the existing knot spacing, making it uniform.
+            double[] newKnots;
+            int p, q;
             if (e.getSource() instanceof JSpinner) {
                 JSpinner source = (JSpinner)e.getSource();
                 switch (source.getName()) {
                     case "p":
                         int pNew = (int)source.getValue();
                         int m = bSurface.getControlPoints().length;
-                        double[] newKnotsU;
                         if (pNew == m) {
                                 double newKnot  = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
                                 bSurface = bSurface.knotInsertionU(newKnot);
-                                newKnotsU = BSpline.uniformKnots(m+1, pNew);
+                                newKnots = BSpline.uniformKnots(m+1, pNew);
                         } else {
-                            newKnotsU = BSpline.uniformKnots(m, pNew);
+                            newKnots = BSpline.uniformKnots(m, pNew);
                         }
-                        bSurface = new BSurface(bSurface.getControlPoints(), newKnotsU, bSurface.getKnotsV(),
+                        bSurface = new BSurface(bSurface.getControlPoints(), newKnots, bSurface.getKnotsV(),
                                 pNew, bSurface.getQ(), Matrix4D.identity);
+                        spinnerM.removeChangeListener(this);
+                        spinnerM.setValue(bSurface.getControlPoints().length);
+                        spinnerM.addChangeListener(this);
                         break;
                     case "q":
                         int qNew = (int)source.getValue();
                         int n = bSurface.getControlPoints()[0].length;
-                        double[] newKnotsV;
                         if (qNew == n) {
                             double newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
                             bSurface = bSurface.knotInsertionV(newKnot);
-                            newKnotsV = BSpline.uniformKnots(n+1, qNew);
+                            newKnots = BSpline.uniformKnots(n+1, qNew);
                         } else {
-                            newKnotsV = BSpline.uniformKnots(n, qNew);
+                            newKnots = BSpline.uniformKnots(n, qNew);
                         }
-                        bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), newKnotsV,
+                        bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), newKnots,
                                 bSurface.getP(), qNew, Matrix4D.identity);
+                        spinnerN.removeChangeListener(this);
+                        spinnerN.setValue(bSurface.getControlPoints()[0].length);
+                        spinnerN.addChangeListener(this);
                         break;
-//                    case "m":
-//                        //if m is decreasing, it could be necessary to decrease the degree number
-//                        //anyway, we need to adjust the knot vector length
-//                        int mNew = (int)source.getValue();
-//                        if (mNew < m) {
-//                            m = mNew;
-//                            s--;
-//                            if (mNew - p < 1) {
-//                                p--;
-//                                spinnerP.setValue(spinnerP.getPreviousValue());
-//                            }
-//                        } else {
-//                            m = mNew;
-//                            s++;
-//                        }
-//                        knotsU = BSpline.uniformKnots(m, p);
-//                        setControlPointsFrameDefault(m, n);
-//                        break;
-//                    case "n":
-//                        int nNew = (int)source.getValue();
-//                        if (nNew < n) {
-//                            n = nNew;
-//                            t--;
-//                            if (nNew - q < 1) {
-//                                q--;
-//                                spinnerQ.setValue(spinnerQ.getPreviousValue());
-//                            }
-//                        } else {
-//                            n = nNew;
-//                            t++;
-//                        }
-//
-//                        knotsV = BSpline.uniformKnots(n, q);
-//                        setControlPointsFrameDefault(m, n);
-//                        break;
+                    case "m":
+                        //if m is decreasing, it could be necessary to decrease the degree number
+                        //anyway, we need to adjust the knot vector length
+                        int mNew = (int)source.getValue();
+                        if (mNew == bSurface.getControlPoints().length) {
+                            spinnerP.removeChangeListener(this);
+                            spinnerP.setValue(spinnerP.getPreviousValue());
+                            spinnerP.addChangeListener(this);
+                        }
+                        p =  (int)spinnerP.getValue();
+                        newKnots = BSpline.uniformKnots(mNew,p);
+                        bSurface = bSurface.editU(mNew, p, newKnots);
+                        break;
+                    case "n":
+                        int nNew = (int)source.getValue();
+                        if (nNew == bSurface.getControlPoints()[0].length) {
+                            spinnerQ.removeChangeListener(this);
+                            spinnerQ.setValue(spinnerQ.getPreviousValue());
+                            spinnerQ.addChangeListener(this);
+                        }
+                        q =  (int)spinnerQ.getValue();
+                        newKnots = BSpline.uniformKnots(nNew,q);
+                        bSurface = bSurface.editV(nNew, q, newKnots);
+                        break;
                 }
             }
         }
 
         public void setBSurface(BSurface bSurface) {
             this.bSurface = bSurface;
-//            this.knotsU = bSurface.getKnotsU();
-//            this.knotsV = bSurface.getKnotsV();
-//            this.s = knotsU.length;
-//            this.t = knotsV.length;
-//            Vector3f[][] newCP = bSurface.getControlPoints();
-//            this.m = newCP.length;
-//            this.n = newCP[0].length;
-//            this.controlPointsFrame = new ControlPointsFrame(m, n, newCP);
-//            this.spinnerM.setValue(m);
-//            this.spinnerN.setValue(n);
         }
     }
 

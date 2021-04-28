@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Random;
 
 import static java.lang.StrictMath.sqrt;
 
@@ -201,6 +202,11 @@ public class Vector3f{
 
     public double distance(Vector3f point) {
         return this.add(point.mul(-1)).magnitude();
+    }
+
+    public Vector3f randomUnitVector() {
+        Random random = new Random();
+        return new Vector3f(random.nextDouble(), random.nextDouble(), random.nextDouble()).normalize();
     }
 
 }

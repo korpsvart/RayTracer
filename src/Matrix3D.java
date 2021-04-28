@@ -112,6 +112,7 @@ public class Matrix3D {
 
     }
 
+
     public Matrix4D get4DMatrix(Vector3f c) {
         //Add c vector column for affine transform
         //last row defaults to [0 0 0 1]
