@@ -348,7 +348,7 @@
     <br>
     <img src="img/surface_triangulation.png">
     <br>
-    <h2 class="uk-heading-small uk-heading-divider">Curve e superfici B-Spline</h2>
+    <h2 class="uk-heading-small uk-heading-divider">Curve B-Spline</h2>
     Le curve B-Spline offrono diversi vantaggi rispetto alle curve di Bézier, di cui rappresentano una generalizzazione.
     Infatti, le curve di Bézier possiedono alcune importanti limitazioni:
     <ul class="uk-list uk-list-disc">
@@ -428,7 +428,37 @@
             sono non-nulle, precisamente \( N_{i-p,p}(u), N_{i-p+1,p}(u),...,N_{i,p}(u) \).
         </li>
     </ul>
-
+    Da queste proprietà si deriva immediatamente la proprietà riguardante la modifica dei punti di controllo:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            Cambiando la posizione del punto di controllo \( \textbf{P}_i \), la curva \( \textbf{P}(u) \) viene
+            modificata solo per \( u \in [u_i, u_{i+p+1}) \), ossia vengono alterati al più \( p+1 \) segmenti di curva.
+        </li>
+    </ul>
+    Un'altra proprietà importante riguarda la continuità di una curva B-Spline, nei punti di "incollamento" tra le varie
+    curve componenti (<i>knot points</i>)
+    <ul class="uk-list uk-list-disc">
+        <li>
+            In corrispondenza di un nodo di molteplicità \( k \), la curva ha continuità \( C^{p-k} \).
+        </li>
+    </ul>
+    Quindi, la molteplicità di un nodo influenza la continuità della curva.
+    <br>
+    Aumentando la molteplicità di un nodo è in realtà possibile anche far sì che la curva passi per un determinato punto di controllo.
+    Infatti, vale la seguente proprietà:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            Per ogni nodo interno di molteplicità \( k \), il numero di <i>basis function</i> non-nulle in quel punto
+            è al più \( p-k+1 \).
+        </li>
+    </ul>
+    Ne consegue che, in corrispondenza di un nodo di molteplicità \( p \), solo una delle <i>basis function</i> sarà
+    non nulla. Più precisamente, il valore dell'unica funzione non nulla sarà esattamente \( 1 \), per cui si avrà che la curva
+    passa per uno dei suoi punti di controllo.
+    Un caso particolare è proprio quello delle curve clamped, nominate poco sopra, che passano per il primo e l'ultimo
+    punto di controllo.
+    <h2 class="uk-heading-small uk-heading-divider">Superfici B-Spline</h2>
+    Così come 
 
 
 
