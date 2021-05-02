@@ -458,7 +458,19 @@
     Un caso particolare è proprio quello delle curve clamped, nominate poco sopra, che passano per il primo e l'ultimo
     punto di controllo.
     <h2 class="uk-heading-small uk-heading-divider">Superfici B-Spline</h2>
-    Così come 
+    Una superficie B-Spline è definita a partire dalle stesse funzioni \( N_{i,p}(u) \), similarmente a come avviene
+    per le superfici di Bézier. In questo caso, le informazioni necessarie sono:
+    <ul class="uk-list uk-list-disc">
+        <li>una griglia di \( (m+1)(n+1) \) punti di controllo \( P_{i,j} \);</li>
+        <li>un vettore di \( s+1 \) nodi nella direzione \( u \), \( \{u_0, u_1, ..., u_s\} \);</li>
+        <li>un vettore di \( t+1 \) nodi nella direzione \( v \), \( \{v_0, v_1, ..., v_t\} \);</li>
+        <li>il grado \( p \) nella direzione \( u \);</li>
+        <li>il grado \( q \) nella direzione \( v \).</li>
+    </ul>
+    Con questi dati, l'equazione parametrica della superficie è:
+    <br>
+    \( \textbf{P}(u,v) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
+
 
 
 

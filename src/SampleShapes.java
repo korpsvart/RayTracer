@@ -538,7 +538,7 @@ public class SampleShapes {
 
 
     public static Vector3f[][] getBSurfaceInterpolationSample1CP() {
-        return MatrixUtilities.transpose2(new Vector3f[][]{
+        Vector3f[][] dataPoints = MatrixUtilities.transpose2(new Vector3f[][]{
                 {
                         new Vector3f(-1, -1, -0.33),
                         new Vector3f(-0.8, -0.92, -0.2),
@@ -547,23 +547,26 @@ public class SampleShapes {
                 },
                 {
                         new Vector3f(-1, -0.77, -0.31),
-                        new Vector3f(-0.7, -0.69, -0.3),
-                        new Vector3f(-0.6, -0.72, -0.1),
-                        new Vector3f(-0.61, -0.68, -0.3),
+                        new Vector3f(-0.8, -0.69, -0.3),
+                        new Vector3f(-0.7, -0.72, -0.2),
+                        new Vector3f(-0.66, -0.68, -0.3),
                 },
                 {
                         new Vector3f(-1, -0.6, -0.33),
                         new Vector3f(-0.8, -0.58, -0.3),
-                        new Vector3f(-0.7, -0.55, -0.2),
+                        new Vector3f(-0.75, -0.55, -0.2),
                         new Vector3f(-0.66, -0.66, -0.2),
                 },
                 {
                         new Vector3f(-1, -0.52, -0.30),
                         new Vector3f(-0.82, -0.44, -0.3),
-                        new Vector3f(-0.77, -0.42, -0.1),
+                        new Vector3f(-0.77, -0.42, -0.22),
                         new Vector3f(-0.65, -0.47, -0.3),
                 }
         });
+        //move to default position more or less centered in the screen
+        Matrix4D internalOTW = new Matrix4D(Matrix3D.identity, new Vector3f(1, 1, 0));
+        return internalOTW.transformVector(dataPoints);
     }
 
     public static int getBSurfaceInterpolationSample1P() {
