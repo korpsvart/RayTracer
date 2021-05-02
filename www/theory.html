@@ -348,7 +348,117 @@
     <br>
     <img src="img/surface_triangulation.png">
     <br>
-    <h2 class="uk-heading-small uk-heading-divider">Curve e superfici B-Spline</h2>
+    <h2 class="uk-heading-small uk-heading-divider">Curve B-Spline</h2>
+    Le curve B-Spline offrono diversi vantaggi rispetto alle curve di Bézier, di cui rappresentano una generalizzazione.
+    Infatti, le curve di Bézier possiedono alcune importanti limitazioni:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            Il grado della curva è strettamente legato al numero dei punti di controllo. Quindi, curve con un numero
+            elevato di punti di controllo diventano rapidamente inefficienti da gestire computazionalmente, in quanto
+            richiedono di lavorare con polinomi di grado elevato.
+            <br>
+            Nelle curve B-Spline, il numero di punti controllo non dipende dal grado della curva (l'unica limitazione
+            è che il grado sia sempre minore del numero di punti di controllo).
+        </li>
+        <li>
+            Non è possibile avere un <i>controllo locale</i> sulla forma della curva: la modifica della posizione di un punto
+            di controllo si propaga sull'aspetto della intera curva di Bézier.
+            Le curve B-Spline invece, permettono di avere controllo locale.
+        </li>
+    </ul>
+    Il motivo per cui le curve B-Spline presentano questi vantaggi rispetto alle curve di Bézier, deriva dal fatto che le prime
+    sono in realtà curve composite, ossia curve ottenute tramite incollamento di più segmenti di curve. Ciascuna di queste
+    è una curva polinomiale, con un suo grado e un insieme di punti di controllo. Questo permette alle curve B-Spline
+    di godere delle proprietà desiderabili di cui abbiamo discusso sopra.
+    <br>
+    Una curva B-Spline è definita da:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            \( n + 1 \) punti di controllo: \(  \textbf{P}_0, \textbf{P}_1, ..., \textbf{P}_n  \);
+        </li>
+        <li>
+            Il grado della curva \( p \) (a volte si indica invece l'<i>ordine</i> della curva, uguale a \( p-1 \) );
+        </li>
+        <li>
+            Un vettore di \( p + n + 2 \) nodi (<i>knots</i>): \( (u_0, u_1, ..., u_{p+n+1}) \), necessariamente ordinati
+            in maniera non decrescente.
+        </li>
+    </ul>
+    Per modificare l'aspetto di una curva B-Spline, possiamo agire su ognuno di questi parametri: la posizione dei punti
+    di controllo, il valore dei nodi o il grado della curva.
+    <br>
+    Se non viene imposta alcuna restrizione sui nodi della curva, questa in generale non passerà per nessuno dei suoi punti di controllo,
+    nemmeno il punto iniziale o quello finale (come invece accade per le curve di Bézier).
+    La molteplicità di un nodo è il numero di volte che questo occorre all'interno del vettore dei nodi. Se si vuole che la curva
+    passi per il primo e l'ultimo punto di controllo, è necessario che il primo e l'ultimo nodo abbiano molteplicità \( p+1 \).
+    Curve B-Spline aventi questa proprietà vengono chiamate curve <i>clamped</i>.
+
+    <br>
+    L'equazione parametrica di una curva B-Spline è:
+    <br>
+    \( \textbf{P}(u) = \sum_{i=0}^n N_{i,p}(u)\textbf{P}_i \)
+    Le funzioni \( N_{i,p}(u) \) sono le B-Spline <i>basis functions</i> e vengono usate come coefficienti per i punti
+    di controllo, così come nelle curve di Bèzier venivano usati i polinomi di Bernstein \( B_{i}^p(u) \).
+    <br>
+    Queste vengono definite ricorsivamente come segue:
+    <br>
+    \(
+    N_{i,0}(u) =
+    \begin{cases}
+    1, & \text{se $u_i \leq u < u_{i+1} $}\\
+    0, & \text{altrimenti}
+    \end{cases}
+    \)
+    <br>
+    \(
+    N_{i,p}(u) =
+    \frac{u-u_i}{u_{i+p}-u_{i}}N_{i,p-1}(u) +
+    \frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)
+    \)
+    <br>
+    Dalla definizione si ricavano le seguenti proprietà (una speculare all'altra), che sono esattamente ciò che permette
+    di avere una forma di controllo locale:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            La funzione \( N_{i,p}(u) \) è non nulla solo per \( u \in [u_i, u_{i+p+1}) \), ovvero è non nulla solo per
+            \( p+1 \) intervalli del vettore di nodi (<i>knot span</i>);
+        </li>
+        <li>
+            Per ogni intervallo del vettore di nodi \( [u_i, u_{i+1}) \), al più \( p+1 \) <i>basis function</i> di grado \( p \)
+            sono non-nulle, precisamente \( N_{i-p,p}(u), N_{i-p+1,p}(u),...,N_{i,p}(u) \).
+        </li>
+    </ul>
+    Da queste proprietà si deriva immediatamente la proprietà riguardante la modifica dei punti di controllo:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            Cambiando la posizione del punto di controllo \( \textbf{P}_i \), la curva \( \textbf{P}(u) \) viene
+            modificata solo per \( u \in [u_i, u_{i+p+1}) \), ossia vengono alterati al più \( p+1 \) segmenti di curva.
+        </li>
+    </ul>
+    Un'altra proprietà importante riguarda la continuità di una curva B-Spline, nei punti di "incollamento" tra le varie
+    curve componenti (<i>knot points</i>)
+    <ul class="uk-list uk-list-disc">
+        <li>
+            In corrispondenza di un nodo di molteplicità \( k \), la curva ha continuità \( C^{p-k} \).
+        </li>
+    </ul>
+    Quindi, la molteplicità di un nodo influenza la continuità della curva.
+    <br>
+    Aumentando la molteplicità di un nodo è in realtà possibile anche far sì che la curva passi per un determinato punto di controllo.
+    Infatti, vale la seguente proprietà:
+    <ul class="uk-list uk-list-disc">
+        <li>
+            Per ogni nodo interno di molteplicità \( k \), il numero di <i>basis function</i> non-nulle in quel punto
+            è al più \( p-k+1 \).
+        </li>
+    </ul>
+    Ne consegue che, in corrispondenza di un nodo di molteplicità \( p \), solo una delle <i>basis function</i> sarà
+    non nulla. Più precisamente, il valore dell'unica funzione non nulla sarà esattamente \( 1 \), per cui si avrà che la curva
+    passa per uno dei suoi punti di controllo.
+    Un caso particolare è proprio quello delle curve clamped, nominate poco sopra, che passano per il primo e l'ultimo
+    punto di controllo.
+    <h2 class="uk-heading-small uk-heading-divider">Superfici B-Spline</h2>
+    Così come 
 
 
 
