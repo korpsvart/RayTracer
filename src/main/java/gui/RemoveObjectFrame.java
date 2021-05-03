@@ -22,7 +22,7 @@ public class RemoveObjectFrame extends JFrame implements ActionListener, ListSel
     public RemoveObjectFrame(Visualizer visualizer, Scene scene) {
         this.visualizer = visualizer;
         this.scene = scene;
-        ArrayList<SceneObject> sceneObjects = scene.getSceneObjects();
+        ArrayList<SceneObject> sceneObjects = scene.getTopLevelSceneObjects();
         listModel.addAll(sceneObjects);
 
         list = new JList(listModel);

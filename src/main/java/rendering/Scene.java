@@ -1,5 +1,6 @@
 package rendering;
 import java.awt.*;
+import java.util.List;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -41,6 +42,7 @@ public class Scene {
     private Matrix4D cameraToWorld;
     private BVH BVH;
     private ArrayList<SceneObject> sceneObjects;
+    private ArrayList<SceneObject> topLevelSceneObjects = new ArrayList<>();
     private ArrayList<SceneObject> nonBVHSceneObjects;
     private ArrayList<SceneObject> sceneObjectsBVH;
     private ArrayList<LightSource> lightSources;
@@ -48,6 +50,10 @@ public class Scene {
 
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
+    }
+
+    public ArrayList<SceneObject> getTopLevelSceneObjects() {
+        return topLevelSceneObjects;
     }
 
     public ArrayList<LightSource> getLightSources() {
@@ -62,6 +68,7 @@ public class Scene {
         sceneObjects.remove(sceneObject);
         nonBVHSceneObjects.remove(sceneObject);
         sceneObjectsBVH.remove(sceneObject);
+        topLevelSceneObjects.remove(sceneObject);
     }
 
 
@@ -115,8 +122,11 @@ public class Scene {
             sceneObjectsBVH.add(sceneObject);
         } else {
             nonBVHSceneObjects.add(sceneObject);
+
         }
         sceneObjects.add(sceneObject);
+        if (!(sceneObject.getGeometricObject() instanceof TriangleMesh.Triangle))
+            topLevelSceneObjects.add(sceneObject);
     }
 
     public ArrayList<SceneObject> getSceneObjectsBVH() {
@@ -125,6 +135,8 @@ public class Scene {
 
     public void triangulateAndAddSceneObject(SceneObject sceneObject, int divs) {
         TriangleMesh triangleMesh = sceneObject.triangulate(divs);
+        triangleMesh.setSceneObject(sceneObject);
+        topLevelSceneObjects.add(sceneObject);
         sceneObject.addTrianglesToScene(this, triangleMesh);
     }
 

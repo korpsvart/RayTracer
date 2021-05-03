@@ -48,6 +48,13 @@ public class TriangleMesh {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            return this == obj ||
+                    (obj instanceof Triangle &&
+                            this.triangleMesh.sceneObject.equals(((Triangle)obj).triangleMesh.sceneObject));
+        }
+
+        @Override
         public Optional<IntersectionData> rayIntersection2(Line3d ray) {
             //Using local coordinates u,v
             //solving linear system with Cramer's rule
@@ -181,6 +188,7 @@ public class TriangleMesh {
 
     //Face index array is not needed
     private int vertexIndex[];
+    private SceneObject sceneObject; //the "top-level" scene object this mesh represents
     private Vector3f[] vertex;
     private Vector3f[] vertexNormal;
     private int numTriangles;
@@ -189,6 +197,14 @@ public class TriangleMesh {
     private BoundingVolume boundingVolume;
     private Matrix4D objectToWorld = null;
     private Triangle triangles[];
+
+    public SceneObject getSceneObject() {
+        return sceneObject;
+    }
+
+    public void setSceneObject(SceneObject sceneObject) {
+        this.sceneObject = sceneObject;
+    }
 
     public Triangle[] getTriangles() {
         return triangles;
