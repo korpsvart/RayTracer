@@ -80,5 +80,10 @@ public class Diffuse extends SceneObject
         }
     }
 
+    @Override
+    String getTypeName() {
+        return "Diffuse";
+    }
+
 
 }

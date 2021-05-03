@@ -131,5 +131,10 @@ public class MirrorTransparent extends SceneObject {
         }
     }
 
+    @Override
+    String getTypeName() {
+        return "Mirror-transparent";
+    }
+
 
 }

@@ -88,4 +88,9 @@ public class Phong extends SceneObject{
             currentScene.addSceneObject(phong);
         }
     }
+
+    @Override
+    String getTypeName() {
+        return "Phong";
+    }
 }

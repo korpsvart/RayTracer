@@ -28,6 +28,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
         addSendButton(gridy++);
+        setSizeToContent(3, gridy, 200, 100);
 
     }
 

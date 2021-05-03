@@ -58,6 +58,11 @@ public class Scene {
         return BVH;
     }
 
+    public void removeSceneObject(SceneObject sceneObject) {
+        sceneObjects.remove(sceneObject);
+        nonBVHSceneObjects.remove(sceneObject);
+        sceneObjectsBVH.remove(sceneObject);
+    }
 
 
     public void addLightSource(LightSource lightSource) {
@@ -73,6 +78,7 @@ public class Scene {
     public void setCameraToWorld(Matrix4D cameraToWorld) {
         this.cameraToWorld = cameraToWorld;
     }
+
 
     public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition, Vector3f backgroundColor) {
         this.width = width;

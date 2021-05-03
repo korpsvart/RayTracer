@@ -493,4 +493,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     public void windowDeactivated(WindowEvent e) {
 
     }
+
+    protected void setSizeToContent(int gridx, int gridy, int scalex, int scaley) {
+        setSize((gridx)*scalex, (gridy)*scaley);
+    }
 }

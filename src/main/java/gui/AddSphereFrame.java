@@ -115,6 +115,7 @@ class AddSphereFrame extends AddObjectFrame {
 
         //add send button
         addSendButton(6);
+        setSizeToContent(3, 7, 200, 60);
 
     }
 

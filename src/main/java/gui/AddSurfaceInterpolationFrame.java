@@ -72,6 +72,9 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
         addSendButton(gridy++);
+
+
+        setSizeToContent(3, gridy, 250, 70);
     }
 
     @Override

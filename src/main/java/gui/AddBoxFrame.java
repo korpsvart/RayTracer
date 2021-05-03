@@ -124,6 +124,7 @@ class AddBoxFrame extends AddObjectFrame {
         addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
 
         addSendButton(gridy);
+        setSizeToContent(3, gridy, 200, 60);
 
     }
 

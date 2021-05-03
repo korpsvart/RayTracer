@@ -97,6 +97,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         this.getToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         setLayout(null);
         addWindowListener(this);
+        setResizable(false);
         setVisible(true);
 
     }
@@ -132,8 +133,10 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddTeapotFrame addTeapotFrame = new AddTeapotFrame(this, this.scene);
         }  else if (e.getActionCommand().equals("add_donut")) {
             AddDonutFrame addDonutFrame = new AddDonutFrame(this, this.scene);
-        } else if (e.getActionCommand().equals("add_plane")) {
+        }  else if(e.getActionCommand().equals("add_plane")) {
             AddPlaneFrame addPlaneFrame = new AddPlaneFrame(this, this.scene);
+        } else if (e.getActionCommand().equals("remove")) {
+            RemoveObjectFrame removeObjectFrame = new RemoveObjectFrame(this, this.scene);
         }
 
     }

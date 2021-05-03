@@ -83,7 +83,7 @@ public class Main {
         //Screen is placed at z=-1
 
         int width = 1024;
-        int height = 1024;
+        int height = 650;
         double fieldOfView = 39.6; //in degrees
         Vector3f cameraPosition = new Vector3f(0,0,0);
         BufferedImage img = new BufferedImage(width, height, TYPE_INT_RGB);

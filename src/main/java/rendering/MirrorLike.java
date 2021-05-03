@@ -44,5 +44,10 @@ public class MirrorLike extends SceneObject{
         }
     }
 
+    @Override
+    String getTypeName() {
+        return "Mirror-like";
+    }
+
 
 }

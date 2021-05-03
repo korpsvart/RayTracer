@@ -54,4 +54,10 @@ public abstract class SceneObject{
         return BoundingVolume.linkToObject(b, this);
     }
 
+    abstract String getTypeName();
+
+    @Override
+    public String toString() {
+        return getTypeName() + geometricObject.toString();
+    }
 }
