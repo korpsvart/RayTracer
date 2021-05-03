@@ -1,8 +1,6 @@
-package main.java.gui;
+package gui;
 
-
-import main.java.rendering.*;
-
+import rendering.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

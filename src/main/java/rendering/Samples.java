@@ -1,4 +1,4 @@
-package main.java.rendering;
+package rendering;
 public class Samples {
 
     public static Vector3f[][] getInterpolationSurfaceSample1() {

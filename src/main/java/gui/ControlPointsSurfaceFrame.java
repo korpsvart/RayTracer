@@ -1,8 +1,6 @@
-package main.java.gui;
+package gui;
 
-
-import main.java.rendering.*;
-
+import rendering.*;
 abstract class ControlPointsSurfaceFrame extends AddObjectFrame {
 
     public ControlPointsSurfaceFrame(Visualizer visualizer, Scene scene) {

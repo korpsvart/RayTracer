@@ -1,4 +1,4 @@
-package main.java.rendering;
+package rendering;
 import java.util.Optional;
 
 public abstract class SceneObject{

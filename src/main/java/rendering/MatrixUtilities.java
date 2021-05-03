@@ -1,4 +1,4 @@
-package main.java.rendering;
+package rendering;
 
 import static java.util.stream.IntStream.range;
 

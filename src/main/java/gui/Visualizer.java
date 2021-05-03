@@ -1,11 +1,13 @@
-package main.java.gui;
+package gui;
+
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Map;
-import main.java.rendering.*;
+
+import rendering.*;
 
 public class Visualizer extends Frame implements ActionListener, WindowListener, KeyListener, AWTEventListener {
 

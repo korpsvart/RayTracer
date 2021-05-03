@@ -1,6 +1,7 @@
-package main.java.gui;
+package gui;
 
-import main.java.rendering.*;
+import rendering.*;
+
 
 class AddPlaneFrame extends AddObjectFrame {
 

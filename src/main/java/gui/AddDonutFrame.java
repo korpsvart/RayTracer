@@ -1,6 +1,6 @@
-package main.java.gui;
+package gui;
 
-import main.java.rendering.*;
+import rendering.*;
 
 class AddDonutFrame extends AddSurfaceInterpolationFrame {
 

@@ -1,6 +1,6 @@
-package main.java.rendering;
+package rendering;
 
-import main.java.gui.*;
+import gui.*;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicLong;

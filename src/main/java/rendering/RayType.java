@@ -1,4 +1,4 @@
-package main.java.rendering;
+package rendering;
 
 public enum RayType {
     //Primary ray are those cast from the camera

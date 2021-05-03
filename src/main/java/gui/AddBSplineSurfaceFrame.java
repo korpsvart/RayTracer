@@ -1,6 +1,6 @@
-package main.java.gui;
+package gui;
 
-import main.java.rendering.*;
+import rendering.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
