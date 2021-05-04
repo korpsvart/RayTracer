@@ -40,6 +40,12 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         add(c);
         MenuBar menuBar = new MenuBar();
         Menu menu = new Menu("Options");
+        Menu settingsMenu = new Menu("Settings");
+        MenuItem changeSettings = new MenuItem("Change settings");
+        settingsMenu.add(changeSettings);
+        changeSettings.setActionCommand("settings");
+        menuBar.add(settingsMenu);
+        settingsMenu.addActionListener(this);
         Menu addFigureSubMenu = new Menu("Add figure...");
         MenuItem removeFigureMenuItem = new MenuItem("Remove figure");
         removeFigureMenuItem.setActionCommand("remove");
@@ -143,6 +149,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             RemoveObjectFrame removeObjectFrame = new RemoveObjectFrame(this, this.scene);
         }  else if (e.getActionCommand().equals("remove_light")) {
             RemoveLightFrame removeLightFrame = new RemoveLightFrame(this, this.scene);
+        }   else if (e.getActionCommand().equals("settings")) {
+            SettingsFrame settingsFrame = new SettingsFrame(this, this.scene);
         }
 
     }

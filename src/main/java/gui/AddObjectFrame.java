@@ -415,7 +415,11 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                 double ior = Double.parseDouble(iorText.getText());
                 GeometricObject geometricObject = createGeometricObject();
                 if (geometricObject.isTriangulated()) {
-                    divs = Integer.parseInt(divisionTextField.getText());
+                    try {
+                        divs = Integer.parseInt(divisionTextField.getText());
+                    } catch (NumberFormatException exception) {
+                        divs = 16;
+                    }
                     triangulateAndAddSceneObject(geometricObject, mType, albedo, ior, divs);
                 } else {
                     addSceneObject(geometricObject, mType, albedo, ior);

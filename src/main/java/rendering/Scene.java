@@ -1,6 +1,5 @@
 package rendering;
 import java.awt.*;
-import java.util.List;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -14,11 +13,13 @@ public class Scene {
     private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
-    private static boolean SIMULATE_INDIRECT_DIFFUSE = false;
-    private static boolean USE_ENVIRONMENT_LIGHT = true;
+
+
+    private static boolean simulateIndirectDiffuse = false;
+    private static boolean useEnvironmentLight = true;
 
     public static boolean isSimulateIndirectDiffuse() {
-        return SIMULATE_INDIRECT_DIFFUSE;
+        return simulateIndirectDiffuse;
     }
 
     public static double getBias() {
@@ -26,13 +27,19 @@ public class Scene {
     }
 
     private static final double bias = 10e-6; //bias for shadow acne
-    private static final double AIR_IOR = 1; //air index of refraction, considered as vacuum for simplicity
+    private static final double AIR_IOR = 1; //air index of refraction
+    // , considered as vacuum for simplicity
 
     private static boolean backFaceCulling = false;
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
     private final double fieldOfView;
-    private final BufferedImage img;
+
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
+
+    private BufferedImage img;
     private final Camera camera;
     private final Vector3f cameraPosition;
     //we save last camera orientation. Rays are always generated with default position and orientation and then
@@ -52,6 +59,29 @@ public class Scene {
         return sceneObjects;
     }
 
+
+    public static void setSimulateIndirectDiffuse(boolean simulateIndirectDiffuse) {
+        Scene.simulateIndirectDiffuse = simulateIndirectDiffuse;
+    }
+
+    public static boolean isUseEnvironmentLight() {
+        return useEnvironmentLight;
+    }
+
+    public static void setUseEnvironmentLight(boolean useEnvironmentLight) {
+        Scene.useEnvironmentLight = useEnvironmentLight;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+
+
     public ArrayList<SceneObject> getTopLevelSceneObjects() {
         return topLevelSceneObjects;
     }
@@ -62,6 +92,14 @@ public class Scene {
 
     public BVH getBVH() {
         return BVH;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public void removeSceneObject(SceneObject sceneObject) {
@@ -144,6 +182,8 @@ public class Scene {
         //this should be called for each rendering if the scene is not static
         this.BVH = new BVH(this, Scene.MIN_BOUND, Scene.MAX_BOUND);
     }
+
+
 
     public void render() {
         double aspectRatio = (double)width/height;
@@ -260,7 +300,7 @@ public class Scene {
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth, RayType rayType) {
         //same as above but allow caller to specify ray type
         if (rayDepth > MAX_RAY_DEPTH) {
-            if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
+            if (useEnvironmentLight && rayType==RayType.INDIRECT_DIFFUSE) {
                 return environmentLight.getColor().mul(environmentLight.getIntensity());
             } else {
                 return this.backgroundColor;
@@ -270,7 +310,7 @@ public class Scene {
         if (intersectionDataPlusObject.isPresent()) {
             return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
         } else {
-            if (USE_ENVIRONMENT_LIGHT && rayType==RayType.INDIRECT_DIFFUSE) {
+            if (useEnvironmentLight && rayType==RayType.INDIRECT_DIFFUSE) {
                 return environmentLight.getColor().mul(environmentLight.getIntensity());
             } else {
                 return this.backgroundColor;

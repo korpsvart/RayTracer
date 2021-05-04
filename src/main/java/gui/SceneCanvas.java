@@ -14,12 +14,15 @@ public class SceneCanvas extends Canvas {
         this.sceneToRender = sceneToRender;
     }
     public void paint(Graphics g)  {
-//        try {
-//            sceneToRender = resizeImage(sceneToRender, 800, 500);
-//        } catch (Exception e) {
-//            System.out.println("Error during resizing of image");
-//            e.printStackTrace();
-//        }
+        BufferedImage resized;
+        try {
+            resized = resizeImage(sceneToRender, 800,
+                    800);
+        } catch (Exception e) {
+            System.out.println("Error during resizing of image");
+            resized = sceneToRender;
+            e.printStackTrace();
+        }
 
         g.drawImage(sceneToRender, 0, 0, new TextArea());
     }

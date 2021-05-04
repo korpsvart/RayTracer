@@ -4,7 +4,15 @@ import java.util.Random;
 
 public class MonteCarloSampling {
 
-    private static final int SAMPLING_N = 32;
+    public static int getSamplingN() {
+        return SAMPLING_N;
+    }
+
+    public static void setSamplingN(int samplingN) {
+        SAMPLING_N = samplingN;
+    }
+
+    private static int SAMPLING_N = 32;
 
     public static Vector3f uniformSamplingHemisphere(double r1, double r2) {
         //given two random numbers r1, r2 in [0, 1]
