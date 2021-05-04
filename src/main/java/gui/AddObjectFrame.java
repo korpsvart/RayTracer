@@ -14,6 +14,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 abstract class AddObjectFrame extends Frame implements ActionListener, WindowListener {
 
+
     private final Visualizer visualizer;
     protected TextField albedoTextField;
     protected JColorChooser colorChooser;
@@ -38,6 +39,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     protected Color currentColor = Color.white;
     protected JComboBox materialComboBox;
     protected int divs = 16;
+    private final JLabel divisionLabel = new JLabel("Number of subdivisions for triangulation: ");
+    private final TextField divisionTextField = new TextField(10);
 
     public AddObjectFrame(Visualizer visualizer, Scene scene) {
         this.visualizer = visualizer;
@@ -412,6 +415,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                 double ior = Double.parseDouble(iorText.getText());
                 GeometricObject geometricObject = createGeometricObject();
                 if (geometricObject.isTriangulated()) {
+                    divs = Integer.parseInt(divisionTextField.getText());
                     triangulateAndAddSceneObject(geometricObject, mType, albedo, ior, divs);
                 } else {
                     addSceneObject(geometricObject, mType, albedo, ior);
@@ -498,5 +502,16 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
 
     protected void setSizeToContent(int gridx, int gridy, int scalex, int scaley) {
         setSize((gridx)*scalex, (gridy)*scaley);
+    }
+
+
+    protected void addDivsPanel(int gridy) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = gridy;
+        mainPanel.add(divisionLabel, c);
+        divisionTextField.setText(String.valueOf(divs));
+        mainPanel.add(divisionTextField, c);
+        divisionTextField.addActionListener(this);
     }
 }

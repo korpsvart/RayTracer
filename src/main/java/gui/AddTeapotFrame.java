@@ -11,6 +11,7 @@ class AddTeapotFrame extends AddObjectFrame {
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+        addDivsPanel(gridy++);
         addSendButton(gridy++);
 
     }

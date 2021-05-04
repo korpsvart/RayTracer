@@ -1,7 +1,13 @@
 package gui;
 
 import rendering.*;
+
+import javax.swing.*;
+import java.awt.*;
+
 abstract class ControlPointsSurfaceFrame extends AddObjectFrame {
+
+
 
     public ControlPointsSurfaceFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
@@ -19,5 +25,6 @@ abstract class ControlPointsSurfaceFrame extends AddObjectFrame {
             }
         }
     }
+
 
 }

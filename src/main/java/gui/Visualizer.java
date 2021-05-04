@@ -48,6 +48,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         pointLightMenuItem.setActionCommand("add_point_light");
         MenuItem distantLightMenuItem = new MenuItem("Distant light");
         distantLightMenuItem.setActionCommand("add_distant_light");
+        MenuItem removeLightMenuItem = new MenuItem("Remove light");
+        removeLightMenuItem.setActionCommand("remove_light");
         MenuItem sphereMenuItem = new MenuItem("Sphere");
         sphereMenuItem.setActionCommand("add_sphere");
         MenuItem boxMenuitem = new MenuItem("Box");
@@ -89,7 +91,9 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         menu.add(addFigureSubMenu);
         menu.add(removeFigureMenuItem);
         menu.add(addLightMenu);
+        menu.add(removeLightMenuItem);
         removeFigureMenuItem.addActionListener(this);
+        removeLightMenuItem.addActionListener(this);
         menuBar.add(menu);
         this.setMenuBar(menuBar);
         setFocusable(true);
@@ -137,6 +141,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             AddPlaneFrame addPlaneFrame = new AddPlaneFrame(this, this.scene);
         } else if (e.getActionCommand().equals("remove")) {
             RemoveObjectFrame removeObjectFrame = new RemoveObjectFrame(this, this.scene);
+        }  else if (e.getActionCommand().equals("remove_light")) {
+            RemoveLightFrame removeLightFrame = new RemoveLightFrame(this, this.scene);
         }
 
     }

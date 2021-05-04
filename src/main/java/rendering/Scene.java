@@ -369,6 +369,10 @@ public class Scene {
         }
     }
 
+    public void removeLightSource(LightSource lightSource) {
+        lightSources.remove(lightSource);
+    }
+
 
     class RenderThread implements Runnable {
 

@@ -18,6 +18,11 @@ public class TriangleMesh {
         private Vector3f v0;
         private final Vector3f v1;
         private Vector3f v2;
+
+        public void setTriangleMesh(TriangleMesh triangleMesh) {
+            this.triangleMesh = triangleMesh;
+        }
+
         private TriangleMesh triangleMesh; //corresponding triangle mesh
         private Vector3f faceNormal = null;
         private double area  = -1;
@@ -519,6 +524,7 @@ public class TriangleMesh {
         for (int i = 0; i < meshes.length; i++) {
             Triangle[] triangles = meshes[i].getTriangles();
             for (j = 0; j < triangles.length; j++) {
+                triangles[j].setTriangleMesh(result);
                 result.triangles[j+c] = triangles[j];
             }
             c+=j;
