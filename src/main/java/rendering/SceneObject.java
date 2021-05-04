@@ -11,6 +11,8 @@ public abstract class SceneObject{
 
     private GeometricObject geometricObject;
 
+    private SceneObject topLevelSceneObject;
+
     public GeometricObject getGeometricObject() {
         return geometricObject;
     }
@@ -22,6 +24,11 @@ public abstract class SceneObject{
     public SceneObject(GeometricObject geometricObject) {
         //wrap the geometric object passed
         this.geometricObject = geometricObject;
+        if (geometricObject instanceof TriangleMesh.Triangle) {
+            topLevelSceneObject = ((TriangleMesh.Triangle)geometricObject).getTriangleMesh().getSceneObject();
+        } else {
+            topLevelSceneObject = this;
+        }
     }
 
     public Vector3f[] getLocalCartesianSystem(Vector3f point, double u, double v) {
@@ -59,5 +66,14 @@ public abstract class SceneObject{
     @Override
     public String toString() {
         return getTypeName() + geometricObject.toString();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SceneObject) {
+            return topLevelSceneObject== ((SceneObject) obj).topLevelSceneObject;
+        }
+        return false;
     }
 }

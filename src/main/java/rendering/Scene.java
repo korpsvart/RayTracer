@@ -65,10 +65,10 @@ public class Scene {
     }
 
     public void removeSceneObject(SceneObject sceneObject) {
-        sceneObjects.remove(sceneObject);
-        nonBVHSceneObjects.remove(sceneObject);
-        sceneObjectsBVH.remove(sceneObject);
-        topLevelSceneObjects.remove(sceneObject);
+        sceneObjects.removeIf((s1) -> s1.equals(sceneObject));
+        nonBVHSceneObjects.removeIf((s1) -> s1.equals(sceneObject));
+        sceneObjectsBVH.removeIf((s1) -> s1.equals(sceneObject));
+        topLevelSceneObjects.removeIf((s1) -> s1.equals(sceneObject));
     }
 
 

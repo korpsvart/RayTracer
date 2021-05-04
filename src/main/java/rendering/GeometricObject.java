@@ -111,4 +111,5 @@ public abstract class GeometricObject {
     public boolean isTriangulated() {
         return triangulated;
     }
+
 }

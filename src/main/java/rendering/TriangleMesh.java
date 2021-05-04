@@ -47,11 +47,8 @@ public class TriangleMesh {
             this.vertexNormal = vertexNormal.clone();
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            return this == obj ||
-                    (obj instanceof Triangle &&
-                            this.triangleMesh.sceneObject.equals(((Triangle)obj).triangleMesh.sceneObject));
+        public TriangleMesh getTriangleMesh() {
+            return triangleMesh;
         }
 
         @Override

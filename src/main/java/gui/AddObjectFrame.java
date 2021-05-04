@@ -78,6 +78,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy;
+        c.weightx=1;
+        c.gridwidth=3;
         mainPanel.add(otwSubPanel, c);
     }
 
@@ -122,6 +124,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
 
 
         //translation
+
         c.insets = new Insets(10, 0, 10, 0);
         c.gridy = gridy;
         c.gridx = 0;
@@ -299,7 +302,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         Button sendButton = new Button("Create");
         sendButton.setActionCommand("create");
         sendButton.addActionListener(this);
-        c.fill = GridBagConstraints.HORIZONTAL;
+//        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy;
         c.gridx = 1;
         c.weightx = 0;
@@ -311,7 +314,6 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         add(mainPanel);
         pack();
         setVisible(true);
-        setSize(800, 400);
     }
 
     abstract GeometricObject createGeometricObject();
