@@ -16,8 +16,10 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
 
 
     private final Visualizer visualizer;
+    protected boolean removeMode = false;
     protected TextField albedoTextField;
     protected JColorChooser colorChooser;
+    protected SceneObject defaultSceneObject;
     protected Button albedoButton;
     protected TextField iorText;
     protected JLabel materialLabel;
@@ -423,6 +425,9 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                     triangulateAndAddSceneObject(geometricObject, mType, albedo, ior, divs);
                 } else {
                     addSceneObject(geometricObject, mType, albedo, ior);
+                }
+                if (removeMode && defaultSceneObject!=null) {
+                    scene.removeSceneObject(defaultSceneObject);
                 }
                 visualizer.renderScene(this.scene);
                 break;

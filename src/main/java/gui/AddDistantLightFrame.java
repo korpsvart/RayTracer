@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 
 class AddDistantLightFrame extends AddLightSourceFrame {
+    private DistantLight defaultDistantLight;
+    private boolean removeMode = false;
     //only directional data
     private JLabel labelLightDirection = new JLabel("Insert light direction");
 
@@ -45,10 +47,22 @@ class AddDistantLightFrame extends AddLightSourceFrame {
         createFrame();
     }
 
+    public AddDistantLightFrame(Visualizer visualizer, Scene scene, DistantLight distantLight) {
+        this(visualizer, scene);
+        defaultDistantLight = distantLight;
+        removeMode = true;
+        textFieldX.setText(String.valueOf(defaultDistantLight.getDirection().getX()));
+        textFieldY.setText(String.valueOf(defaultDistantLight.getDirection().getY()));
+        textFieldZ.setText(String.valueOf(defaultDistantLight.getDirection().getZ()));
+    }
+
     @Override
     void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
         //remapping intensity over [0,10]
         intensity *= 10;
+        if (removeMode) {
+            scene.removeLightSource(defaultDistantLight);
+        }
         DistantLight distantLight = new DistantLight(color, intensity, xyz);
         scene.addLightSource(distantLight);
     }

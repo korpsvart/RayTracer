@@ -263,6 +263,11 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         this.sceneCanvas.repaint();
     }
 
+    public void renderSceneWithoutRebuildingBVH(Scene scene) {
+        this.scene.render(20);
+        this.sceneCanvas.repaint();
+    }
+
     class CommandButton extends Button {
 
         public CommandButton(Visualizer visualizer, String label) {

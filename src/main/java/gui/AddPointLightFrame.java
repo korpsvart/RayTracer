@@ -8,6 +8,8 @@ import java.awt.*;
 class AddPointLightFrame extends AddLightSourceFrame {
     //only positional data
     private JLabel labelLightPosition = new JLabel("Insert light position");
+    private boolean removeMode = false;
+    private PointLight defaultPointLight;
 
     public AddPointLightFrame(Visualizer visualizer, Scene scene) {
         super(visualizer,scene);
@@ -45,10 +47,24 @@ class AddPointLightFrame extends AddLightSourceFrame {
         createFrame();
     }
 
+    public AddPointLightFrame(Visualizer visualizer, Scene scene, PointLight pointLight) {
+        this(visualizer, scene);
+        defaultPointLight = pointLight;
+        removeMode = true;
+        textFieldX.setText(String.valueOf(defaultPointLight.getPosition().getX()));
+        textFieldY.setText(String.valueOf(defaultPointLight.getPosition().getY()));
+        textFieldZ.setText(String.valueOf(defaultPointLight.getPosition().getZ()));
+    }
+
+
+
     @Override
     void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
         //remapping intensity over [0,150]
         intensity *= 150;
+        if (removeMode) {
+            scene.removeLightSource(defaultPointLight);
+        }
         PointLight pointLight = new PointLight(color, intensity, xyz);
         scene.addLightSource(pointLight);
     }

@@ -1,8 +1,6 @@
 package gui;
 
-import rendering.LightSource;
-import rendering.Scene;
-import rendering.SceneObject;
+import rendering.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -16,6 +14,7 @@ public class RemoveLightFrame extends JFrame implements ActionListener, ListSele
 
     DefaultListModel<LightSource> listModel = new DefaultListModel();
     private static final String removeString = "Remove";
+    private static final String editString = "Edit";
     private Visualizer visualizer;
     private Scene scene;
     JList list;
@@ -36,10 +35,15 @@ public class RemoveLightFrame extends JFrame implements ActionListener, ListSele
         removeButton.setActionCommand(removeString);
         removeButton.addActionListener(this);
 
+        JButton editButton = new JButton(editString);
+        editButton.setActionCommand(editString);
+        editButton.addActionListener(this);
+
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane,
                 BoxLayout.LINE_AXIS));
         buttonPane.add(removeButton);
+        buttonPane.add(editButton);
         buttonPane.add(Box.createHorizontalStrut(5));
         buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -56,13 +60,25 @@ public class RemoveLightFrame extends JFrame implements ActionListener, ListSele
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        LightSource lightSource;
         switch (e.getActionCommand()) {
             case "Remove":
-                LightSource lightSource = (LightSource) list.getSelectedValue();
+                lightSource = (LightSource) list.getSelectedValue();
                 scene.removeLightSource(lightSource);
                 listModel.remove(list.getSelectedIndex());
-                visualizer.renderScene(scene);
+                visualizer.renderSceneWithoutRebuildingBVH(scene);
+                this.dispose();
                 break;
+            case "Edit":
+                lightSource = (LightSource) list.getSelectedValue();
+                if (lightSource instanceof PointLight) {
+                    AddPointLightFrame addPointLightFrame = new AddPointLightFrame(visualizer, scene,
+                            (PointLight)lightSource);
+                } else if (lightSource instanceof DistantLight) {
+                    AddDistantLightFrame addDistantLightFrame = new AddDistantLightFrame(visualizer, scene,
+                            (DistantLight) lightSource);
+                }
+                this.dispose();
         }
     }
 

@@ -325,4 +325,7 @@ public class BezierSurface33 extends GeometricObject {
     }
 
 
+    public Vector3f[][] getControlPoints() {
+        return controlPoints;
+    }
 }

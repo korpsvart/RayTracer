@@ -168,7 +168,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         Vector3f color = new Vector3f(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
         color = color.mul((double) 1 / 255);
         addParticularLightSource(intensity, color, xyz);
-        visualizer.renderScene(scene);
+        visualizer.renderSceneWithoutRebuildingBVH(scene);
     }
 
     abstract void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz);

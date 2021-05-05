@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 class AddBezierSurface extends ControlPointsSurfaceFrame {
 
     private final Visualizer visualizer;
+    private BezierSurface33 defaultBezierSurface;
     private ControlPointsFrame controlPointsFrame;
     private Button buttonCP = new Button("Edit control points");
 
@@ -30,6 +31,15 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         addDivsPanel(gridy++);
         addSendButton(gridy++);
         setSizeToContent(3, gridy, 200, 100);
+
+    }
+
+    public AddBezierSurface(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
+        this(visualizer, scene);
+        this.defaultBezierSurface = (BezierSurface33)defaultObject.getGeometricObject();
+        this.defaultSceneObject = defaultObject;
+        removeMode = true;
+        controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getControlPoints(), this);
 
     }
 

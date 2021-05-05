@@ -10,6 +10,10 @@ public class DistantLight extends LightSource {
     private final Vector3f direction;
 
 
+    public Vector3f getDirection() {
+        return direction;
+    }
+
     protected DistantLight(Vector3f color, double intensity, Matrix4D lightToWorld) {
         super(color, intensity, lightToWorld);
         Vector3f v = new Vector3f(0, 0, -1);
