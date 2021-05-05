@@ -43,23 +43,21 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     protected int divs = 16;
     private final JLabel divisionLabel = new JLabel("Number of subdivisions for triangulation: ");
     private final TextField divisionTextField = new TextField(10);
+    protected String material = "Diffuse";
 
     public AddObjectFrame(Visualizer visualizer, Scene scene) {
         this.visualizer = visualizer;
+        this.scene = scene;
+        constructor();
+
+    }
+
+    public void constructor() {
 
         addWindowListener(this);
         GridBagConstraints c = new GridBagConstraints();
         Panel panel = new Panel(new GridBagLayout());
         this.mainPanel = panel;
-        this.scene = scene;
-        this.materialLabel = new JLabel("Select type of material");
-        JComboBox comboBoxMaterial = new JComboBox(Visualizer.materials);
-        this.materialComboBox = comboBoxMaterial;
-        materialComboBox.addActionListener(this);
-        //define albedo subpanel
-        albedoSubPanel = createChooseRGBPanel();
-
-
         //define transparent subpanel
         this.transparentSubPanel = new Panel(new GridBagLayout());
         JLabel iorLabel = new JLabel("Insert index of refraction");
@@ -74,8 +72,36 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         c.gridwidth = 1;
         c.weightx = 0.2;
         transparentSubPanel.add(iorTextField, c);
+        albedoSubPanel = createChooseRGBPanel();
+
+        this.materialLabel = new JLabel("Select type of material");
+        JComboBox comboBoxMaterial = new JComboBox(Visualizer.materials);
+        this.materialComboBox = comboBoxMaterial;
+        materialComboBox.addActionListener(this);
+        materialComboBox.setSelectedItem(material);
+        //define albedo subpanel
 
 
+
+
+    }
+
+    public AddObjectFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        this.visualizer = visualizer;
+        this.scene = scene;
+        removeMode = true;
+        if (defaultSceneObject instanceof Diffuse) {
+            currentColor = ((Diffuse) defaultSceneObject).getAlbedo().vectorToColor();
+            material = "Diffuse";
+        } else if (defaultSceneObject instanceof Phong) {
+            currentColor = ((Phong) defaultSceneObject).getAlbedo().vectorToColor();
+            material = "Phong";
+        } else if (defaultSceneObject instanceof MirrorLike) {
+            material = "Mirror-Like";
+        } else if (defaultSceneObject instanceof  MirrorTransparent) {
+            material = "Transparent";
+        }
+        constructor();
     }
 
 
@@ -93,8 +119,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         textFieldYTranslation.setText(Double.toString(translation.getY()));
         textFieldZTranslation.setText(Double.toString(translation.getZ()));
         textFieldXRotation.setText(Double.toString(rotation.getX()));
-        textFieldYRotation.setText(Double.toString(rotation.getX()));
-        textFieldZRotation.setText(Double.toString(rotation.getX()));
+        textFieldYRotation.setText(Double.toString(rotation.getY()));
+        textFieldZRotation.setText(Double.toString(rotation.getZ()));
     }
 
     protected void setDefaultOTW(Vector3f translation, Vector3f rotation, Vector3f scaling) {
@@ -102,11 +128,11 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         textFieldYTranslation.setText(Double.toString(translation.getY()));
         textFieldZTranslation.setText(Double.toString(translation.getZ()));
         textFieldXRotation.setText(Double.toString(rotation.getX()));
-        textFieldYRotation.setText(Double.toString(rotation.getX()));
-        textFieldZRotation.setText(Double.toString(rotation.getX()));
-        textFieldXRotation.setText(Double.toString(scaling.getX()));
-        textFieldYRotation.setText(Double.toString(scaling.getX()));
-        textFieldZRotation.setText(Double.toString(scaling.getX()));
+        textFieldYRotation.setText(Double.toString(rotation.getY()));
+        textFieldZRotation.setText(Double.toString(rotation.getZ()));
+        textFieldXScaling.setText(Double.toString(scaling.getX()));
+        textFieldYScaling.setText(Double.toString(scaling.getY()));
+        textFieldZScaling.setText(Double.toString(scaling.getZ()));
     }
 
     private Panel createOTWSubPanel() {
@@ -243,7 +269,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         JLabel rgbLabel = new JLabel("RGB:");
         c.gridx = 1;
         c.weightx = 0.2;
-        TextField currentAlbedoLabel = new TextField("(255,255,255)");
+        TextField currentAlbedoLabel = new TextField("(" + currentColor.getRed() + "," + currentColor.getGreen() + "," + currentColor.getBlue() + ")");
         this.albedoTextField = currentAlbedoLabel;
         currentAlbedoLabel.setEditable(false);
         c.gridx = 2;
@@ -271,7 +297,37 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         mainPanel.add(materialComboBox, c);
     }
 
-    protected void addMaterialPropertySubPanel(MaterialType materialType, int gridy) {
+//    protected void addMaterialPropertySubPanel(MaterialType materialType, int gridy) {
+//        this.materialSubPanelGridy = gridy;
+//        GridBagConstraints c = new GridBagConstraints();
+//        c.insets = new Insets(10, 0, 10, 0);
+//        c.gridy = gridy;
+//        c.gridx = 0;
+//        c.weightx = 0;
+//        c.gridwidth = 3;
+//        switch (materialType) {
+//            case DIFFUSE:
+//            case PHONG:
+//                mainPanel.remove(this.transparentSubPanel);
+//                mainPanel.add(this.albedoSubPanel, c);
+//                mainPanel.revalidate();
+//                mainPanel.repaint();
+//                break;
+//            case TRANSPARENT:
+//                mainPanel.remove(this.albedoSubPanel);
+//                mainPanel.add(this.transparentSubPanel, c);
+//                mainPanel.revalidate();
+//                mainPanel.repaint();
+//                break;
+//            case MIRRORLIKE:
+//                mainPanel.remove(this.transparentSubPanel);
+//                mainPanel.remove(this.albedoSubPanel);
+//                mainPanel.revalidate();
+//                mainPanel.repaint();
+//        }
+//    }
+
+    protected void addMaterialPropertySubPanel(int gridy) {
         this.materialSubPanelGridy = gridy;
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10, 0, 10, 0);
@@ -279,7 +335,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         c.gridx = 0;
         c.weightx = 0;
         c.gridwidth = 3;
-        switch (materialType) {
+        switch (Visualizer.materialsMap.get(material)) {
             case DIFFUSE:
             case PHONG:
                 mainPanel.remove(this.transparentSubPanel);
@@ -396,16 +452,21 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                 MaterialType materialType = Visualizer.materialsMap.get(cb.getSelectedItem());
                 switch (materialType) {
                     case DIFFUSE:
-                        addMaterialPropertySubPanel(MaterialType.DIFFUSE, materialSubPanelGridy);
+                        material = "Diffuse";
+                        addMaterialPropertySubPanel(materialSubPanelGridy);
                         break;
                     case PHONG:
-                        addMaterialPropertySubPanel(MaterialType.PHONG, materialSubPanelGridy);
+                        material = "Phong";
+                        addMaterialPropertySubPanel(materialSubPanelGridy);
                         break;
                     case TRANSPARENT:
-                        addMaterialPropertySubPanel(MaterialType.TRANSPARENT, materialSubPanelGridy);
+                        material = "Transparent";
+                        addMaterialPropertySubPanel(materialSubPanelGridy);
                         break;
                     case MIRRORLIKE:
-                        addMaterialPropertySubPanel(MaterialType.MIRRORLIKE, materialSubPanelGridy);
+                        material = "Mirror-Like";
+                        addMaterialPropertySubPanel(materialSubPanelGridy);
+                        break;
                 }
                 break;
             case "create":
@@ -416,6 +477,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                 albedo = albedo.mul((double) 1 / 255);
                 double ior = Double.parseDouble(iorText.getText());
                 GeometricObject geometricObject = createGeometricObject();
+                geometricObject.setRotationData(getRotation());
+                geometricObject.setScalingData(getScaling());
                 if (geometricObject.isTriangulated()) {
                     try {
                         divs = Integer.parseInt(divisionTextField.getText());
@@ -428,6 +491,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                 }
                 if (removeMode && defaultSceneObject!=null) {
                     scene.removeSceneObject(defaultSceneObject);
+                    this.dispose();
                 }
                 visualizer.renderScene(this.scene);
                 break;

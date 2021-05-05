@@ -121,7 +121,7 @@ class AddBoxFrame extends AddObjectFrame {
         mainPanel.add(materialComboBox, c);
 
         addMaterialComboBox(gridy++);
-        addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+        addMaterialPropertySubPanel(gridy++);
 
         addSendButton(gridy);
         setSizeToContent(3, gridy, 200, 60);

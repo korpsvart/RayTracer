@@ -87,7 +87,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
 
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
-        addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+        addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
         addSendButton(gridy++);
 

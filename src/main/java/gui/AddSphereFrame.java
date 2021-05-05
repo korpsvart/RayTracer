@@ -109,7 +109,7 @@ class AddSphereFrame extends AddObjectFrame {
         //material property
         //(changes according to selected option) - default is albedo (for diffuse objects)
         //add current active subpanel (default is the diffuse one)
-        addMaterialPropertySubPanel(MaterialType.DIFFUSE, 5);
+        addMaterialPropertySubPanel(5);
         //end of material property
 
 
@@ -119,6 +119,10 @@ class AddSphereFrame extends AddObjectFrame {
 
     }
 
+    public AddSphereFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        super(visualizer, scene, defaultSceneObject);
+
+    }
 
     protected GeometricObject createGeometricObject() {
         Vector3f position = new Vector3f(Double.parseDouble(posX.getText()),

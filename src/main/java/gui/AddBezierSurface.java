@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 
 class AddBezierSurface extends ControlPointsSurfaceFrame {
 
-    private final Visualizer visualizer;
     private BezierSurface33 defaultBezierSurface;
     private ControlPointsFrame controlPointsFrame;
     private Button buttonCP = new Button("Edit control points");
@@ -16,8 +15,12 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
     public AddBezierSurface(Visualizer visualizer, Scene scene) {
 
         super(visualizer, scene);
-        this.visualizer = visualizer;
         controlPointsFrame = new ControlPointsFrame(visualizer, SampleShapes.getBezierSurfaceSampleCP(), this);
+        createMainPanel();
+
+    }
+
+    private void createMainPanel() {
         buttonCP.setActionCommand("open_edit_cp");
         buttonCP.addActionListener(this);
         int gridy = 0;
@@ -27,19 +30,21 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         mainPanel.add(buttonCP, c);
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
-        addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+        addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
         addSendButton(gridy++);
         setSizeToContent(3, gridy, 200, 100);
-
     }
 
     public AddBezierSurface(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
-        this(visualizer, scene);
+        super(visualizer, scene, defaultObject);
         this.defaultBezierSurface = (BezierSurface33)defaultObject.getGeometricObject();
         this.defaultSceneObject = defaultObject;
         removeMode = true;
-        controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getControlPoints(), this);
+        controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getOriginalCP(), this);
+        setDefaultOTW(defaultBezierSurface.getTranslationData(), defaultBezierSurface.getRotationData(),
+                defaultBezierSurface.getScalingData());
+        createMainPanel();
 
     }
 

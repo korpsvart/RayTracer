@@ -75,6 +75,8 @@ public class RemoveObjectFrame extends JFrame implements ActionListener, ListSel
                 if (geometricObject instanceof BezierSurface33) {
                     AddBezierSurface addBezierSurface = new AddBezierSurface(visualizer, scene,
                             sceneObject);
+                } else if (geometricObject instanceof Sphere) {
+                    AddSphereFrame addSphereFrame = new AddSphereFrame(visualizer, scene, sceneObject);
                 }
                 this.dispose();
         }

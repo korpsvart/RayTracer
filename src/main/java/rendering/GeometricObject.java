@@ -13,6 +13,10 @@ public abstract class GeometricObject {
      */
 
     protected Matrix4D objectToWorld = null;
+    private Vector3f rotationData;
+
+
+    private Vector3f scalingData;
     protected boolean triangulated = true;
     private boolean useBVH = false;//set to true if you wish to use bvh to accelerate intersection
     //1)do not use bvh acceleration with plane
@@ -112,4 +116,24 @@ public abstract class GeometricObject {
         return triangulated;
     }
 
+    public Vector3f getRotationData() {
+        return rotationData;
+    }
+
+    public void setRotationData(Vector3f rotationData) {
+        this.rotationData = rotationData;
+    }
+
+
+    public Vector3f getScalingData() {
+        return scalingData;
+    }
+
+    public void setScalingData(Vector3f scalingData) {
+        this.scalingData = scalingData;
+    }
+
+    public Vector3f getTranslationData() {
+        return objectToWorld.getC();
+    }
 }

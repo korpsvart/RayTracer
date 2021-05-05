@@ -93,4 +93,8 @@ public class Phong extends SceneObject{
     String getTypeName() {
         return "Phong";
     }
+
+    public Vector3f getAlbedo() {
+        return albedo;
+    }
 }

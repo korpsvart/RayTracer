@@ -13,6 +13,10 @@ abstract class ControlPointsSurfaceFrame extends AddObjectFrame {
         super(visualizer, scene);
     }
 
+    public ControlPointsSurfaceFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        super(visualizer, scene, defaultSceneObject);
+    }
+
     abstract void updateControlPoints(Vector3f[][] cp);
 
 

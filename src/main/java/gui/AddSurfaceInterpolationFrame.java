@@ -70,7 +70,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
 
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
-        addMaterialPropertySubPanel(MaterialType.DIFFUSE, gridy++);
+        addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
         addSendButton(gridy++);
 
