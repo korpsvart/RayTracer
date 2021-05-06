@@ -6,9 +6,9 @@ public class BSurface extends GeometricObject {
     //Only works for clamped surfaces, for simplicity
 
     private Vector3f[][] controlPoints;
-    private Vector3f[][] originalCP;
     private Vector3f[][] transposed; //precomputed for performance
     private Vector3f[][] controlPointsWorld;
+    public Vector3f[][] transposedWorld;
     private double[] knotsU;
     private double[] knotsV;
     private int p, q;
@@ -27,11 +27,9 @@ public class BSurface extends GeometricObject {
         }
         this.objectToWorld = objectToWorld;
         this.controlPoints = new Vector3f[controlPoints.length][controlPoints[0].length];
-        this.originalCP = new Vector3f[controlPoints.length][controlPoints[0].length];
         if (objectToWorld != null) {
             for (int i = 0; i < controlPoints.length; i++) {
                 for (int j = 0; j < controlPoints[i].length; j++) {
-                    this.originalCP[i][j] = controlPoints[i][j];
                     this.controlPoints[i][j] = controlPoints[i][j];
                 }
             }
@@ -80,11 +78,11 @@ public class BSurface extends GeometricObject {
             auxU = new Vector3f[1];
             int i = u == knotsU[0] ? 0 : c-s;
             if (q < t) {
-                auxU[0] = v == knotsV[0] ? controlPoints[i][0] : controlPoints[i][d - t];
+                auxU[0] = v == knotsV[0] ? controlPointsWorld[i][0] : controlPointsWorld[i][d - t];
             } else {
                 Vector3f[] auxV = new Vector3f[q-t+1]; //points for v direction
                 for (int j = d-q, l=0; j <= d-t; j++, l++) {
-                    auxV[l] = controlPoints[i][j];
+                    auxV[l] = controlPointsWorld[i][j];
                 }
                 auxU[0] = BSpline.deBoor(auxV, knotsV, v, t, q, d);
             }
@@ -92,11 +90,11 @@ public class BSurface extends GeometricObject {
             auxU = new Vector3f[p-s+1];
             for (int i = c-p, f=0; i <= c-s; i++, f++) {
                 if (q < t) {
-                    auxU[f] = v == knotsV[0] ? controlPoints[i][0] : controlPoints[i][d - t];
+                    auxU[f] = v == knotsV[0] ? controlPointsWorld[i][0] : controlPointsWorld[i][d - t];
                 } else {
                     Vector3f[] auxV = new Vector3f[q-t+1]; //points for v direction
                     for (int j = d-q, l=0; j <= d-t; j++, l++) {
-                        auxV[l] = controlPoints[i][j];
+                        auxV[l] = controlPointsWorld[i][j];
                     }
                     auxU[f] = BSpline.deBoor(auxV, knotsV, v, t, q, d);
                 }
@@ -110,6 +108,7 @@ public class BSurface extends GeometricObject {
     public TriangleMesh triangulate(int divs) {
 
         controlPointsWorld = objectToWorld.transformVector(controlPoints);
+        transposedWorld = MatrixUtilities.transpose2(controlPointsWorld);
 
         double du = (knotsU[knotsU.length-1]-knotsU[0])/divs;
         double dv = (knotsV[knotsV.length-1]-knotsV[0])/divs;
@@ -173,12 +172,12 @@ public class BSurface extends GeometricObject {
             //This means we only care about one value of i
             auxU = new Vector3f[1];
             int i = u == knotsU[0] ? 0 : c-s;
-            BSpline bspline = new BSpline(controlPoints[i], knotsV, q);
+            BSpline bspline = new BSpline(controlPointsWorld[i], knotsV, q);
             auxU[0] = bspline.derivative(v);
         } else {
             auxU = new Vector3f[p-s+1];
             for (int i = c-p, f=0; i <= c-s; i++, f++) {
-                BSpline bspline = new BSpline(controlPoints[i], knotsV, q);
+                BSpline bspline = new BSpline(controlPointsWorld[i], knotsV, q);
                 auxU[f] = bspline.derivative(v);
             }
         }
@@ -201,12 +200,12 @@ public class BSurface extends GeometricObject {
             //This means we only care about one value of i
             auxV = new Vector3f[1];
             int i = v == knotsV[0] ? 0 : c-s;
-            BSpline bspline = new BSpline(transposed[i], knotsU, p);
+            BSpline bspline = new BSpline(transposedWorld[i], knotsU, p);
             auxV[0] = bspline.derivative(u);
         } else {
             auxV = new Vector3f[q-s+1];
             for (int i = c-q, f=0; i <= c-s; i++, f++) {
-                BSpline bspline = new BSpline(transposed[i], knotsU, p);
+                BSpline bspline = new BSpline(transposedWorld[i], knotsU, p);
                 auxV[f] = bspline.derivative(u);
             }
         }
@@ -423,7 +422,4 @@ public class BSurface extends GeometricObject {
         return reduced;
     }
 
-    public Vector3f[][] getOriginalCP() {
-        return originalCP;
-    }
 }

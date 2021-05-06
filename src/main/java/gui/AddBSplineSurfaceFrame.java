@@ -119,7 +119,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         super.actionPerformed(e);
         switch (e.getActionCommand()) {
             case "open_edit_cp":
-                controlPointsFrame = new ControlPointsFrame(visualizer, bSurface.getOriginalCP(), this);
+                controlPointsFrame = new ControlPointsFrame(visualizer, bSurface.getControlPoints(), this);
                 controlPointsFrame.setVisible(true);
                 break;
             case "open_edit_knots_u":
@@ -143,7 +143,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     p, q, Matrix4D.identity);
         }
 
-        controlPointsFrame = new ControlPointsFrame(visualizer,bSurface.getOriginalCP(), this);
+        controlPointsFrame = new ControlPointsFrame(visualizer,bSurface.getControlPoints(), this);
 
         //update spinners
         SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(bSurface.getControlPoints().length, 3, 10, 1);
@@ -208,7 +208,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     } else {
                         newKnots = BSpline.uniformKnots(m, pNew);
                     }
-                    bSurface = new BSurface(bSurface.getOriginalCP(), newKnots, bSurface.getKnotsV(),
+                    bSurface = new BSurface(bSurface.getControlPoints(), newKnots, bSurface.getKnotsV(),
                             pNew, bSurface.getQ(), Matrix4D.identity);
                     spinnerM.removeChangeListener(this);
                     spinnerM.setValue(bSurface.getControlPoints().length);
@@ -224,7 +224,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     } else {
                         newKnots = BSpline.uniformKnots(n, qNew);
                     }
-                    bSurface = new BSurface(bSurface.getOriginalCP(), bSurface.getKnotsU(), newKnots,
+                    bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), newKnots,
                             bSurface.getP(), qNew, Matrix4D.identity);
                     spinnerN.removeChangeListener(this);
                     spinnerN.setValue(bSurface.getControlPoints()[0].length);
