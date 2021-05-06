@@ -7,7 +7,7 @@ public class PhysicalBox extends GeometricObject {
     //but no vertex normal since it makes no sense
     private final Vector3f min;
     private final Vector3f max;
-    private final Matrix4D objectToWorld;
+//    private final Matrix4D objectToWorld;
 
     public PhysicalBox(Vector3f min, Vector3f max, Matrix4D objectToWorld) {
         this.min = min;
@@ -52,5 +52,11 @@ public class PhysicalBox extends GeometricObject {
 
     }
 
+    public Vector3f getMin() {
+        return min;
+    }
 
+    public Vector3f getMax() {
+        return max;
+    }
 }

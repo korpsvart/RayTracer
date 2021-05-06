@@ -14,11 +14,17 @@ class AddBoxFrame extends AddObjectFrame {
     private TextField textFieldXMax = new TextField("0.2", 10);
     private TextField textFieldYMax = new TextField("0.2", 10);
     private TextField textFieldZMax = new TextField("0.2", 10);
+    PhysicalBox defaultBoxObject;
 
 
     public AddBoxFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
 
+        addBoxFrameConstructor();
+
+    }
+
+    private void addBoxFrameConstructor() {
         //labels creation
         JLabel minLabel = new JLabel("Insert min extension coordinates");
         JLabel maxLabel = new JLabel("Insert max extension coordinates");
@@ -125,9 +131,19 @@ class AddBoxFrame extends AddObjectFrame {
 
         addSendButton(gridy);
         setSizeToContent(3, gridy, 200, 60);
-
     }
 
+    public AddBoxFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        super(visualizer, scene, defaultSceneObject);
+        addBoxFrameConstructor();
+        defaultBoxObject = (PhysicalBox)defaultSceneObject.getGeometricObject();
+        textFieldXMin.setText(String.valueOf(defaultBoxObject.getMin().getX()));
+        textFieldYMin.setText(String.valueOf(defaultBoxObject.getMin().getY()));
+        textFieldZMin.setText(String.valueOf(defaultBoxObject.getMin().getZ()));
+        textFieldXMax.setText(String.valueOf(defaultBoxObject.getMax().getX()));
+        textFieldYMax.setText(String.valueOf(defaultBoxObject.getMax().getY()));
+        textFieldZMax.setText(String.valueOf(defaultBoxObject.getMax().getZ()));
+    }
 
     @Override
     GeometricObject createGeometricObject() {

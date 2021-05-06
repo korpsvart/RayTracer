@@ -40,8 +40,6 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         super(visualizer, scene, defaultObject);
         this.defaultBezierSurface = (BezierSurface33)defaultObject.getGeometricObject();
         controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getOriginalCP(), this);
-        setDefaultOTW(defaultBezierSurface.getTranslationData(), defaultBezierSurface.getRotationData(),
-                defaultBezierSurface.getScalingData());
         createMainPanel();
 
     }

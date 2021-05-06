@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 
 class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements ChangeListener {
 
-    private final Visualizer visualizer;
     private ControlPointsFrame controlPointsFrame;
     private BSurface bSurface;
     //        private int p,q; //degrees in both directions. Default is 3
@@ -34,7 +33,10 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
 
     public AddBSplineSurfaceFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
-        this.visualizer = visualizer;
+        addBSplineSurfaceFrameConstructor();
+    }
+
+    private void addBSplineSurfaceFrameConstructor() {
         initializeDataWithSample();
         buttonCP.setActionCommand("open_edit_cp");
         buttonCP.addActionListener(this);
@@ -94,6 +96,12 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         setSizeToContent(3, gridy, 280, 70);
     }
 
+    public AddBSplineSurfaceFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        super(visualizer, scene, defaultSceneObject);
+        bSurface = (BSurface)defaultSceneObject.getGeometricObject();
+        addBSplineSurfaceFrameConstructor();
+    }
+
     @Override
     GeometricObject createGeometricObject() {
 
@@ -111,7 +119,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         super.actionPerformed(e);
         switch (e.getActionCommand()) {
             case "open_edit_cp":
-                controlPointsFrame = new ControlPointsFrame(visualizer, bSurface.getControlPoints(), this);
+                controlPointsFrame = new ControlPointsFrame(visualizer, bSurface.getOriginalCP(), this);
                 controlPointsFrame.setVisible(true);
                 break;
             case "open_edit_knots_u":
@@ -124,21 +132,24 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
     }
 
     private void initializeDataWithSample() {
-        Vector3f[][] sampleCP = SampleShapes.getBSplineSample1CP();
-        Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
-        double[] u = SampleShapes.getBSplineSample1U();
-        double[] v = SampleShapes.getBSplineSample1V();
-        int p = SampleShapes.getBSplineSample1P();
-        int q = SampleShapes.getBSplineSample1Q();
-        bSurface = new BSurface(sampleCP, u, v,
-                p, q, Matrix4D.identity);
-        controlPointsFrame = new ControlPointsFrame(visualizer, sampleCP, this);
+        if (bSurface ==null) {
+            Vector3f[][] sampleCP = SampleShapes.getBSplineSample1CP();
+            Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
+            double[] u = SampleShapes.getBSplineSample1U();
+            double[] v = SampleShapes.getBSplineSample1V();
+            int p = SampleShapes.getBSplineSample1P();
+            int q = SampleShapes.getBSplineSample1Q();
+            bSurface = new BSurface(sampleCP, u, v,
+                    p, q, Matrix4D.identity);
+        }
+
+        controlPointsFrame = new ControlPointsFrame(visualizer,bSurface.getOriginalCP(), this);
 
         //update spinners
-        SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(sampleCP.length, 3, 10, 1);
-        SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(sampleCP[0].length, 3, 10, 1);
-        SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
-        SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
+        SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(bSurface.getControlPoints().length, 3, 10, 1);
+        SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(bSurface.getControlPoints()[0].length, 3, 10, 1);
+        SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(bSurface.getP(), 2, 9, 1);
+        SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(bSurface.getQ(), 2, 9, 1);
         spinnerM = new JSpinner(spinnerModelM);
         spinnerM.setName("m");
         spinnerN = new JSpinner(spinnerModelN);
@@ -152,7 +163,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         //For now I'm not considering rotation
         //since I should implement a method that translates
         //rotation matrix back to rotation angle around each axis
-        setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
+//        setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
     }
 
     private void setControlPointsFrameDefault(int m, int n) {
@@ -197,7 +208,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     } else {
                         newKnots = BSpline.uniformKnots(m, pNew);
                     }
-                    bSurface = new BSurface(bSurface.getControlPoints(), newKnots, bSurface.getKnotsV(),
+                    bSurface = new BSurface(bSurface.getOriginalCP(), newKnots, bSurface.getKnotsV(),
                             pNew, bSurface.getQ(), Matrix4D.identity);
                     spinnerM.removeChangeListener(this);
                     spinnerM.setValue(bSurface.getControlPoints().length);
@@ -213,7 +224,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     } else {
                         newKnots = BSpline.uniformKnots(n, qNew);
                     }
-                    bSurface = new BSurface(bSurface.getControlPoints(), bSurface.getKnotsU(), newKnots,
+                    bSurface = new BSurface(bSurface.getOriginalCP(), bSurface.getKnotsU(), newKnots,
                             bSurface.getP(), qNew, Matrix4D.identity);
                     spinnerN.removeChangeListener(this);
                     spinnerN.setValue(bSurface.getControlPoints()[0].length);

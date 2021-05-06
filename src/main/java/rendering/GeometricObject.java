@@ -134,6 +134,9 @@ public abstract class GeometricObject {
     }
 
     public Vector3f getTranslationData() {
-        return objectToWorld.getC();
+        if (objectToWorld != null)
+            return objectToWorld.getC();
+        else
+            return new Vector3f(0,0,0);
     }
 }

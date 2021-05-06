@@ -6,7 +6,9 @@ public class BSurface extends GeometricObject {
     //Only works for clamped surfaces, for simplicity
 
     private Vector3f[][] controlPoints;
+    private Vector3f[][] originalCP;
     private Vector3f[][] transposed; //precomputed for performance
+    private Vector3f[][] controlPointsWorld;
     private double[] knotsU;
     private double[] knotsV;
     private int p, q;
@@ -25,10 +27,12 @@ public class BSurface extends GeometricObject {
         }
         this.objectToWorld = objectToWorld;
         this.controlPoints = new Vector3f[controlPoints.length][controlPoints[0].length];
+        this.originalCP = new Vector3f[controlPoints.length][controlPoints[0].length];
         if (objectToWorld != null) {
             for (int i = 0; i < controlPoints.length; i++) {
                 for (int j = 0; j < controlPoints[i].length; j++) {
-                    this.controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
+                    this.originalCP[i][j] = controlPoints[i][j];
+                    this.controlPoints[i][j] = controlPoints[i][j];
                 }
             }
         }
@@ -52,6 +56,7 @@ public class BSurface extends GeometricObject {
         //as it's done anyway automatically by de Boor's algorithm)
         //2) only considering necessary points in the u direction: this improves performance because
         //it allows us to skip possibly a lot of B-Spline evaluation.
+
 
         int c = 0; //index of knot span for u
         int s = 0; //multiplicity for u
@@ -103,6 +108,8 @@ public class BSurface extends GeometricObject {
 
 
     public TriangleMesh triangulate(int divs) {
+
+        controlPointsWorld = objectToWorld.transformVector(controlPoints);
 
         double du = (knotsU[knotsU.length-1]-knotsU[0])/divs;
         double dv = (knotsV[knotsV.length-1]-knotsV[0])/divs;
@@ -416,4 +423,7 @@ public class BSurface extends GeometricObject {
         return reduced;
     }
 
+    public Vector3f[][] getOriginalCP() {
+        return originalCP;
+    }
 }

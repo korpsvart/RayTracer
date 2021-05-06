@@ -15,7 +15,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 abstract class AddObjectFrame extends Frame implements ActionListener, WindowListener {
 
 
-    private final Visualizer visualizer;
+    protected final Visualizer visualizer;
     protected boolean removeMode = false;
     protected TextField albedoTextField;
     protected JColorChooser colorChooser;
@@ -89,7 +89,10 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         this.visualizer = visualizer;
         this.scene = scene;
         this.defaultSceneObject = defaultSceneObject;
+        GeometricObject geometricObject = defaultSceneObject.getGeometricObject();
         removeMode = true;
+        setDefaultOTW(geometricObject.getTranslationData(), geometricObject.getRotationData(),
+                geometricObject.getScalingData());
         if (defaultSceneObject instanceof Diffuse) {
             currentColor = ((Diffuse) defaultSceneObject).getAlbedo().vectorToColor();
             material = "Diffuse";
