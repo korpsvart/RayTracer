@@ -79,7 +79,6 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         this.materialComboBox = comboBoxMaterial;
         materialComboBox.addActionListener(this);
         materialComboBox.setSelectedItem(material);
-        //define albedo subpanel
 
 
 
@@ -89,6 +88,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     public AddObjectFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
         this.visualizer = visualizer;
         this.scene = scene;
+        this.defaultSceneObject = defaultSceneObject;
         removeMode = true;
         if (defaultSceneObject instanceof Diffuse) {
             currentColor = ((Diffuse) defaultSceneObject).getAlbedo().vectorToColor();

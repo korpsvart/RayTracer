@@ -9,6 +9,7 @@ class AddSphereFrame extends AddObjectFrame {
 
 
     private TextField posX, posY, posZ;
+    private Sphere defaultSphere;
     private TextField textRadius;
     private Color currentColor = Color.white;
     private JColorChooser colorChooser;
@@ -17,6 +18,11 @@ class AddSphereFrame extends AddObjectFrame {
     public AddSphereFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
 
+        addSphereFrameConstructor();
+
+    }
+
+    private void addSphereFrameConstructor() {
         setTitle("Add sphere");
         GridBagConstraints c = new GridBagConstraints();
 
@@ -116,12 +122,16 @@ class AddSphereFrame extends AddObjectFrame {
         //add send button
         addSendButton(6);
         setSizeToContent(3, 7, 200, 60);
-
     }
 
     public AddSphereFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
         super(visualizer, scene, defaultSceneObject);
-
+        addSphereFrameConstructor();
+        defaultSphere = (Sphere)defaultSceneObject.getGeometricObject();
+        posX.setText(String.valueOf(defaultSphere.getCentre().getX()));
+        posY.setText(String.valueOf(defaultSphere.getCentre().getY()));
+        posZ.setText(String.valueOf(defaultSphere.getCentre().getZ()));
+        textRadius.setText(String.valueOf(defaultSphere.getRadius()));
     }
 
     protected GeometricObject createGeometricObject() {
