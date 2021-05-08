@@ -144,7 +144,12 @@ public class Main {
         long renderTime = System.nanoTime() - start;
 
 
-        Visualizer visualizer = new Visualizer(scene);
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new Visualizer(scene);
+            }
+        });
+//        Visualizer visualizer = new Visualizer(scene);
 
         System.out.println("Ray number: " + width*height); //divide to get seconds
         System.out.println("Rendering time: " + renderTime/10e9);

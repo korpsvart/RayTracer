@@ -2,15 +2,18 @@ package rendering;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 
-public class Scene {
+public class Scene{
 
     private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
+    private AtomicLong renderingProgress = new AtomicLong(0);
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
 
@@ -40,6 +43,7 @@ public class Scene {
     }
 
     private BufferedImage img;
+    private List<SceneListener> sceneListenerList = new ArrayList<>();
     private final Camera camera;
     private final Vector3f cameraPosition;
     //we save last camera orientation. Rays are always generated with default position and orientation and then
@@ -209,6 +213,7 @@ public class Scene {
 
     public void render(int divs) {
         //employs screen subdivision parallelism
+        renderingProgress.set(0);
         double aspectRatio = (double)width/height;
         double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
 
@@ -405,6 +410,7 @@ public class Scene {
                 Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
                 Color color1 = color.vectorToColor();
                 img.setRGB(i-startX,j-startY,color1.getRGB());
+                currentScene.updateProgress();
             }
         }
     }
@@ -435,6 +441,7 @@ public class Scene {
 
 
     public BufferedImage renderForOutput(int divs, int width, int height) {
+        renderingProgress.set(0);
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         //employs screen subdivision parallelism
         double aspectRatio = (double)width/height;
@@ -487,5 +494,17 @@ public class Scene {
             e.printStackTrace();
         }
         return img;
+    }
+
+    private void updateProgress() {
+        long progress = renderingProgress.addAndGet(1);
+        for (SceneListener sceneListener :
+                sceneListenerList) {
+            sceneListener.renderingProgressUpdate(progress);
+        }
+    }
+
+    public void addSceneListener(SceneListener sceneListener) {
+        sceneListenerList.add(sceneListener);
     }
 }
