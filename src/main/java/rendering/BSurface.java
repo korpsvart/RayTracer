@@ -105,7 +105,7 @@ public class BSurface extends GeometricObject {
     }
 
 
-    public TriangleMesh triangulate(int divs) {
+    public TriangleMesh triangulate() {
 
         controlPointsWorld = objectToWorld.transformVector(controlPoints);
         transposedWorld = MatrixUtilities.transpose2(controlPointsWorld);

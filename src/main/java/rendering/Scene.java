@@ -171,8 +171,8 @@ public class Scene {
         return sceneObjectsBVH;
     }
 
-    public void triangulateAndAddSceneObject(SceneObject sceneObject, int divs) {
-        TriangleMesh triangleMesh = sceneObject.triangulate(divs);
+    public void triangulateAndAddSceneObject(SceneObject sceneObject) {
+        TriangleMesh triangleMesh = sceneObject.triangulate();
         triangleMesh.setSceneObject(sceneObject);
         topLevelSceneObjects.add(sceneObject);
         sceneObject.addTrianglesToScene(this, triangleMesh);

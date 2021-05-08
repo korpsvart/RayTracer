@@ -91,6 +91,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         this.defaultSceneObject = defaultSceneObject;
         GeometricObject geometricObject = defaultSceneObject.getGeometricObject();
         removeMode = true;
+        divs = geometricObject.getDivs();
         setDefaultOTW(geometricObject.getTranslationData(), geometricObject.getRotationData(),
                 geometricObject.getScalingData());
         if (defaultSceneObject instanceof Diffuse) {
@@ -406,25 +407,25 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     }
 
     public void triangulateAndAddSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3f albedo,
-                                             double ior, int divs) {
+                                             double ior) {
         switch (materialType) {
             case DIFFUSE:
                 Diffuse diffuse = new Diffuse(geometricObject);
                 diffuse.setAlbedo(albedo);
-                scene.triangulateAndAddSceneObject(diffuse, divs);
+                scene.triangulateAndAddSceneObject(diffuse);
                 break;
             case PHONG:
                 Phong phong = new Phong(geometricObject);
                 phong.setAlbedo(albedo);
-                scene.triangulateAndAddSceneObject(phong, divs);
+                scene.triangulateAndAddSceneObject(phong);
                 break;
             case MIRRORLIKE:
-                scene.triangulateAndAddSceneObject(new MirrorLike(geometricObject), divs);
+                scene.triangulateAndAddSceneObject(new MirrorLike(geometricObject));
                 break;
             case TRANSPARENT:
                 MirrorTransparent mirrorTransparent = new MirrorTransparent(geometricObject);
                 mirrorTransparent.setIor(ior);
-                scene.triangulateAndAddSceneObject(mirrorTransparent, divs);
+                scene.triangulateAndAddSceneObject(mirrorTransparent);
                 break;
         }
     }
@@ -488,7 +489,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                     } catch (NumberFormatException exception) {
                         divs = 16;
                     }
-                    triangulateAndAddSceneObject(geometricObject, mType, albedo, ior, divs);
+                    geometricObject.setDivs(divs);
+                    triangulateAndAddSceneObject(geometricObject, mType, albedo, ior);
                 } else {
                     addSceneObject(geometricObject, mType, albedo, ior);
                 }

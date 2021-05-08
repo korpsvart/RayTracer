@@ -103,7 +103,7 @@ public class BezierSurface33 extends GeometricObject {
 
 
     @Override
-    public TriangleMesh triangulate(int divs) {
+    public TriangleMesh triangulate() {
 
         controlPointsWorld = new Vector3f[controlPoints.length][controlPoints[0].length];
 
@@ -122,7 +122,7 @@ public class BezierSurface33 extends GeometricObject {
         int[] faceIndex = new int[divs*divs]; //its just gonna be full of 4, since its all quads
 
         double u,v;
-        u = v = 0;
+        u = 0; v = 0;
 
 
         //store all vertices for polygon mesh

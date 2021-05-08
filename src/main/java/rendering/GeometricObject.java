@@ -14,6 +14,7 @@ public abstract class GeometricObject {
 
     protected Matrix4D objectToWorld = null;
     private Vector3f rotationData;
+    protected int divs = 16; //default value
 
 
     private Vector3f scalingData;
@@ -102,7 +103,7 @@ public abstract class GeometricObject {
         return true;
     }
 
-    public TriangleMesh triangulate(int divs) {
+    public TriangleMesh triangulate() {
         return null;
     }
 
@@ -138,5 +139,13 @@ public abstract class GeometricObject {
             return objectToWorld.getC();
         else
             return new Vector3f(0,0,0);
+    }
+
+    public int getDivs() {
+        return divs;
+    }
+
+    public void setDivs(int divs) {
+        this.divs = divs;
     }
 }

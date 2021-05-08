@@ -46,8 +46,8 @@ public abstract class SceneObject{
     }
 
 
-    public TriangleMesh triangulate(int divs) {
-        return geometricObject.triangulate(divs);
+    public TriangleMesh triangulate() {
+        return geometricObject.triangulate();
 
     }
 

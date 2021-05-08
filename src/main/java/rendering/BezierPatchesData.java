@@ -52,11 +52,11 @@ public class BezierPatchesData extends GeometricObject {
     }
 
     @Override
-    public TriangleMesh triangulate(int divs) {
+    public TriangleMesh triangulate() {
         BezierSurface33[] surfaces = getSurfaces();
         TriangleMesh[] meshes = new TriangleMesh[surfaces.length];
         for (int i = 0; i < meshes.length; i++) {
-            meshes[i] = surfaces[i].affineTransform(objectToWorld).triangulate(divs);
+            meshes[i] = surfaces[i].affineTransform(objectToWorld).triangulate();
         }
         TriangleMesh merged = TriangleMesh.merge(meshes);
         return merged;

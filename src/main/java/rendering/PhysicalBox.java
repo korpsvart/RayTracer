@@ -15,7 +15,7 @@ public class PhysicalBox extends GeometricObject {
         this.objectToWorld = objectToWorld;
     }
 
-    public TriangleMesh triangulate(int divs) {
+    public TriangleMesh triangulate() {
         //in this case the number of divs makes no sense
         //We simply need to give the right vertices to the triangle mesh routine
 
