@@ -39,7 +39,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
     public AddBezierSurface(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
         super(visualizer, scene, defaultObject);
         this.defaultBezierSurface = (BezierSurface33)defaultObject.getGeometricObject();
-        controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getOriginalCP(), this);
+        controlPointsFrame = new ControlPointsFrame(visualizer, defaultBezierSurface.getControlPoints(), this);
         createMainPanel();
 
     }

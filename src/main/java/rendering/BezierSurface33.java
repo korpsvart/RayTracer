@@ -10,12 +10,12 @@ public class BezierSurface33 extends GeometricObject {
 
 
     private final Vector3f controlPoints[][];
-    private final Vector3f originalCP[][]; //before applying affine transformation
+    private Vector3f[][] controlPointsWorld;
+//    private final Vector3f originalCP[][]; //before applying affine transformation
 
     public BezierSurface33(Vector3f controlPoints[][]) {
         //we should check the matrix has the right size
         this.controlPoints = controlPoints.clone();
-        this.originalCP = controlPoints.clone();
     }
 
 //    public BezierSurface33(Vector3f controlPoints[]) {
@@ -46,18 +46,12 @@ public class BezierSurface33 extends GeometricObject {
         //and then bottom up
         //but in the internal representation the the first row is the first "column" of points
         this.controlPoints = new Vector3f[4][4];
-        this.originalCP = new Vector3f[4][4];
         this.objectToWorld = objectToWorld;
         for (int i = 0; i < 4; i++) {
-            this.controlPoints[0][i] = controlPoints[i*4].matrixAffineTransform(objectToWorld);
-            this.controlPoints[1][i] = controlPoints[i*4+1].matrixAffineTransform(objectToWorld);
-            this.controlPoints[2][i] = controlPoints[i*4+2].matrixAffineTransform(objectToWorld);
-            this.controlPoints[3][i] = controlPoints[i*4+3].matrixAffineTransform(objectToWorld);
-            //
-            this.originalCP[0][i] = controlPoints[i*4];
-            this.originalCP[1][i] = controlPoints[i*4+1];
-            this.originalCP[2][i] = controlPoints[i*4+2];
-            this.originalCP[3][i] = controlPoints[i*4+3];
+            this.controlPoints[0][i] = controlPoints[i*4];
+            this.controlPoints[1][i] = controlPoints[i*4+1];
+            this.controlPoints[2][i] = controlPoints[i*4+2];
+            this.controlPoints[3][i] = controlPoints[i*4+3];
         }
     }
 
@@ -80,12 +74,10 @@ public class BezierSurface33 extends GeometricObject {
         //and then bottom up
         //but in the internal representation the the first row is the first "column" of points
         this.controlPoints = new Vector3f[4][4];
-        this.originalCP = new Vector3f[4][4];
         this.objectToWorld = objectToWorld;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                this.controlPoints[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
-                this.originalCP[i][j] = controlPoints[i][j];
+                this.controlPoints[i][j] = controlPoints[i][j];
             }
         }
     }
@@ -102,7 +94,7 @@ public class BezierSurface33 extends GeometricObject {
             //We evaluate each of this curve at v, getting 4 control points
             //This defines the Bezier Curve we can evaluate at u
             //to get the point on the surface P(u, v)
-            BezierCurve3 c = new BezierCurve3(this.controlPoints[i]);
+            BezierCurve3 c = new BezierCurve3(this.controlPointsWorld[i]);
             curveControlPoints[i] = c.evaluate(v);
         }
         BezierCurve3 p = new BezierCurve3(curveControlPoints);
@@ -112,6 +104,14 @@ public class BezierSurface33 extends GeometricObject {
 
     @Override
     public TriangleMesh triangulate(int divs) {
+
+        controlPointsWorld = new Vector3f[controlPoints.length][controlPoints[0].length];
+
+        for (int i = 0; i < controlPoints.length; i++) {
+            for (int j = 0; j < controlPoints[0].length; j++) {
+                controlPointsWorld[i][j] = controlPoints[i][j].matrixAffineTransform(objectToWorld);
+            }
+        }
         double du;
         double dv = du = (float)1 / divs; //grid resolution
 
@@ -169,7 +169,7 @@ public class BezierSurface33 extends GeometricObject {
         Vector3f cPoints[] = new Vector3f[16];
         for (int i = 0; i < controlPoints.length; i++) {
             for (int j = 0; j < controlPoints[0].length; j++) {
-                cPoints[i*4+j]=controlPoints[i][j];
+                cPoints[i*4+j]=controlPointsWorld[i][j];
             }
         }
         BoundingVolume boundingVolume = new BoundingVolume(cPoints);
@@ -187,7 +187,7 @@ public class BezierSurface33 extends GeometricObject {
         BezierCurve3 bezierCurve3;
         Vector3f curveControlPoints[] = new Vector3f[4];
         for (int i = 0; i < 4; i++) {
-            bezierCurve3 = new BezierCurve3(controlPoints[i]);
+            bezierCurve3 = new BezierCurve3(controlPointsWorld[i]);
             curveControlPoints[i] = bezierCurve3.evaluate(v);
         }
         bezierCurve3 = new BezierCurve3(curveControlPoints);
@@ -199,7 +199,7 @@ public class BezierSurface33 extends GeometricObject {
         BezierCurve3 bezierCurve3;
         Vector3f curveControlPoints[] = new Vector3f[4];
         for (int i = 0; i < 4; i++) {
-            bezierCurve3 = new BezierCurve3(controlPoints[i]);
+            bezierCurve3 = new BezierCurve3(controlPointsWorld[i]);
             curveControlPoints[i] = bezierCurve3.evaluate(v);
         }
         bezierCurve3 = new BezierCurve3(curveControlPoints);
@@ -217,7 +217,7 @@ public class BezierSurface33 extends GeometricObject {
         BezierCurve3 bezierCurve3;
         Vector3f curveControlPoints[] = new Vector3f[4];
         for (int i = 0; i < 4; i++) {
-            bezierCurve3 = new BezierCurve3(controlPoints[0][i], controlPoints[1][i], controlPoints[2][i], controlPoints[3][i]);
+            bezierCurve3 = new BezierCurve3(controlPointsWorld[0][i], controlPointsWorld[1][i], controlPointsWorld[2][i], controlPointsWorld[3][i]);
             curveControlPoints[i] = bezierCurve3.evaluate(u);
         }
         bezierCurve3 = new BezierCurve3(curveControlPoints);
@@ -229,7 +229,7 @@ public class BezierSurface33 extends GeometricObject {
         BezierCurve3 bezierCurve3;
         Vector3f curveControlPoints[] = new Vector3f[4];
         for (int i = 0; i < 4; i++) {
-            bezierCurve3 = new BezierCurve3(controlPoints[0][i], controlPoints[1][i], controlPoints[2][i], controlPoints[3][i]);
+            bezierCurve3 = new BezierCurve3(controlPointsWorld[0][i], controlPointsWorld[1][i], controlPointsWorld[2][i], controlPointsWorld[3][i]);
             curveControlPoints[i] = bezierCurve3.evaluate(u);
         }
         bezierCurve3 = new BezierCurve3(curveControlPoints);
@@ -252,7 +252,7 @@ public class BezierSurface33 extends GeometricObject {
             //We evaluate each of this curve at v, getting 4 control points
             //This defines the Bezier Curve we can evaluate at u
             //to get the point on the surface P(u, v)
-            BezierCurve3 c = new BezierCurve3(this.controlPoints[i]);
+            BezierCurve3 c = new BezierCurve3(this.controlPointsWorld[i]);
             curveControlPoints[i] = c.evaluate(v);
         }
         BezierCurve3 p = new BezierCurve3(curveControlPoints);
@@ -338,9 +338,5 @@ public class BezierSurface33 extends GeometricObject {
 
     public Vector3f[][] getControlPoints() {
         return controlPoints;
-    }
-
-    public Vector3f[][] getOriginalCP() {
-        return originalCP;
     }
 }
