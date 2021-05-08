@@ -39,8 +39,14 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         c.setBounds(0, 0, sceneToRender.getWidth(), sceneToRender.getHeight());
         add(c);
         MenuBar menuBar = new MenuBar();
-        Menu menu = new Menu("Options");
+        Menu menu = new Menu("Edit scene");
         Menu settingsMenu = new Menu("Settings");
+        Menu fileMenu = new Menu("File");
+        MenuItem saveImgToFile = new MenuItem("Save image to file");
+        saveImgToFile.setActionCommand("save_img");
+        saveImgToFile.addActionListener(this);
+        fileMenu.add(saveImgToFile);
+        menuBar.add(fileMenu);
         MenuItem changeSettings = new MenuItem("Change settings");
         settingsMenu.add(changeSettings);
         changeSettings.setActionCommand("settings");
@@ -151,6 +157,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             RemoveLightFrame removeLightFrame = new RemoveLightFrame(this, this.scene);
         }   else if (e.getActionCommand().equals("settings")) {
             SettingsFrame settingsFrame = new SettingsFrame(this, this.scene);
+        } else if (e.getActionCommand().equals("save_img")) {
+            SaveToFileFrame saveToFileFrame = new SaveToFileFrame(scene);
         }
 
     }

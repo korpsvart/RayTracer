@@ -222,7 +222,7 @@ public class Scene {
                 int y = j*stepY;
                 BufferedImage subImg = img.getSubimage(x, y, stepX, stepY);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, this, camera);
+                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, this, camera, width, height);
                 });
             }
             if (height % divs != 0) {
@@ -230,7 +230,7 @@ public class Scene {
                 int y = divs*stepY;
                 BufferedImage subImg = img.getSubimage(x, y, stepX, height%divs);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, this, camera);
+                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, this, camera, width, height);
                 });
             }
         }
@@ -240,7 +240,7 @@ public class Scene {
                 int y = j*divs;
                 BufferedImage subImg = img.getSubimage(x, y, width%divs, stepY);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, this, camera);
+                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, this, camera, width, height);
                 });
             }
             if (height % divs != 0) {
@@ -248,7 +248,7 @@ public class Scene {
                 int y = stepY*divs;
                 BufferedImage subImg = img.getSubimage(stepX * divs, stepY*divs, width % divs, height%divs);
                 executor.submit(() -> {
-                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, this, camera);
+                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, this, camera, width, height);
                 });
             }
         }
@@ -391,10 +391,10 @@ public class Scene {
     }
 
     protected static void screenAreaRendering(BufferedImage img, int startX, int startY, int w, int h, double aspectRatio, double scale,
-                                              Scene currentScene, Camera camera) {
+                                              Scene currentScene, Camera camera, int totalWidth, int totalHeight) {
 
-        int width = currentScene.width;
-        int height = currentScene.height;
+        int width = totalWidth;
+        int height = totalHeight;
         for (int i = startX; i < w+startX; i++) {
             for (int j = startY; j < h+startY; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
@@ -431,5 +431,61 @@ public class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+
+    public BufferedImage renderForOutput(int divs, int width, int height) {
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        //employs screen subdivision parallelism
+        double aspectRatio = (double)width/height;
+        double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
+
+        ExecutorService executor = Executors.newCachedThreadPool();
+
+        int stepX = Math.floorDiv(width, divs);
+        int stepY = Math.floorDiv(height, divs);
+        for (int i = 0; i < divs; i++) {
+            for (int j = 0; j < divs; j++) {
+                int x = i*stepX;
+                int y = j*stepY;
+                BufferedImage subImg = img.getSubimage(x, y, stepX, stepY);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg,x,y,stepX, stepY,aspectRatio, scale, this, camera, width, height);
+                });
+            }
+            if (height % divs != 0) {
+                int x = i*stepX;
+                int y = divs*stepY;
+                BufferedImage subImg = img.getSubimage(x, y, stepX, height%divs);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x,y,stepX, height%divs,aspectRatio, scale, this, camera, width , height);
+                });
+            }
+        }
+        if (width % divs != 0) {
+            for (int j = 0; j < divs; j++) {
+                int x = stepX*divs;
+                int y = j*divs;
+                BufferedImage subImg = img.getSubimage(x, y, width%divs, stepY);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x, y, width%divs, stepY,aspectRatio, scale, this, camera, width ,height);
+                });
+            }
+            if (height % divs != 0) {
+                int x = stepX*divs;
+                int y = stepY*divs;
+                BufferedImage subImg = img.getSubimage(stepX * divs, stepY*divs, width % divs, height%divs);
+                executor.submit(() -> {
+                    screenAreaRendering(subImg, x,y,height%divs, height%divs,aspectRatio, scale, this, camera, width, height);
+                });
+            }
+        }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(50, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return img;
     }
 }
