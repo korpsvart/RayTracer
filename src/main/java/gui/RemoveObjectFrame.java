@@ -86,6 +86,14 @@ public class RemoveObjectFrame extends JFrame implements ActionListener, ListSel
         }
     }
 
+    private void rebuildListModel(int selectedIndex) {
+        //remove object from listModel at selected index
+        //and rebuild list model with new scene objects
+        listModel.remove(selectedIndex);
+        listModel.addAll(scene.getTopLevelSceneObjects());
+        list = new JList(listModel);
+    }
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
 

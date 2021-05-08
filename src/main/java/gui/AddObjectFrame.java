@@ -497,6 +497,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                     this.dispose();
                 }
                 visualizer.renderScene(this.scene);
+                this.dispose();
                 break;
         }
     }
