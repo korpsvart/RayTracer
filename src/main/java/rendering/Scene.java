@@ -1,4 +1,5 @@
 package rendering;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -500,6 +501,12 @@ public class Scene{
         long progress = renderingProgress.addAndGet(1);
         for (SceneListener sceneListener :
                 sceneListenerList) {
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
+//                    sceneListener.renderingProgressUpdate(progress);
+//                }
+//            });
             sceneListener.renderingProgressUpdate(progress);
         }
     }

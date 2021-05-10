@@ -81,9 +81,17 @@ public class SaveToFileFrame extends JFrame implements ActionListener {
         chooser.setSelectedFile(saveFile);
         int rval = chooser.showSaveDialog(formats);
         if (rval == JFileChooser.APPROVE_OPTION) {
-            saveFile = chooser.getSelectedFile();
-            RenderingProgressBarFrame renderingProgressBarFrame = new RenderingProgressBarFrame(scene,
-                    targetWidth, targetHeight, format, saveFile);
+            final File approvedFile = chooser.getSelectedFile();
+            RenderingProgressBarFrame renderingProgressBarFrame =
+                    new RenderingProgressBarFrame(scene, targetWidth*targetHeight,
+                            new RenderingTask() {
+                                @Override
+                                protected Void doInBackground() throws Exception {
+                                    ImageIO.write(scene.renderForOutput(20, targetWidth,
+                                            targetHeight), format, approvedFile);
+                                    return null;
+                                }
+                            });
         }
     }
 }

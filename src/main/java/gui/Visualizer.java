@@ -9,6 +9,9 @@ import java.util.Map;
 
 import rendering.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
 public class Visualizer extends Frame implements ActionListener, WindowListener, KeyListener, AWTEventListener {
 
     private Scene scene;
@@ -265,15 +268,33 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     }
 
     public void renderScene(Scene scene) {
-        this.scene.setBVH();
-        this.scene.render(20);
+        RenderingProgressBarFrame renderingProgressBarFrame =
+                new RenderingProgressBarFrame(scene, scene.getWidth()*scene.getHeight(),
+                        new RenderingTask() {
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                scene.setBVH();
+                                scene.render(20);
+                                sceneCanvas.repaint();
+                                return null;
+                            }
+                        });
 
-        this.sceneCanvas.repaint();
+
     }
 
     public void renderSceneWithoutRebuildingBVH(Scene scene) {
-        this.scene.render(20);
-        this.sceneCanvas.repaint();
+        RenderingProgressBarFrame renderingProgressBarFrame =
+                new RenderingProgressBarFrame(scene, scene.getWidth()*scene.getHeight(),
+                        new RenderingTask() {
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                scene.render(20);
+                                sceneCanvas.repaint();
+                                return null;
+                            }
+                        });
+
     }
 
     class CommandButton extends Button {
