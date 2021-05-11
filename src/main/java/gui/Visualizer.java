@@ -33,6 +33,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     public Visualizer(Scene scene) {
 
 
+
         this.scene = scene;
         BufferedImage sceneToRender = this.scene.getImg();
 
@@ -118,7 +119,6 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         addWindowListener(this);
         setResizable(false);
         setVisible(true);
-
     }
 
     public static Vector3f extractVectorFromTextField(TextField textField) {

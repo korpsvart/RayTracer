@@ -58,7 +58,8 @@ public class Sphere extends GeometricObject {
     }
 
 
-
-
-
+    @Override
+    public String toString() {
+        return "Sphere; " + "Centre: " + getCentre() + ";" + "Radius: " + getRadius();
+    }
 }

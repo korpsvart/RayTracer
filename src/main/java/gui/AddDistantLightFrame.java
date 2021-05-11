@@ -13,6 +13,10 @@ class AddDistantLightFrame extends AddLightSourceFrame {
 
     public AddDistantLightFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
+        createMainPanel();
+    }
+
+    private void createMainPanel() {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy;
@@ -48,22 +52,24 @@ class AddDistantLightFrame extends AddLightSourceFrame {
     }
 
     public AddDistantLightFrame(Visualizer visualizer, Scene scene, DistantLight distantLight) {
-        this(visualizer, scene);
+        super(visualizer, scene, distantLight);
         defaultDistantLight = distantLight;
         removeMode = true;
         textFieldX.setText(String.valueOf(defaultDistantLight.getDirection().getX()));
         textFieldY.setText(String.valueOf(defaultDistantLight.getDirection().getY()));
         textFieldZ.setText(String.valueOf(defaultDistantLight.getDirection().getZ()));
+        textFieldIntensity.setText(String.valueOf(distantLight.getNormalizedIntensity()));
+        createMainPanel();
     }
 
     @Override
-    void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
+    LightSource getParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
         //remapping intensity over [0,10]
         intensity *= 10;
         if (removeMode) {
             scene.removeLightSource(defaultDistantLight);
         }
         DistantLight distantLight = new DistantLight(color, intensity, xyz);
-        scene.addLightSource(distantLight);
+        return distantLight;
     }
 }

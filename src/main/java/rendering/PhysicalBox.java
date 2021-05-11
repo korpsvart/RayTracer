@@ -59,4 +59,9 @@ public class PhysicalBox extends GeometricObject {
     public Vector3f getMax() {
         return max;
     }
+
+    @Override
+    public String toString() {
+        return "Box; " + "Translation: " + getTranslationData() + "; " + "Rotation: " + getRotationData();
+    }
 }

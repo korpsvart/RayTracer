@@ -38,4 +38,8 @@ public class PointLight extends LightSource {
     }
 
 
+    @Override
+    public String toString() {
+        return "Point light; " + "Translation: " + getPosition();
+    }
 }

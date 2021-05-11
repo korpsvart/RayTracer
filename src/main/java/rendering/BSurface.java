@@ -422,4 +422,9 @@ public class BSurface extends GeometricObject {
         return reduced;
     }
 
+    @Override
+    public String toString() {
+        return "B-Spline surface; " + "Translation: " + getTranslationData() + "; " + "Rotation: " + getRotationData();
+    }
+
 }

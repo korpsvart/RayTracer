@@ -34,4 +34,9 @@ public class DistantLight extends LightSource {
     public LightInfo getDirectionAndDistance(Vector3f hitPoint) {
         return new LightInfo(direction.mul(-1), Double.POSITIVE_INFINITY);
     }
+
+    @Override
+    public String toString() {
+        return "Distant light; " + "Direction: " + getDirection();
+    }
 }

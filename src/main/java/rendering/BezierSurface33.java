@@ -18,27 +18,6 @@ public class BezierSurface33 extends GeometricObject {
         this.controlPoints = controlPoints.clone();
     }
 
-//    public BezierSurface33(Vector3f controlPoints[]) {
-//        //in case the points are given in a single array of 16 points
-//        //(we assume the points are ordered going first left to right
-//        //and then bottom up
-//        //but in the internal representation the the first row is the first "column" of points
-//        this.controlPoints = new Vector3f[4][4];
-//        if (this.objectToWorld != null) {
-//            //transform control points
-//            //(it's equivalent to apply same transform on the surface)
-//            for (int i = 0; i < 16; i++) {
-//                controlPoints[i] = controlPoints[i].matrixAffineTransform(objectToWorld);
-//            }
-//        }
-//        for (int i = 0; i < 4; i++) {
-//            this.controlPoints[0][i] = controlPoints[i*4];
-//            this.controlPoints[1][i] = controlPoints[i*4+1];
-//            this.controlPoints[2][i] = controlPoints[i*4+2];
-//            this.controlPoints[3][i] = controlPoints[i*4+3];
-//        }
-//        this.originalCP = this.controlPoints.clone();
-//    }
 
     public BezierSurface33(Vector3f controlPoints[], Matrix4D objectToWorld) {
         //in case the points are given in a single array of 16 points
@@ -338,5 +317,11 @@ public class BezierSurface33 extends GeometricObject {
 
     public Vector3f[][] getControlPoints() {
         return controlPoints;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Bézier surface; " + "Translation: " + getTranslationData() + "; " + "Rotation: " + getRotationData();
     }
 }

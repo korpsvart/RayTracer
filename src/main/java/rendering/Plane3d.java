@@ -89,6 +89,9 @@ public class Plane3d extends GeometricObject {
     }
 
 
-
+    @Override
+    public String toString() {
+        return "Plane; " + "Translation: " + getTranslationData() + "; " + "Rotation: " + getRotationData();
+    }
 
 }

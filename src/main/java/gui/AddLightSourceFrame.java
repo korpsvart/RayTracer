@@ -25,7 +25,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
     protected JColorChooser colorChooser;
     protected Button colorButton = new Button("Choose color");
     protected TextField colorTextField = new TextField("(255,255,255)", 10);
-    protected Panel colorSubPanel = createChooseRGBPanel();
+    protected Panel colorSubPanel;
     protected int gridy = 0;
     protected JLabel x = new JLabel("x");
     protected JLabel y = new JLabel("y");
@@ -38,7 +38,14 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
     public AddLightSourceFrame(Visualizer visualizer, Scene scene) {
         this.visualizer = visualizer;
         this.scene = scene;
+        createMainPanel();
+
+    }
+
+    private void createMainPanel() {
         this.addWindowListener(this);
+
+        colorSubPanel = createChooseRGBPanel();
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -54,7 +61,14 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
 
         c.gridy = gridy++;
         mainPanel.add(colorSubPanel, c);
+    }
 
+
+    public AddLightSourceFrame(Visualizer visualizer, Scene scene, LightSource defaultLightSource) {
+        this.visualizer = visualizer;
+        this.scene = scene;
+        currentColor = defaultLightSource.getColor().vectorToColor();
+        createMainPanel();
     }
 
     private Panel createChooseRGBPanel() {
@@ -71,7 +85,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         JLabel rgbLabel = new JLabel("RGB:");
         c.gridx = 1;
         c.weightx = 0.2;
-        TextField currentAlbedoLabel = new TextField("(255,255,255)");
+        TextField currentAlbedoLabel = new TextField("(" + currentColor.getRed() + "," + currentColor.getGreen() + "," + currentColor.getBlue() + ")");
         this.colorTextField = currentAlbedoLabel;
         currentAlbedoLabel.setEditable(false);
         c.gridx = 2;
@@ -167,12 +181,14 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         String[] colorA = colorVal.split(",");
         Vector3f color = new Vector3f(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
         color = color.mul((double) 1 / 255);
-        addParticularLightSource(intensity, color, xyz);
+        LightSource lightSource = getParticularLightSource(intensity, color, xyz);
+        lightSource.setNormalizedIntensity(intensity);
+        scene.addLightSource(lightSource);
         visualizer.renderSceneWithoutRebuildingBVH(scene);
         this.dispose();
     }
 
-    abstract void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz);
+    abstract LightSource getParticularLightSource(double intensity, Vector3f color, Vector3f xyz);
 
     protected void addSendButton(int gridy) {
         //Add button to send data

@@ -13,6 +13,10 @@ class AddPointLightFrame extends AddLightSourceFrame {
 
     public AddPointLightFrame(Visualizer visualizer, Scene scene) {
         super(visualizer,scene);
+        createMainPanel();
+    }
+
+    private void createMainPanel() {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 10, 0);
@@ -48,25 +52,27 @@ class AddPointLightFrame extends AddLightSourceFrame {
     }
 
     public AddPointLightFrame(Visualizer visualizer, Scene scene, PointLight pointLight) {
-        this(visualizer, scene);
+        super(visualizer, scene, pointLight);
         defaultPointLight = pointLight;
         removeMode = true;
         textFieldX.setText(String.valueOf(defaultPointLight.getPosition().getX()));
         textFieldY.setText(String.valueOf(defaultPointLight.getPosition().getY()));
         textFieldZ.setText(String.valueOf(defaultPointLight.getPosition().getZ()));
+        textFieldIntensity.setText(String.valueOf(defaultPointLight.getNormalizedIntensity()));
+        createMainPanel();
     }
 
 
 
     @Override
-    void addParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
+    LightSource getParticularLightSource(double intensity, Vector3f color, Vector3f xyz) {
         //remapping intensity over [0,150]
         intensity *= 150;
         if (removeMode) {
             scene.removeLightSource(defaultPointLight);
         }
         PointLight pointLight = new PointLight(color, intensity, xyz);
-        scene.addLightSource(pointLight);
+        return pointLight;
     }
 
 

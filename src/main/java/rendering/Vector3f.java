@@ -145,7 +145,7 @@ public class Vector3f{
 
     @Override
     public String toString() {
-        return "Vector3f{" +
+        return "{" +
                 "x=" + x +
                 ", y=" + y +
                 ", z=" + z +

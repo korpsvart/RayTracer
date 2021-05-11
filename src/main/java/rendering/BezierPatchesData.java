@@ -61,4 +61,9 @@ public class BezierPatchesData extends GeometricObject {
         TriangleMesh merged = TriangleMesh.merge(meshes);
         return merged;
     }
+
+    @Override
+    public String toString() {
+        return "Bézier patches object; " + "Translation: " + getTranslationData() + "; " + "Rotation: " + getRotationData();
+    }
 }

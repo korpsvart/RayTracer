@@ -5,6 +5,7 @@ public abstract class LightSource {
     //Lights are unaffected by scaling transform
 
     private final Vector3f color;
+    private double normalizedIntensity;
     private final double intensity;
     private final Matrix4D lightToWorld;
 
@@ -50,4 +51,11 @@ public abstract class LightSource {
         }
     }
 
+    public void setNormalizedIntensity(double normalizedIntensity) {
+        this.normalizedIntensity = normalizedIntensity;
+    }
+
+    public double getNormalizedIntensity() {
+        return normalizedIntensity;
+    }
 }

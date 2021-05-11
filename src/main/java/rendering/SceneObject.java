@@ -65,7 +65,7 @@ public abstract class SceneObject{
 
     @Override
     public String toString() {
-        return getTypeName() + geometricObject.toString();
+        return getTypeName() + ": " + geometricObject.toString();
     }
 
 

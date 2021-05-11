@@ -148,4 +148,10 @@ public abstract class GeometricObject {
     public void setDivs(int divs) {
         this.divs = divs;
     }
+
+
+    @Override
+    public String toString() {
+        return "Translation: " + getTranslationData();
+    }
 }
