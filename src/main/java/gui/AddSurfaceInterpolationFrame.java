@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 
 class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements ChangeListener {
 
-    private final Visualizer visualizer;
+    private Visualizer visualizer;
     private ControlPointsFrame controlPointsFrame;
     private int p, q; //degrees in both directions. Default is 3
     private int m, n; //number of control points in both directions
@@ -27,8 +27,12 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
 
     public AddSurfaceInterpolationFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
-        this.visualizer = visualizer;
         initializeDataWithSample();
+        createMainPanel();
+    }
+
+    private void createMainPanel() {
+        this.visualizer = visualizer;
         buttonCP.setActionCommand("open_edit_cp");
         buttonCP.addActionListener(this);
         spinnerP.addChangeListener(this);
@@ -78,6 +82,13 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         setSizeToContent(3, gridy, 250, 70);
     }
 
+    public AddSurfaceInterpolationFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
+        super(visualizer, scene, defaultSceneObject);
+        BSurface bSurface = (BSurface) defaultSceneObject.getGeometricObject();
+        initializeDataWithSample(bSurface);
+        createMainPanel();
+    }
+
     @Override
     void updateControlPoints(Vector3f[][] cp) {
 
@@ -95,7 +106,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
                 dataPoints[i][j] = Visualizer.extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
             }
         }
-        showControlPoints(dataPoints, getOTWMatrix());
+//        showControlPoints(dataPoints, getOTWMatrix());
         return BSurface.interpolate(dataPoints, p, q, getOTWMatrix());
     }
 
@@ -207,6 +218,31 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         //since I should implement a method that translates
         //rotation matrix back to rotation angle around each axis
         setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
+    }
+
+    private void initializeDataWithSample(BSurface bSurface) {
+        Vector3f[][] sampleCP = getSampleDP();
+        Matrix4D sampleOTW = bSurface.getObjectToWorld();
+        this.m = sampleCP.length;
+        this.n = sampleCP[0].length;
+        controlPointsFrame = new ControlPointsFrame(visualizer, m, n, sampleCP, this);
+        this.p = bSurface.getP();
+        this.q = bSurface.getQ();
+
+        //update spinners
+        SpinnerNumberModel spinnerModelM = new SpinnerNumberModel(m, 3, 100, 1);
+        SpinnerNumberModel spinnerModelN = new SpinnerNumberModel(n, 3, 100, 1);
+        SpinnerNumberModel spinnerModelP = new SpinnerNumberModel(p, 2, 9, 1);
+        SpinnerNumberModel spinnerModelQ = new SpinnerNumberModel(q, 2, 9, 1);
+        spinnerM = new JSpinner(spinnerModelM);
+        spinnerM.setName("m");
+        spinnerN = new JSpinner(spinnerModelN);
+        spinnerN.setName("n");
+        spinnerP = new JSpinner(spinnerModelP);
+        spinnerP.setName("p");
+        spinnerQ = new JSpinner(spinnerModelQ);
+        spinnerQ.setName("q");
+
     }
 
     @Override

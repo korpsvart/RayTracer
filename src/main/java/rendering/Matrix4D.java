@@ -115,10 +115,11 @@ public class Matrix4D {
         return transformVector(vector3f);
     }
 
-    public Vector3f[] transformVector(double[][] v) {
-        Vector3f[] result = new Vector3f[v.length];
+    public double[][] transformVector(double[][] v) {
+        double[][] result = new double[v.length][3];
         for (int i = 0; i < result.length; i++) {
-            result[i] = transformVector(v[i]);
+            Vector3f vector3f = transformVector(v[i]);
+            result[i] = new double[]{vector3f.getX(),vector3f.getY(),vector3f.getZ()};
         }
         return result;
     }

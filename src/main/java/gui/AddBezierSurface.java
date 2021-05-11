@@ -69,7 +69,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
                 cp[i][j] = Visualizer.extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
             }
         }
-        showControlPoints(cp, getOTWMatrix());
+//        showControlPoints(cp, getOTWMatrix());
         return new BezierSurface33(cp, getOTWMatrix());
     }
 

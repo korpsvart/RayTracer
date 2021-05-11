@@ -368,6 +368,7 @@ public class SampleShapes {
                 {0, 0.3, 0, 0},
                 {0, 0, 0, 1}
         });
+        cP = otw_internal.transformVector(cP);
         Matrix4D otw = new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, -5));
         BezierPatchesData bpd = new BezierPatchesData(numPatches, numCP, patchesCP, cP, otw_internal);
         bpd.setObjectToWorld(otw);

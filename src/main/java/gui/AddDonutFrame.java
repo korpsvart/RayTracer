@@ -8,6 +8,7 @@ class AddDonutFrame extends AddSurfaceInterpolationFrame {
         super(visualizer, scene);
     }
 
+
     @Override
     protected Vector3f[][] getSampleDP() {
         return SampleShapes.getInterpolatingSurfaceDonutDP();

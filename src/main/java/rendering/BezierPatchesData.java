@@ -7,7 +7,6 @@ public class BezierPatchesData extends GeometricObject {
     private int[][] patchesCP;
     private double[][] cP;
     private Matrix4D objectToWorldInternal;
-    private Matrix4D objectToWorld;
 
 
     public BezierPatchesData(int numPatches, int numCP, int[][] patchesCP, double[][] cP, Matrix4D objectToWorldInternal) {
@@ -45,7 +44,8 @@ public class BezierPatchesData extends GeometricObject {
             for (int j = 0; j < 16; j++) {
                 controlPoints[j] = new Vector3f(cP[patchesCP[i][j]-1]);
             }
-            BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorldInternal);
+            BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorld);
+            bSurface.setDivs(divs);
             patches[i] = bSurface;
         }
         return patches;
@@ -56,7 +56,7 @@ public class BezierPatchesData extends GeometricObject {
         BezierSurface33[] surfaces = getSurfaces();
         TriangleMesh[] meshes = new TriangleMesh[surfaces.length];
         for (int i = 0; i < meshes.length; i++) {
-            meshes[i] = surfaces[i].affineTransform(objectToWorld).triangulate();
+            meshes[i] = surfaces[i].triangulate();
         }
         TriangleMesh merged = TriangleMesh.merge(meshes);
         return merged;

@@ -81,6 +81,8 @@ public class RemoveObjectFrame extends JFrame implements ActionListener, ListSel
                     AddBoxFrame addBoxFrame = new AddBoxFrame(visualizer, scene, sceneObject);
                 }  else if (geometricObject instanceof BSurface) {
                     AddBSplineSurfaceFrame addBSplineSurfaceFrame = new AddBSplineSurfaceFrame(visualizer, scene, sceneObject);
+                } else if (geometricObject instanceof BezierPatchesData) {
+                    AddTeapotFrame addTeapotFrame = new AddTeapotFrame(visualizer, scene, sceneObject);
                 }
                 this.dispose();
         }

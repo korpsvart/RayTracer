@@ -7,13 +7,22 @@ class AddTeapotFrame extends AddObjectFrame {
     public AddTeapotFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
         initializeWithTeapotData();
+        createMainPanel();
+    }
+
+    private void createMainPanel() {
+
         int gridy = 0;
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
         addSendButton(gridy++);
+    }
 
+    public AddTeapotFrame(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
+        super(visualizer, scene, defaultObject);
+        createMainPanel();
     }
 
     private void initializeWithTeapotData() {
