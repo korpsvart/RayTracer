@@ -470,8 +470,50 @@
     Con questi dati, l'equazione parametrica della superficie è:
     <br>
     \( \textbf{P}(u,v) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
+    <br>
+    <h2 class="uk-heading-small uk-heading-divider">Interpolazione con superfici B-Spline</h2>
+    <h5>Interpolazione con curve B-Spline</h5>
+    Supponiamo di avere \( n+1 \) punti nello spazio \( D_0, ..., D_n \) e di volerli interpolare mediante
+    una curva B-Spline di grado \( p \). In questa formulazione del problema, i parametri per l'interpolazione
+    \( t_0, t_1, ..., t_n \) non sono forniti dall'utente e vanno quindi generati mediante qualche tecnica,
+    ad esempio in maniera uniforme oppure basandosi sulla distanza tra i punti da interpolare (<i>chord
+    length method</i>).
+    <br>
+    Per la definizione di una curva B-Spline è necessario avere anche un vettore di nodi. Anche questo può essere
+    generato in maniera uniforme, oppure appoggiandosi sui valori dei parametri calcolati precedentemente.
+    A questo punto rimangono solo da determinare gli \( n+1 \) punti di controllo \( P_i \) tali
+    che:
+    <br>
+    \( \textbf{D}_k = \textbf{P}(t_k) = \sum_{i=0}^n N_{i,p}(t_k)\textbf{P}_i
+    \quad 0 \leq k \leq n
+    \)
+    <br>
+    Abbiamo quindi \( (n+1) \) equazioni, che possiamo riscrivere come sistema utilizzando le seguenti
+    matrici "formali" di punti:
+    <br> \( NP=D \)
+    <br> ossia
+    <br>
+    \(
+    \begin{bmatrix} N_{0, p}(t_0) & \ldots & N_{n, p}(t_0) \\ \vdots & \ddots & \vdots \\ N_{0, p}(t_n) & \ldots & N_{n, p}(t_n) \end{bmatrix}
+    \begin{bmatrix} \textbf{P}_0 \\ \vdots \\ \textbf{P}_n \end{bmatrix} =
+    \begin{bmatrix} \textbf{D}_0 \\ \vdots \\ \textbf{D}_n \end{bmatrix}
+    \)
+    <br>
+    Scrivendo al posto di ogni punto le sue coordinate come vettore riga, nel caso dello spazio
+    affine tridimensionale
 
 
+
+    Supponiamo di avere una matrice di \( (m+1) \) righe ed \( (n+1) \) colonne  di punti
+    \( D_{i,j} \) nello spazio e di volerli interpolare utilizzando una superficie B-Spline
+    di bigrado \( (p,q \) definita da \( (m+1)(n+1 \) punti di controllo.
+    <br>
+    In questa formulazione del problema, i parametri per l'interpolazione non sono forniti dall'utente e vanno
+    quindi determinati mediante qualche tecnica. Vanno quindi determinati \( m + 1 \) parametri
+    \( s_0, s_1, ..., s_m \)  nella direzione \( u \) e \( n + 1 \) parametri
+    \( t_0, t_1, ..., t_n \) nella direzione \( v \), così da imporre:
+    <br>
+    \( \textbf{P}(s,v) = \sum_{i=0}^h \sum_{j=0}^k N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
 
 
 
