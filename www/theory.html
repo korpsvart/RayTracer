@@ -471,10 +471,11 @@
     <br>
     \( \textbf{P}(u,v) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
     <br>
-    <h2 class="uk-heading-small uk-heading-divider">Interpolazione con superfici B-Spline</h2>
-    <h5>Interpolazione con curve B-Spline</h5>
+    <h2 class="uk-heading-small uk-heading-divider">Interpolazione con curve e superfici B-Spline</h2>
+    <h5>Interpolazione con curve</h5>
     Supponiamo di avere \( n+1 \) punti nello spazio \( D_0, ..., D_n \) e di volerli interpolare mediante
-    una curva B-Spline di grado \( p \). In questa formulazione del problema, i parametri per l'interpolazione
+    una curva B-Spline di grado \( p \) (il grado viene dato come input).
+    In questa formulazione del problema, i parametri per l'interpolazione
     \( t_0, t_1, ..., t_n \) non sono forniti dall'utente e vanno quindi generati mediante qualche tecnica,
     ad esempio in maniera uniforme oppure basandosi sulla distanza tra i punti da interpolare (<i>chord
     length method</i>).
@@ -499,21 +500,27 @@
     \begin{bmatrix} \textbf{D}_0 \\ \vdots \\ \textbf{D}_n \end{bmatrix}
     \)
     <br>
-    Scrivendo al posto di ogni punto le sue coordinate come vettore riga, nel caso dello spazio
-    affine tridimensionale
-
-
-
-    Supponiamo di avere una matrice di \( (m+1) \) righe ed \( (n+1) \) colonne  di punti
-    \( D_{i,j} \) nello spazio e di volerli interpolare utilizzando una superficie B-Spline
-    di bigrado \( (p,q \) definita da \( (m+1)(n+1 \) punti di controllo.
+    Scrivendo al posto di ogni punto le sue coordinate affini come vettore riga, nel caso
+    di punti nello spazio tridimensionale abbiamo in pratica 3 sistemi lineari da risolvere (risolvendo
+    per colonna), ciascuno in \( n+1 \) equazioni ed \( n+1 \) incognite.
+    La determinazione dei punti di controllo quindi si riduce alla risoluzioni di questi sistemi lineari.
+    <h5>Interpolazione con superfici</h5>
+    Per l'interpolazione tramite superfici, il ragionamento visto nel caso delle curve si estende abbastanza
+    facilmente.
+    In questo caso ci viene data una matrice di \( (m+1) \) righe ed \( (n+1) \) colonne  di punti
+    \( D_{i,j} \) nello spazio, che vogliamo interpolare utilizzando una superficie B-Spline
+    di bigrado \( (p,q \) definita da \( (m+1)(n+1) \) punti di controllo.
     <br>
-    In questa formulazione del problema, i parametri per l'interpolazione non sono forniti dall'utente e vanno
-    quindi determinati mediante qualche tecnica. Vanno quindi determinati \( m + 1 \) parametri
+    Vanno quindi determinati \( m + 1 \) parametri
     \( s_0, s_1, ..., s_m \)  nella direzione \( u \) e \( n + 1 \) parametri
     \( t_0, t_1, ..., t_n \) nella direzione \( v \), così da imporre:
     <br>
-    \( \textbf{P}(s,v) = \sum_{i=0}^h \sum_{j=0}^k N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
+    \( \textbf{D}_{c,d} =
+    \textbf{P}(s_c,t_d) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(s_c) N_{j,q}(t_d) \textbf{P}_{i,j}
+    \quad
+
+    \)
+
 
 
 
