@@ -65,17 +65,29 @@ public class SaveToFileFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "save":
-                String fileName = JOptionPane.showInputDialog("Insert file name: ");
-                saveToFile(fileName);
+                saveToFile();
                 break;
         }
     }
 
 
-    private void saveToFile(String fileName) {
+    private void saveToFile() {
         String format = (String)formats.getSelectedItem();
-        int targetWidth = Integer.parseInt(widthTextField.getText());
-        int targetHeight = Integer.parseInt(heightTextField.getText());
+        int targetWidth = 0;
+        int targetHeight = 0;
+        try {
+            targetWidth = Integer.parseInt(widthTextField.getText());
+            targetHeight = Integer.parseInt(heightTextField.getText());
+        } catch (NumberFormatException exception) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric integer input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw exception;
+        }
+        final int width = targetWidth;
+        final int height = targetHeight;
+        String fileName = JOptionPane.showInputDialog("Insert file name: ");
         File saveFile = new File(fileName+"."+format);
         JFileChooser chooser = new JFileChooser();
         chooser.setSelectedFile(saveFile);
@@ -87,8 +99,8 @@ public class SaveToFileFrame extends JFrame implements ActionListener {
                             new RenderingTask() {
                                 @Override
                                 protected Void doInBackground() throws Exception {
-                                    ImageIO.write(scene.renderForOutput(20, targetWidth,
-                                            targetHeight), format, approvedFile);
+                                    ImageIO.write(scene.renderForOutput(20, width,
+                                            height), format, approvedFile);
                                     return null;
                                 }
                             });

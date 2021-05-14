@@ -64,9 +64,20 @@ class VectorEditFrame extends Frame implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
-        Double x = Double.parseDouble(textFieldX.getText());
-        Double y = Double.parseDouble(textFieldY.getText());
-        Double z = Double.parseDouble(textFieldZ.getText());
+        Double x = null;
+        Double y = null;
+        Double z = null;
+        try {
+            x = Double.parseDouble(textFieldX.getText());
+            y = Double.parseDouble(textFieldY.getText());
+            z = Double.parseDouble(textFieldZ.getText());
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw ex;
+        }
         mainFrame.setCP(i, j, new Vector3f(x, y, z));
         setVisible(false);
         this.dispose();

@@ -42,7 +42,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     protected JComboBox materialComboBox;
     protected int divs = 16;
     private final JLabel divisionLabel = new JLabel("Number of subdivisions for triangulation: ");
-    private final TextField divisionTextField = new TextField(10);
+    private final TextField divisionTextField = new TextField("16", 10);
     protected String material = "Diffuse";
 
     public AddObjectFrame(Visualizer visualizer, Scene scene) {
@@ -487,7 +487,11 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
                     try {
                         divs = Integer.parseInt(divisionTextField.getText());
                     } catch (NumberFormatException exception) {
-                        divs = 16;
+                        JOptionPane.showMessageDialog(this,
+                                "Only numeric input is accepted!",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        throw exception;
                     }
                     geometricObject.setDivs(divs);
                     triangulateAndAddSceneObject(geometricObject, mType, albedo, ior);
@@ -508,18 +512,42 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         //I add a little shift in x direction to translation
         //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
         //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
-        return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()) + 10e-6,
-                Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
+        try {
+            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()) + 10e-6,
+                    Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw e;
+        }
     }
 
     protected Vector3f getRotation() {
-        return new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
-                Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
+        try {
+            return new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
+                    Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw e;
+        }
     }
 
     protected Vector3f getScaling() {
-        return new Vector3f(Double.parseDouble(textFieldXScaling.getText()),
-                Double.parseDouble(textFieldYScaling.getText()), Double.parseDouble(textFieldZScaling.getText()));
+        try {
+            return new Vector3f(Double.parseDouble(textFieldXScaling.getText()),
+                    Double.parseDouble(textFieldYScaling.getText()), Double.parseDouble(textFieldZScaling.getText()));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw e;
+        }
     }
 
     protected Matrix4D getOTWMatrix() {

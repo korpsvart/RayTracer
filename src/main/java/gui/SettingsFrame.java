@@ -101,13 +101,29 @@ public class SettingsFrame extends JFrame implements ActionListener {
             case "apply":
                     if (indirectDiffuseCB.isSelected()) {
                         Scene.setSimulateIndirectDiffuse(true);
-                        MonteCarloSampling.setSamplingN(Integer.parseInt(samplesNTextField.getText()));
+                        try {
+                            MonteCarloSampling.setSamplingN(Integer.parseInt(samplesNTextField.getText()));
+                        } catch (NumberFormatException exception) {
+                            JOptionPane.showMessageDialog(this,
+                                    "Only numeric integer input is accepted!",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            throw exception;
+                        }
                     } else {
                         Scene.setSimulateIndirectDiffuse(false);
                     }
+                try {
                     scene.setWidth(Integer.parseInt(widthTextField.getText()));
                     scene.setHeight(Integer.parseInt(heightTextField.getText()));
-                    visualizer.dispose();
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(this,
+                            "Only numeric integer input is accepted!",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    throw exception;
+                }
+                visualizer.dispose();
                     scene.setImg(new BufferedImage(scene.getWidth(), scene.getHeight(), BufferedImage.TYPE_INT_RGB));
                     scene.setBVH();
                     scene.render(20);

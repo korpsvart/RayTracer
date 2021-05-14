@@ -67,7 +67,15 @@ class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
             callerFrame.setBSurface(bSurface);
         } else {
             for (int i = 0; i < l; i++) {
-                this.knots[i + degree] = Double.parseDouble(textFields[i].getText());
+                try {
+                    this.knots[i + degree] = Double.parseDouble(textFields[i].getText());
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(this,
+                            "Only numeric input is accepted!",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    throw exception;
+                }
                 if (direction.equals("u")) {
                     bSurface.setKnotsU(this.knots);
                 } else {
@@ -112,7 +120,15 @@ class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
             //first update the spline knots, in case they have been modified before
             //the insert new knot button is pressed
             for (int i = 0; i < l; i++) {
-                this.knots[i + degree] = Double.parseDouble(textFields[i].getText());
+                try {
+                    this.knots[i + degree] = Double.parseDouble(textFields[i].getText());
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this,
+                            "Only numeric input is accepted!",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    throw e;
+                }
                 if (direction.equals("u")) {
                     bSurface.setKnotsU(this.knots);
                 } else {

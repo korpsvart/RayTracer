@@ -135,9 +135,19 @@ class AddSphereFrame extends AddObjectFrame {
     }
 
     protected GeometricObject createGeometricObject() {
-        Vector3f position = new Vector3f(Double.parseDouble(posX.getText()),
-                Double.parseDouble(posY.getText()), Double.parseDouble(posZ.getText()));
-        double radius = Double.parseDouble(textRadius.getText());
+        Vector3f position = null;
+        double radius = 0;
+        try {
+            position = new Vector3f(Double.parseDouble(posX.getText()),
+                    Double.parseDouble(posY.getText()), Double.parseDouble(posZ.getText()));
+            radius = Double.parseDouble(textRadius.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Only numeric input is accepted!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw e;
+        }
         Sphere sphere = new Sphere(position, radius);
         return sphere;
     }
