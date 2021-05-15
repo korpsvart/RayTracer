@@ -1,5 +1,5 @@
 package rendering;
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -59,7 +59,6 @@ public class Scene{
     private ArrayList<SceneObject> sceneObjectsBVH;
     private ArrayList<LightSource> lightSources;
     private EnvironmentLight environmentLight = new EnvironmentLight(new Vector3f(1, 1, 1), 0.3f);
-
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
     }
@@ -429,17 +428,6 @@ public class Scene{
         lightSources.remove(lightSource);
     }
 
-
-    class RenderThread implements Runnable {
-
-
-        private BufferedImage img;
-
-        @Override
-        public void run() {
-
-        }
-    }
 
     public Vector3f getCameraOrientation() {
         return cameraOrientation;
