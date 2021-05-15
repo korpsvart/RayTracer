@@ -114,8 +114,21 @@ public class SettingsFrame extends JFrame implements ActionListener {
                         Scene.setSimulateIndirectDiffuse(false);
                     }
                 try {
-                    scene.setWidth(Integer.parseInt(widthTextField.getText()));
-                    scene.setHeight(Integer.parseInt(heightTextField.getText()));
+                    int width = Integer.parseInt(widthTextField.getText());
+                    int height = Integer.parseInt(heightTextField.getText());
+                    if (width == scene.getWidth() && height == scene.getHeight()) {
+                        //avoid re-creation of visualizer
+                        visualizer.renderScene(scene);
+                    } else {
+                        scene.setWidth(width);
+                        scene.setHeight(height);
+                        visualizer.dispose();
+                        scene.setImg(new BufferedImage(scene.getWidth(), scene.getHeight(), BufferedImage.TYPE_INT_RGB));
+                        Visualizer visualizer1 = new Visualizer(scene);
+                        visualizer1.renderScene(scene);
+                        visualizer1.setVisible(true);
+                    }
+                    this.dispose();
                 } catch (NumberFormatException exception) {
                     JOptionPane.showMessageDialog(this,
                             "Only numeric integer input is accepted!",
@@ -123,11 +136,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
                             JOptionPane.ERROR_MESSAGE);
                     throw exception;
                 }
-                visualizer.dispose();
-                    scene.setImg(new BufferedImage(scene.getWidth(), scene.getHeight(), BufferedImage.TYPE_INT_RGB));
-                    scene.setBVH();
-                    scene.render(20);
-                    new Visualizer(scene);
+
                 break;
         }
     }

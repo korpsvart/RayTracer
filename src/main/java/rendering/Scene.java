@@ -13,14 +13,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Scene{
 
-    private static final int MAX_RAY_DEPTH = 5; //max depth of ray tracing recursion
+    private static final int MAX_RAY_DEPTH = 4; //max depth of ray tracing recursion
     private AtomicLong renderingProgress = new AtomicLong(0);
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
 
 
     private static boolean simulateIndirectDiffuse = false;
-    private static boolean useEnvironmentLight = true;
+    private static boolean useEnvironmentLight = false;
 
     public static boolean isSimulateIndirectDiffuse() {
         return simulateIndirectDiffuse;
@@ -260,7 +260,7 @@ public class Scene{
         }
         executor.shutdown();
         try {
-            executor.awaitTermination(50, TimeUnit.SECONDS);
+            executor.awaitTermination(200, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -268,7 +268,7 @@ public class Scene{
 
 
     public Vector3f rayTrace(Line3d ray, int rayDepth) {
-        if (rayDepth > MAX_RAY_DEPTH) {
+        if (rayDepth == MAX_RAY_DEPTH) {
             return this.backgroundColor;
         }
         double interceptMin = Double.POSITIVE_INFINITY;
@@ -292,7 +292,7 @@ public class Scene{
 
 
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth) {
-        if (rayDepth > MAX_RAY_DEPTH) {
+        if (rayDepth == MAX_RAY_DEPTH) {
             return this.backgroundColor;
         }
         Optional<IntersectionDataPlusObject> intersectionDataPlusObject = calculateIntersection(ray, RayType.PRIMARY);
@@ -305,9 +305,14 @@ public class Scene{
 
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth, RayType rayType) {
         //same as above but allow caller to specify ray type
-        if (rayDepth > MAX_RAY_DEPTH) {
-            if (useEnvironmentLight && rayType==RayType.INDIRECT_DIFFUSE) {
-                return environmentLight.getColor().mul(environmentLight.getIntensity());
+        //TODO: check this method
+        if (rayDepth == MAX_RAY_DEPTH) {
+            if (rayType==RayType.INDIRECT_DIFFUSE) {
+                if (useEnvironmentLight) {
+                    return environmentLight.getColor().mul(environmentLight.getIntensity());
+                } else {
+                    return new Vector3f(0,0,0);
+                }
             } else {
                 return this.backgroundColor;
             }
@@ -316,8 +321,12 @@ public class Scene{
         if (intersectionDataPlusObject.isPresent()) {
             return intersectionDataPlusObject.get().getSceneObject().computeColor(intersectionDataPlusObject.get().getIntersectionData(), ray, rayDepth, this);
         } else {
-            if (useEnvironmentLight && rayType==RayType.INDIRECT_DIFFUSE) {
-                return environmentLight.getColor().mul(environmentLight.getIntensity());
+            if (rayType==RayType.INDIRECT_DIFFUSE) {
+                if (useEnvironmentLight) {
+                    return environmentLight.getColor().mul(environmentLight.getIntensity());
+                } else {
+                    return new Vector3f(0,0,0);
+                }
             } else {
                 return this.backgroundColor;
             }
@@ -513,5 +522,9 @@ public class Scene{
 
     public void addSceneListener(SceneListener sceneListener) {
         sceneListenerList.add(sceneListener);
+    }
+
+    public static int getMaxRayDepth() {
+        return MAX_RAY_DEPTH;
     }
 }

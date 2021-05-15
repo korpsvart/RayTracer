@@ -85,25 +85,39 @@ public class SaveToFileFrame extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             throw exception;
         }
-        final int width = targetWidth;
-        final int height = targetHeight;
-        String fileName = JOptionPane.showInputDialog("Insert file name: ");
-        File saveFile = new File(fileName+"."+format);
-        JFileChooser chooser = new JFileChooser();
-        chooser.setSelectedFile(saveFile);
-        int rval = chooser.showSaveDialog(formats);
-        if (rval == JFileChooser.APPROVE_OPTION) {
-            final File approvedFile = chooser.getSelectedFile();
-            RenderingProgressBarFrame renderingProgressBarFrame =
-                    new RenderingProgressBarFrame(scene, targetWidth*targetHeight,
-                            new RenderingTask() {
-                                @Override
-                                protected Void doInBackground() throws Exception {
-                                    ImageIO.write(scene.renderForOutput(20, width,
-                                            height), format, approvedFile);
-                                    return null;
-                                }
-                            });
-        }
+
+            final int width = targetWidth;
+            final int height = targetHeight;
+            String fileName = JOptionPane.showInputDialog("Insert file name: ");
+            File saveFile = new File(fileName+"."+format);
+            JFileChooser chooser = new JFileChooser();
+            chooser.setSelectedFile(saveFile);
+            int rval = chooser.showSaveDialog(formats);
+            if (rval == JFileChooser.APPROVE_OPTION) {
+                final File approvedFile = chooser.getSelectedFile();
+                if (targetWidth == scene.getWidth() && targetHeight == scene.getHeight()) {
+                    //avoid re-rendering
+                    try {
+                        ImageIO.write(scene.getImg(), format, approvedFile);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(this,
+                                "Error when writing to file",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    RenderingProgressBarFrame renderingProgressBarFrame =
+                            new RenderingProgressBarFrame(scene, targetWidth*targetHeight,
+                                    new SavingTask() {
+                                        @Override
+                                        protected Void doInBackground() throws Exception {
+                                            ImageIO.write(scene.renderForOutput(20, width,
+                                                    height), format, approvedFile);
+                                            return null;
+                                        }
+
+                                    });
+                }
+            }
     }
 }

@@ -118,7 +118,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         setLayout(null);
         addWindowListener(this);
         setResizable(false);
-        setVisible(true);
+
     }
 
     public static Vector3f extractVectorFromTextField(TextField textField) {
@@ -270,7 +270,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     public void renderScene(Scene scene) {
         RenderingProgressBarFrame renderingProgressBarFrame =
                 new RenderingProgressBarFrame(scene, scene.getWidth()*scene.getHeight(),
-                        new RenderingTask() {
+                        new RenderingTask(sceneCanvas) {
                             @Override
                             protected Void doInBackground() throws Exception {
                                 scene.setBVH();
@@ -286,7 +286,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     public void renderSceneWithoutRebuildingBVH(Scene scene) {
         RenderingProgressBarFrame renderingProgressBarFrame =
                 new RenderingProgressBarFrame(scene, scene.getWidth()*scene.getHeight(),
-                        new RenderingTask() {
+                        new RenderingTask(sceneCanvas) {
                             @Override
                             protected Void doInBackground() throws Exception {
                                 scene.render(20);

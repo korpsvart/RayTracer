@@ -23,7 +23,7 @@ public class Main {
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new Visualizer(scene);
+                new Visualizer(scene).setVisible(true);
             }
         });
     }
