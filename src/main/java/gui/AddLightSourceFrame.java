@@ -43,6 +43,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
     }
 
     private void createMainPanel() {
+        setTitle("Add light");
         this.addWindowListener(this);
 
         colorSubPanel = createChooseRGBPanel();

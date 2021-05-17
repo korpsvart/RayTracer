@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class Scene{
 
-    private static final int MAX_RAY_DEPTH = 4; //max depth of ray tracing recursion
+    private int maxRayDepth = 4; //max depth of ray tracing recursion
     private AtomicLong renderingProgress = new AtomicLong(0);
     private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
     private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
@@ -34,7 +34,7 @@ public class Scene{
     private static final double AIR_IOR = 1; //air index of refraction
     // , considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = false;
+    private static boolean backFaceCulling = true;
     private int width;
     private int height;
     private final double fieldOfView;
@@ -267,7 +267,7 @@ public class Scene{
 
 
     public Vector3f rayTrace(Line3d ray, int rayDepth) {
-        if (rayDepth == MAX_RAY_DEPTH) {
+        if (rayDepth == maxRayDepth) {
             return this.backgroundColor;
         }
         double interceptMin = Double.POSITIVE_INFINITY;
@@ -291,7 +291,7 @@ public class Scene{
 
 
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth) {
-        if (rayDepth == MAX_RAY_DEPTH) {
+        if (rayDepth == maxRayDepth) {
             return this.backgroundColor;
         }
         Optional<IntersectionDataPlusObject> intersectionDataPlusObject = calculateIntersection(ray, RayType.PRIMARY);
@@ -305,7 +305,7 @@ public class Scene{
     public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth, RayType rayType) {
         //same as above but allow caller to specify ray type
         //TODO: check this method
-        if (rayDepth == MAX_RAY_DEPTH) {
+        if (rayDepth == maxRayDepth) {
             if (rayType==RayType.INDIRECT_DIFFUSE) {
                 if (useEnvironmentLight) {
                     return environmentLight.getColor().mul(environmentLight.getIntensity());
@@ -498,12 +498,6 @@ public class Scene{
         long progress = renderingProgress.addAndGet(1);
         for (SceneListener sceneListener :
                 sceneListenerList) {
-//            SwingUtilities.invokeLater(new Runnable() {
-//                @Override
-//                public void run() {
-//                    sceneListener.renderingProgressUpdate(progress);
-//                }
-//            });
             sceneListener.renderingProgressUpdate(progress);
         }
     }
@@ -512,7 +506,11 @@ public class Scene{
         sceneListenerList.add(sceneListener);
     }
 
-    public static int getMaxRayDepth() {
-        return MAX_RAY_DEPTH;
+    public int getMaxRayDepth() {
+        return maxRayDepth;
+    }
+
+    public void setMaxRayDepth(int maxRayDepth) {
+        this.maxRayDepth = maxRayDepth;
     }
 }

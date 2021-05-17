@@ -15,6 +15,7 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 abstract class AddObjectFrame extends Frame implements ActionListener, WindowListener {
 
 
+    public static final double ADJUST_X = 10e-6;
     protected final Visualizer visualizer;
     protected boolean removeMode = false;
     protected TextField albedoTextField;
@@ -54,6 +55,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
 
     public void constructor() {
 
+        setTitle("Add object");
         addWindowListener(this);
         GridBagConstraints c = new GridBagConstraints();
         Panel panel = new Panel(new GridBagLayout());
@@ -119,7 +121,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     }
 
     protected void setDefaultOTW(Vector3f translation, Vector3f rotation) {
-        textFieldXTranslation.setText(Double.toString(translation.getX()));
+        textFieldXTranslation.setText(Double.toString(translation.getX()-ADJUST_X));
         textFieldYTranslation.setText(Double.toString(translation.getY()));
         textFieldZTranslation.setText(Double.toString(translation.getZ()));
         textFieldXRotation.setText(Double.toString(rotation.getX()));
@@ -128,12 +130,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     }
 
     protected void setDefaultOTW(Vector3f translation, Vector3f rotation, Vector3f scaling) {
-        textFieldXTranslation.setText(Double.toString(translation.getX()));
-        textFieldYTranslation.setText(Double.toString(translation.getY()));
-        textFieldZTranslation.setText(Double.toString(translation.getZ()));
-        textFieldXRotation.setText(Double.toString(rotation.getX()));
-        textFieldYRotation.setText(Double.toString(rotation.getY()));
-        textFieldZRotation.setText(Double.toString(rotation.getZ()));
+        setDefaultOTW(translation, rotation);
         textFieldXScaling.setText(Double.toString(scaling.getX()));
         textFieldYScaling.setText(Double.toString(scaling.getY()));
         textFieldZScaling.setText(Double.toString(scaling.getZ()));
@@ -513,7 +510,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
         //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
         try {
-            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()) + 10e-6,
+            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()) + ADJUST_X,
                     Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -620,5 +617,9 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         divisionTextField.setText(String.valueOf(divs));
         mainPanel.add(divisionTextField, c);
         divisionTextField.addActionListener(this);
+    }
+
+    public void setDivs(int divs) {
+        this.divs = divs;
     }
 }

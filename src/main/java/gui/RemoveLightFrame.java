@@ -20,6 +20,7 @@ public class RemoveLightFrame extends JFrame implements ActionListener, ListSele
     JList list;
 
     public RemoveLightFrame(Visualizer visualizer, Scene scene) {
+        setTitle("Edit lights");
         this.visualizer = visualizer;
         this.scene = scene;
         listModel.addAll(scene.getLightSources());

@@ -20,7 +20,7 @@
             <ul class="uk-navbar-nav">
                 <li class="uk-active"><a href=""></a></li>
                 <li class="uk-parent"><a href=""></a></li>
-                <li class="uk-position-left"><a href="index.html">Presentazione</a></li>
+                <li class="uk-position-left"><a href="index.html">Manuale utente</a></li>
                 <li class="uk-position-center"><a href="theory.html">Teoria</a></li>
                 <li class="uk-position-right"><a href="download.html">Download</a></li>
             </ul>
@@ -336,6 +336,8 @@
     è numericamente più stabile e permette di calcolare al tempo stesso il vettore tangente alla curva.
     Applicato alle superfici di Bézier, questo ci permette di evitare di dover calcolare separatamente uno dei due vettori
     tangenti (a seconda di quale parametro "fissiamo" per primo), necessari a calcolare il vettore normale alla superficie.
+    <img src="img/bezier_example.png">
+    <img src="img/teapot_example.png">
     <h3 class="uk-heading-small uk-heading-divider">Triangolazione di superfici</h3>
     Calcolare direttamente l'intersezione di una retta con una superficie di Bézier è difficile e computazionalmente inefficiente,
     per cui solitamente queste vengono triangolate prima di farne un rendering tramite ray tracing.
@@ -471,6 +473,8 @@
     <br>
     \( \textbf{P}(u,v) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(u) N_{j,q}(v) \textbf{P}_{i,j} \)
     <br>
+    <img src="img/bspline_example_3_3.png">
+    <img src="img/bspline_example_4_4.png">
     <h2 class="uk-heading-small uk-heading-divider">Interpolazione con curve e superfici B-Spline</h2>
     <h5>Interpolazione con curve</h5>
     Supponiamo di avere \( n+1 \) punti nello spazio \( D_0, ..., D_n \) e di volerli interpolare mediante
@@ -518,8 +522,33 @@
     \( \textbf{D}_{c,d} =
     \textbf{P}(s_c,t_d) = \sum_{i=0}^m \sum_{j=0}^n N_{i,p}(s_c) N_{j,q}(t_d) \textbf{P}_{i,j}
     \quad
-
+    0 \leq c \leq m
+    \quad
+    0 \leq d \leq n
     \)
+    <br>
+    Manipolando questa espressione otteniamo
+    <br>
+    \(
+    \textbf{D}_{c,d} = \sum_{i=0}^m N_{i,p}(s_c) \textbf{Q}_{i,d}
+    \quad  \text{dove} \quad
+    \textbf{Q}_{i,d} = \sum_{j=0}^n N_{j,q}(t_d) \textbf{P}_{i,j}
+    \)
+    \(\textbf{Q}_{i,d}\) è il punto su una curva B-Spline, valutata in \( t_d \), di grado \(q\) e definita dalla riga \(i\)
+    dei punti di controllo da determinare.
+    <br>
+    \(\textbf{D}_{c_d}\) è il punto su una curva B-Spline, valutata in \(s_c\), di grado \(p\) e definita dalla colonna \(d\)
+    dei punti di controllo \(\textbf{Q}\).
+    <br>
+    In questo modo, possiamo determinare la \(i\)-esima colonna dei punti di controllo "intermedi" \(\textbf{Q}\) a partire
+    dalla \(i\)-esima colonna dei punti dati \(\textbf{D}\) e dai parametri \( s_0, s_1, ..., s_m \), facendo un'interpolazione
+    tramite curve B-Spline.
+    Una volta ottenuti i punti \( \textbf{Q} \), per ottenere la \(i-esima\) riga degli effetti punti di controllo \(\textbf{P}\)
+    si fa un'altra interpolazione tramite curve B-Spline, questa volta con una curva di grado q, utilizzando come punti
+    l'\(i\)-esima riga dei punti \(\textbf{Q}\) ed i parametri \( t_0, t_1, ..., t_n \).
+
+
+
 
 
 

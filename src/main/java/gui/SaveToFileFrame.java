@@ -21,6 +21,7 @@ public class SaveToFileFrame extends JFrame implements ActionListener {
     private final JComboBox formats;
 
     public SaveToFileFrame(Scene scene) {
+        setTitle("Save");
         this.scene = scene;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

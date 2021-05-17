@@ -20,7 +20,9 @@ public class SettingsFrame extends JFrame implements ActionListener {
     Button applyButton;
     TextField widthTextField;
     TextField heightTextField;
+    TextField maxDepthTextField;
     public SettingsFrame(Visualizer visualizer, Scene scene) {
+        setTitle("Settings");
         this.visualizer = visualizer;
         this.scene = scene;
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -74,6 +76,20 @@ public class SettingsFrame extends JFrame implements ActionListener {
         mainPanel.add(samplesNTextField, c);
         c.gridy++;
 
+        mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL), c);
+        c.gridy++;
+
+        //Max ray depth section
+        JLabel maxDepthLabel = new JLabel("Max ray depth");
+        maxDepthTextField = new TextField(String.valueOf(scene.getMaxRayDepth()));
+
+        c.gridx=0;
+        mainPanel.add(maxDepthLabel, c);
+        c.gridx=1;
+        mainPanel.add(maxDepthTextField, c);
+        c.gridy++;
+
+
         //apply button
         applyButton = new Button("Apply");
         applyButton.setActionCommand("apply");
@@ -114,6 +130,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
                         Scene.setSimulateIndirectDiffuse(false);
                     }
                 try {
+                    scene.setMaxRayDepth(Integer.parseInt(maxDepthTextField.getText()));
                     int width = Integer.parseInt(widthTextField.getText());
                     int height = Integer.parseInt(heightTextField.getText());
                     if (width == scene.getWidth() && height == scene.getHeight()) {

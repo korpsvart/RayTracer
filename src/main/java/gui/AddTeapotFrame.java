@@ -12,6 +12,9 @@ class AddTeapotFrame extends AddObjectFrame {
 
     private void createMainPanel() {
 
+
+        setDivs(4);
+
         int gridy = 0;
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);

@@ -23,7 +23,6 @@ class AddSphereFrame extends AddObjectFrame {
     }
 
     private void addSphereFrameConstructor() {
-        setTitle("Add sphere");
         GridBagConstraints c = new GridBagConstraints();
 
         //Start of position input graphics

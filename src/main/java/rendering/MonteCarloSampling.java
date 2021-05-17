@@ -28,7 +28,7 @@ public class MonteCarloSampling {
 
     public static Vector3f calculateIndirectDiffuse(Scene currentScene, Vector3f hitPoint, Vector3f[] localCoordinateSystem, int rayDepth) {
         Vector3f indirectDiffuse = new Vector3f(0, 0, 0);
-        if (rayDepth+1 > Scene.getMaxRayDepth()) {
+        if (rayDepth+1 > currentScene.getMaxRayDepth()) {
             return indirectDiffuse;
         }
         Matrix3D sampleToWorld = new Matrix3D(new Vector3f[]{localCoordinateSystem[0], localCoordinateSystem[1], localCoordinateSystem[2]}, Matrix3D.COL_VECTOR);

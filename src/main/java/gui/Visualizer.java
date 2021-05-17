@@ -32,7 +32,7 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     public Visualizer(Scene scene) {
 
-
+        setTitle("Raytracer");
 
         this.scene = scene;
         BufferedImage sceneToRender = this.scene.getImg();
@@ -56,15 +56,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         changeSettings.setActionCommand("settings");
         menuBar.add(settingsMenu);
         settingsMenu.addActionListener(this);
-        Menu addFigureSubMenu = new Menu("Add figure...");
-        MenuItem removeFigureMenuItem = new MenuItem("Remove figure");
+        Menu addFigureSubMenu = new Menu("Add object");
+        MenuItem removeFigureMenuItem = new MenuItem("Edit objects");
         removeFigureMenuItem.setActionCommand("remove");
         Menu addLightMenu = new Menu("Add light");
         MenuItem pointLightMenuItem = new MenuItem("Point light");
         pointLightMenuItem.setActionCommand("add_point_light");
         MenuItem distantLightMenuItem = new MenuItem("Distant light");
         distantLightMenuItem.setActionCommand("add_distant_light");
-        MenuItem removeLightMenuItem = new MenuItem("Remove light");
+        MenuItem removeLightMenuItem = new MenuItem("Edit lights");
         removeLightMenuItem.setActionCommand("remove_light");
         MenuItem sphereMenuItem = new MenuItem("Sphere");
         sphereMenuItem.setActionCommand("add_sphere");
