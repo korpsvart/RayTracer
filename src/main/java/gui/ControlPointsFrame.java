@@ -2,6 +2,7 @@ package gui;
 
 import rendering.*;
 
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,20 +10,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-class ControlPointsFrame extends Frame implements WindowListener, ActionListener {
+class ControlPointsFrame extends JFrame implements ActionListener {
 
     private final Visualizer visualizer;
     private TextField[][] textFieldsCP;
+    Vector3f[][] controlPoints;
     int m, n;
     private BasicArrowButton[][] buttonsCP;
     private ControlPointsSurfaceFrame callerFrame;
+    private JButton applyButton = new JButton("Apply");
 
     public ControlPointsFrame(Visualizer visualizer, int m, int n, Vector3f[][] defaultSampleCP, ControlPointsSurfaceFrame callerFrame) {
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        applyButton.addActionListener(this);
+        applyButton.setActionCommand("apply");
         this.visualizer = visualizer;
         this.m = m;
         this.n = n;
+        controlPoints = new Vector3f[m][n];
         this.callerFrame = callerFrame;
-        addWindowListener(this);
         textFieldsCP = new TextField[m][n];
         buttonsCP = new BasicArrowButton[m][n];
 
@@ -41,9 +47,9 @@ class ControlPointsFrame extends Frame implements WindowListener, ActionListener
                 //a bigger dimension than the control points matrix
                 //so it needs a bit of refactoring
                 if (i < defaultSampleCP.length && j < defaultSampleCP[0].length) {
-                    textFieldsCP[i][j] = new TextField("{"+defaultSampleCP[i][j].getX()+
-                            ","+defaultSampleCP[i][j].getY()+
-                            ","+defaultSampleCP[i][j].getZ()+"}", 15);
+                    textFieldsCP[i][j] = new TextField(Visualizer.extractTextFromVector(defaultSampleCP[i][j]),
+                            15);
+                    controlPoints[i][j] = defaultSampleCP[i][j];
                 } else {
                     textFieldsCP[i][j] = new TextField("{0,0,0}");
                 }
@@ -59,6 +65,12 @@ class ControlPointsFrame extends Frame implements WindowListener, ActionListener
                 mainPanel.add(buttonsCP[i][j], c);
             }
         }
+        Panel buttonPanel = new Panel();
+        c.gridy++;
+        c.gridx = 0;
+        c.gridwidth=n*2;
+        buttonPanel.add(applyButton, CENTER_ALIGNMENT);
+        mainPanel.add(buttonPanel,c);
         this.add(mainPanel);
         this.pack();
     }
@@ -75,51 +87,58 @@ class ControlPointsFrame extends Frame implements WindowListener, ActionListener
         return textFieldsCP;
     }
 
-    @Override
-    public void windowOpened(WindowEvent windowEvent) {
-
+    public Vector3f[][] getControlPoints() {
+        return controlPoints;
     }
 
-    @Override
-    public void windowClosing(WindowEvent windowEvent) {
-        Vector3f[][] cp = new Vector3f[m][n];
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                cp[i][j] = Visualizer.extractVectorFromTextField(getTextFieldsCP()[i][j]);
-            }
-        }
-        callerFrame.updateControlPoints(cp);
-        setVisible(false);
-        this.dispose();
-    }
+//    @Override
+//    public void windowOpened(WindowEvent windowEvent) {
+//
+//    }
 
-    @Override
-    public void windowClosed(WindowEvent windowEvent) {
-
-    }
-
-    @Override
-    public void windowIconified(WindowEvent windowEvent) {
-
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent windowEvent) {
-
-    }
-
-    @Override
-    public void windowActivated(WindowEvent windowEvent) {
-
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent windowEvent) {
-
-    }
+//    @Override
+//    public void windowClosing(WindowEvent windowEvent) {
+////        Vector3f[][] cp = new Vector3f[m][n];
+////        for (int i = 0; i < m; i++) {
+////            for (int j = 0; j < n; j++) {
+////                cp[i][j] = Visualizer.extractVectorFromTextField(getTextFieldsCP()[i][j]);
+////            }
+////        }
+////        callerFrame.updateControlPoints(cp);
+//        callerFrame.updateControlPoints(controlPoints);
+//        setVisible(false);
+//        this.dispose();
+//    }
+//
+//    @Override
+//    public void windowClosed(WindowEvent windowEvent) {
+//
+//    }
+//
+//    @Override
+//    public void windowIconified(WindowEvent windowEvent) {
+//
+//    }
+//
+//    @Override
+//    public void windowDeiconified(WindowEvent windowEvent) {
+//
+//    }
+//
+//    @Override
+//    public void windowActivated(WindowEvent windowEvent) {
+//
+//    }
+//
+//    @Override
+//    public void windowDeactivated(WindowEvent windowEvent) {
+//
+//    }
 
     public void setCP(int i, int j, Vector3f data) {
+        controlPoints[i][j] = data;
         textFieldsCP[i][j].setText(Visualizer.extractTextFromVector(data));
+//        textFieldsCP[i][j].setText(Visualizer.extractTextFromVector(data));
     }
 
 
@@ -131,9 +150,14 @@ class ControlPointsFrame extends Frame implements WindowListener, ActionListener
                 String[] pos = button.getName().split(",");
                 int i = Integer.parseInt(pos[0]);
                 int j = Integer.parseInt(pos[1]);
-                Vector3f currentData = Visualizer.extractVectorFromTextField(textFieldsCP[i][j]);
+                Vector3f currentData = controlPoints[i][j];
                 VectorEditFrame vectorEditFrame = new VectorEditFrame(i, j, currentData,this);
-
+                break;
+            case "apply":
+                callerFrame.updateControlPoints(controlPoints);
+                setVisible(false);
+                this.dispose();
+                break;
         }
     }
 

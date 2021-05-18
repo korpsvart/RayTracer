@@ -4,6 +4,8 @@ import rendering.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 class AddBoxFrame extends AddObjectFrame {
 
@@ -137,7 +139,7 @@ class AddBoxFrame extends AddObjectFrame {
         super(visualizer, scene, defaultSceneObject);
         addBoxFrameConstructor();
         defaultBoxObject = (PhysicalBox)defaultSceneObject.getGeometricObject();
-        textFieldXMin.setText(String.valueOf(defaultBoxObject.getMin().getX()));
+        textFieldYMin.setText(String.valueOf(defaultBoxObject.getMin().getX()));
         textFieldYMin.setText(String.valueOf(defaultBoxObject.getMin().getY()));
         textFieldZMin.setText(String.valueOf(defaultBoxObject.getMin().getZ()));
         textFieldXMax.setText(String.valueOf(defaultBoxObject.getMax().getX()));

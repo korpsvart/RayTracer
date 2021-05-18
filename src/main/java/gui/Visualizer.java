@@ -4,7 +4,11 @@ package gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 
 import rendering.*;
@@ -128,7 +132,15 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
     }
 
     public static String extractTextFromVector(Vector3f v) {
-        return "{"+v.getX()+","+v.getY()+","+v.getZ()+"}";
+        Locale currentLocale = Locale.getDefault();
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(currentLocale);
+        otherSymbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.#####", otherSymbols);
+        df.setRoundingMode(RoundingMode.CEILING);
+        return "{"+
+                df.format(v.getX())+","+
+                df.format(v.getY())+","+
+                df.format(v.getZ())+"}";
 
     }
 

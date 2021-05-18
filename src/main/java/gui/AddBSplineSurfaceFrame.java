@@ -26,9 +26,9 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
     private JLabel jLabelQ = new JLabel("Degree for v parameter");
     private JLabel jLabelM = new JLabel("Number of control points for u parameter");
     private JLabel jLabelN = new JLabel("Number of control points for v parameter");
-    private Button buttonCP = new Button("Edit control points");
-    private Button buttonKnotsU = new Button("Edit knots for u parameter");
-    private Button buttonKnotsV = new Button("Edit knots for v parameter");
+    private JButton buttonCP = new JButton("Edit control points");
+    private JButton buttonKnotsU = new JButton("Edit knots for u parameter");
+    private JButton buttonKnotsV = new JButton("Edit knots for v parameter");
 
 
     public AddBSplineSurfaceFrame(Visualizer visualizer, Scene scene) {

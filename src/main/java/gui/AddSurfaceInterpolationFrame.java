@@ -23,7 +23,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
     private JLabel jLabelQ = new JLabel("Degree for v parameter");
     private JLabel jLabelM = new JLabel("Number of data points for u parameter");
     private JLabel jLabelN = new JLabel("Number of data points for v parameter");
-    private Button buttonCP = new Button("Edit data points");
+    private JButton buttonCP = new JButton("Edit data points");
 
     public AddSurfaceInterpolationFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
@@ -103,7 +103,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         Vector3f[][] dataPoints = new Vector3f[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                dataPoints[i][j] = Visualizer.extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
+                dataPoints[i][j] = controlPointsFrame.getControlPoints()[i][j];
             }
         }
 //        showControlPoints(dataPoints, getOTWMatrix());

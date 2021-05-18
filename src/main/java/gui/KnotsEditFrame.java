@@ -19,7 +19,7 @@ class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
     private int degree;
     private TextField[] textFields;
     private Panel mainPanel = new Panel(new GridBagLayout());
-    private Button insertKnotButton = new Button("Insert new knot");
+    private JButton insertKnotButton = new JButton("Insert new knot");
 
     public KnotsEditFrame(BSurface bSurface, AddBSplineSurfaceFrame callerFrame, String direction) {
         this.callerFrame = callerFrame;
@@ -135,7 +135,20 @@ class KnotsEditFrame extends Frame implements WindowListener, ActionListener {
                     bSurface.setKnotsV(this.knots);
                 }
             }
-            double newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+            double newKnot = 0;
+            try {
+                newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                if (newKnot < 0 || newKnot > 1)
+                    throw new NumberFormatException();
+            } catch (NumberFormatException exception) {
+                JOptionPane.showMessageDialog(this,
+                        "Invalid input",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                throw exception;
+            } catch (HeadlessException e) {
+                e.printStackTrace();
+            }
             if (direction.equals("u")) {
                 bSurface = bSurface.knotInsertionU(newKnot);
             } else {

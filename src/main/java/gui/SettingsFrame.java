@@ -4,6 +4,7 @@ import rendering.MonteCarloSampling;
 import rendering.Scene;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,11 +18,12 @@ public class SettingsFrame extends JFrame implements ActionListener {
     GridBagConstraints c = new GridBagConstraints();
     JCheckBox indirectDiffuseCB;
     TextField samplesNTextField;
-    Button applyButton;
+    JButton applyButton;
     TextField widthTextField;
     TextField heightTextField;
     TextField maxDepthTextField;
     public SettingsFrame(Visualizer visualizer, Scene scene) {
+        c.fill = GridBagConstraints.HORIZONTAL;
         setTitle("Settings");
         this.visualizer = visualizer;
         this.scene = scene;
@@ -35,9 +37,8 @@ public class SettingsFrame extends JFrame implements ActionListener {
         heightTextField = new TextField(10);
         widthTextField.setText(String.valueOf(scene.getWidth()));
         heightTextField.setText(String.valueOf(scene.getHeight()));
-        mainPanel.add(resolutionLabel, c);
         c.gridy++;
-        mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL), c);
+        mainPanel.add(resolutionLabel, c);
         c.gridy++;
         mainPanel.add(widthLabel, c);
         c.gridx=1;
@@ -49,9 +50,14 @@ public class SettingsFrame extends JFrame implements ActionListener {
         mainPanel.add(heightTextField, c);
         c.gridy++;
         c.gridx=0;
-
+        c.gridwidth=2;
+        c.insets  = new Insets(20,0,0,0);
         mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL), c);
         c.gridy++;
+        c.gridwidth=1;
+
+
+
 
         //indirect diffuse section
         JLabel indirectDiffuse = new JLabel("Simulate indirect diffuse light: ");
@@ -69,6 +75,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
         mainPanel.add(indirectDiffuse,c);
         c.gridx=1;
         mainPanel.add(indirectDiffuseCB,c);
+        c.insets  = new Insets(0,0,0,0);
         c.gridy++;
         c.gridx=0;
         mainPanel.add(samplesN, c);
@@ -76,8 +83,12 @@ public class SettingsFrame extends JFrame implements ActionListener {
         mainPanel.add(samplesNTextField, c);
         c.gridy++;
 
+        c.gridx=0;
+        c.gridwidth=2;
+        c.insets  = new Insets(20,0,0,0);
         mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL), c);
         c.gridy++;
+        c.gridwidth=1;
 
         //Max ray depth section
         JLabel maxDepthLabel = new JLabel("Max ray depth");
@@ -90,14 +101,18 @@ public class SettingsFrame extends JFrame implements ActionListener {
         c.gridy++;
 
 
+
+
         //apply button
-        applyButton = new Button("Apply");
+        applyButton = new JButton("Apply");
         applyButton.setActionCommand("apply");
         applyButton.addActionListener(this);
 
+        c.gridx=0;
+        c.weightx=1;
+        c.gridwidth=2;
         mainPanel.add(applyButton, c);
         c.gridy++;
-
 
 
         this.add(mainPanel);

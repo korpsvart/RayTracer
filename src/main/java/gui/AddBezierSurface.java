@@ -2,6 +2,7 @@ package gui;
 
 import rendering.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -9,7 +10,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
 
     private BezierSurface33 defaultBezierSurface;
     private ControlPointsFrame controlPointsFrame;
-    private Button buttonCP = new Button("Edit control points");
+    private JButton buttonCP = new JButton("Edit control points");
 
 
     public AddBezierSurface(Visualizer visualizer, Scene scene) {
@@ -66,7 +67,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         Vector3f[][] cp = new Vector3f[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                cp[i][j] = Visualizer.extractVectorFromTextField(controlPointsFrame.getTextFieldsCP()[i][j]);
+                cp[i][j] = controlPointsFrame.getControlPoints()[i][j];
             }
         }
 //        showControlPoints(cp, getOTWMatrix());

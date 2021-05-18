@@ -5,23 +5,21 @@ import rendering.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
-abstract class AddObjectFrame extends Frame implements ActionListener, WindowListener {
+abstract class AddObjectFrame extends JFrame implements ActionListener {
 
 
-    public static final double ADJUST_X = 10e-6;
+//    public static final double ADJUST_X = 1e-7;
     protected final Visualizer visualizer;
     protected boolean removeMode = false;
     protected TextField albedoTextField;
     protected JColorChooser colorChooser;
     protected SceneObject defaultSceneObject;
-    protected Button albedoButton;
+    protected JButton albedoButton;
     protected TextField iorText;
     protected JLabel materialLabel;
     protected Scene scene;
@@ -55,8 +53,8 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
 
     public void constructor() {
 
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Add object");
-        addWindowListener(this);
         GridBagConstraints c = new GridBagConstraints();
         Panel panel = new Panel(new GridBagLayout());
         this.mainPanel = panel;
@@ -121,7 +119,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     }
 
     protected void setDefaultOTW(Vector3f translation, Vector3f rotation) {
-        textFieldXTranslation.setText(Double.toString(translation.getX()-ADJUST_X));
+        textFieldXTranslation.setText(Double.toString(translation.getX()));
         textFieldYTranslation.setText(Double.toString(translation.getY()));
         textFieldZTranslation.setText(Double.toString(translation.getZ()));
         textFieldXRotation.setText(Double.toString(rotation.getX()));
@@ -276,7 +274,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         c.gridx = 2;
         c.weightx = 0.2;
         chooseRGBPanel.add(currentAlbedoLabel, c);
-        Button openColorChooserButton = new Button("Select albedo");
+        JButton openColorChooserButton = new JButton("Select albedo");
         this.albedoButton = openColorChooserButton;
         openColorChooserButton.setActionCommand("colorChoose");
         openColorChooserButton.addActionListener(this);
@@ -361,7 +359,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
     protected void addSendButton(int gridy) {
         //Add button to send data
         GridBagConstraints c = new GridBagConstraints();
-        Button sendButton = new Button("Create");
+        JButton sendButton = new JButton("Create");
         sendButton.setActionCommand("create");
         sendButton.addActionListener(this);
 //        c.fill = GridBagConstraints.HORIZONTAL;
@@ -510,7 +508,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
         //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
         try {
-            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()) + ADJUST_X,
+            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()),
                     Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -567,42 +565,7 @@ abstract class AddObjectFrame extends Frame implements ActionListener, WindowLis
         return objectToWorld;
     }
 
-    @Override
-    public void windowOpened(WindowEvent e) {
 
-    }
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        setVisible(false);
-        this.dispose();
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-
-    }
-
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-
-    }
 
     protected void setSizeToContent(int gridx, int gridy, int scalex, int scaley) {
         setSize((gridx)*scalex, (gridy)*scaley);
