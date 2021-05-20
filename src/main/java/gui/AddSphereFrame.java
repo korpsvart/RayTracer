@@ -120,7 +120,7 @@ class AddSphereFrame extends AddObjectFrame {
 
         //add send button
         addSendButton(6);
-        setSizeToContent(3, 7, 200, 60);
+        this.pack();
     }
 
     public AddSphereFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {

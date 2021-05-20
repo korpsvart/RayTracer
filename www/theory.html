@@ -99,6 +99,7 @@
     </p>
 
     <h2 class="uk-heading-small uk-heading-divider">Illuminazione su superfici lambertiane</h2>
+    <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded" width=45% src="img/diffuse_example.PNG">
     <p>
     La legge di Lambert afferma che l'illuminamento prodotto da una sorgente su una superficie è direttamente
     proporzionale all'intensità luminosa della sorgente e al coseno dell'angolo che la normale alla superficie forma
@@ -131,15 +132,19 @@
     \( L = \frac{F_{tot}}{\pi} \)
     <br>
     Come anticipato, la quantità di luce riflessa è indipendente dalla direzione della visuale.
-    <img src="img/diffuse_example.PNG">
     </p>
     <h2 class="uk-heading-small uk-heading-divider">Riflessione speculare</h2>
     Usando la legge della riflessione, date la direzione incidente \( \textbf{l} \) e la normale \( \textbf{n} \)
     (si assume entrambi siano vettori di norma unitaria) è facile calcolare la direzione della riflessione:
     <br>
-    \( \textbf{r} = 2(\textbf{n}\cdot \textbf{i})\textbf{n} - \textbf{i} \)
+    <p class="uk-align-center">
+        \( \begin{equation}\textbf{r} = 2(\textbf{n}\cdot \textbf{i})\textbf{n} - \textbf{i} \end{equation} \)
+    </p>
     <br>
-    <img src="img/reflection_dir.png">
+    <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded" width=40%  src="img/reflection_ex.PNG">
+    <img class="uk-box-shadow-xlarge uk-border-rounded" width=35% src="img/reflection_dir.png">
+
+    <br>
     <br>
     A livello implementativo, quando la direzione della visuale interseca una superficie riflettente, calcoliamo
     la direzione di riflessione e generiamo un nuovo "raggio", avente come origine il punto di intersezione e come
@@ -150,7 +155,7 @@
     Per questo motivo, si definisce una costante che limita il numero massimo di livelli che può raggiungere questo
     procedimento ricorsivo (le immagini dimostrative sono state generate usando come limite 5 livelli).
     <br>
-    <img src="img/reflection_ex.PNG">
+
     <br>
     <h2 class="uk-heading-small uk-heading-divider">Rifrazione</h2>
     Quando un raggio di luce "passa" da un mezzo trasparente ad un altro, la sua direzione viene alterata. La nuova direzione

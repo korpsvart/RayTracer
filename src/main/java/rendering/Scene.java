@@ -34,7 +34,7 @@ public class Scene{
     private static final double AIR_IOR = 1; //air index of refraction
     // , considered as vacuum for simplicity
 
-    private static boolean backFaceCulling = true;
+    private static boolean backFaceCulling = false;
     private int width;
     private int height;
     private final double fieldOfView;

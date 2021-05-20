@@ -20,6 +20,7 @@ class AddPlaneFrame extends AddObjectFrame {
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(gridy++);
         addSendButton(gridy++);
+        this.pack();
     }
 
     public AddPlaneFrame(Visualizer visualizer, Scene scene, SceneObject defaultObject) {

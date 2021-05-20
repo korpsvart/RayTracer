@@ -98,6 +98,7 @@ public class MirrorTransparent extends SceneObject {
         Vector3f hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
         Vector3f hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
         if (c < 0) {
+            assert(ior2 < ior1);
             //incident angle is greater then critical angle:
             //total internal reflection.
             //We don't need to compute refraction direction

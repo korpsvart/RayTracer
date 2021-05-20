@@ -56,6 +56,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Add object");
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
         Panel panel = new Panel(new GridBagLayout());
         this.mainPanel = panel;
         //define transparent subpanel
@@ -140,7 +141,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         int gridy = 0;
         JLabel translationLabel = new JLabel("Insert origin (translation to world coordinates)");
-        JLabel rotationLabel = new JLabel("Insert rotation around the three main axis");
+        JLabel rotationLabel = new JLabel("Insert rotation around the three main axes");
         JLabel scalingLabel = new JLabel("Insert scaling");
         JLabel x = new JLabel("X");
         JLabel y = new JLabel("Y");
@@ -258,11 +259,12 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
 
     private Panel createChooseRGBPanel() {
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
         Panel chooseRGBPanel = new Panel(new GridBagLayout());
-        JLabel materialPropertyLabel = new JLabel("Select albedo:");
+        JLabel materialPropertyLabel = new JLabel("Color:");
         c.gridy = 0;
         c.gridx = 0;
-        c.weightx = 0.5;
+        c.weightx = 0.2;
         c.gridwidth = 1;
         chooseRGBPanel.add(materialPropertyLabel, c);
         JLabel rgbLabel = new JLabel("RGB:");
@@ -271,14 +273,14 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         TextField currentAlbedoLabel = new TextField("(" + currentColor.getRed() + "," + currentColor.getGreen() + "," + currentColor.getBlue() + ")");
         this.albedoTextField = currentAlbedoLabel;
         currentAlbedoLabel.setEditable(false);
-        c.gridx = 2;
+        c.gridx = 1;
         c.weightx = 0.2;
         chooseRGBPanel.add(currentAlbedoLabel, c);
-        JButton openColorChooserButton = new JButton("Select albedo");
+        JButton openColorChooserButton = new JButton("Select color");
         this.albedoButton = openColorChooserButton;
         openColorChooserButton.setActionCommand("colorChoose");
         openColorChooserButton.addActionListener(this);
-        c.gridx = 3;
+        c.gridx = 2;
         c.weightx = 0.2;
         chooseRGBPanel.add(openColorChooserButton, c);
         return chooseRGBPanel;
@@ -286,13 +288,14 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
 
     protected void addMaterialComboBox(int gridy) {
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy;
         c.gridx = 0;
-        c.gridwidth = 2;
-        c.weightx = 0.6;
+        c.gridwidth = 1;
+        c.weightx = 0;
         mainPanel.add(materialLabel, c);
         c.gridx = 2;
-        c.weightx = 0.6;
+        c.weightx = 0.4;
         mainPanel.add(materialComboBox, c);
     }
 
@@ -329,6 +332,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
     protected void addMaterialPropertySubPanel(int gridy) {
         this.materialSubPanelGridy = gridy;
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 10, 0);
         c.gridy = gridy;
         c.gridx = 0;
@@ -359,20 +363,21 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
     protected void addSendButton(int gridy) {
         //Add button to send data
         GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        JPanel buttonPanel = new JPanel();
         JButton sendButton = new JButton("Create");
         sendButton.setActionCommand("create");
         sendButton.addActionListener(this);
-//        c.fill = GridBagConstraints.HORIZONTAL;
+        buttonPanel.add(sendButton);
         c.gridy = gridy;
-        c.gridx = 1;
+        c.gridx = 0;
         c.weightx = 0;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.insets = new Insets(10, 0, 10, 0);
-        mainPanel.add(sendButton, c);
+        mainPanel.add(buttonPanel, c);
 
 
         add(mainPanel);
-        pack();
         setVisible(true);
     }
 
@@ -578,6 +583,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         c.gridy = gridy;
         mainPanel.add(divisionLabel, c);
         divisionTextField.setText(String.valueOf(divs));
+        c.gridx=2;
         mainPanel.add(divisionTextField, c);
         divisionTextField.addActionListener(this);
     }

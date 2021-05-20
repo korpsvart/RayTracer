@@ -24,6 +24,7 @@ class VectorEditFrame extends JFrame implements WindowListener, ActionListener {
     int i, j;
 
     public VectorEditFrame(int i, int j, Vector3f data, ControlPointsFrame mainFrame) {
+        this.setTitle("Edit point or vector");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         applyButton.setActionCommand("apply");
         applyButton.addActionListener(this);

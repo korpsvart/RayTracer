@@ -22,19 +22,25 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
     }
 
     private void createMainPanel() {
+        JPanel buttonPanel = new JPanel();
         buttonCP.setActionCommand("open_edit_cp");
         buttonCP.addActionListener(this);
+        buttonPanel.add(buttonCP);
         int gridy = 0;
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy++;
-        mainPanel.add(buttonCP, c);
+        c.gridwidth=3;
+
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
         addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
+        c.gridy=gridy++;
+        mainPanel.add(buttonPanel, c);
         addSendButton(gridy++);
-        setSizeToContent(3, gridy, 200, 100);
+//        setSizeToContent(3, gridy, 200, 100);
+        this.pack();
     }
 
     public AddBezierSurface(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
@@ -55,6 +61,8 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
         super.actionPerformed(e);
         switch (e.getActionCommand()) {
             case "open_edit_cp":
+                controlPointsFrame = new ControlPointsFrame(visualizer, controlPointsFrame.getControlPoints(), this);
+                this.setEnabled(false);
                 controlPointsFrame.setVisible(true);
                 break;
 

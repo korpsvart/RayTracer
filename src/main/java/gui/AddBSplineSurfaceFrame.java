@@ -56,25 +56,25 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelP, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerP, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelQ, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerQ, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelM, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerM, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelN, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerN, c);
 
 
@@ -93,7 +93,9 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         addDivsPanel(gridy++);
         addSendButton(gridy++);
 
-        setSizeToContent(3, gridy, 280, 70);
+        this.pack();
+
+//        setSizeToContent(3, gridy, 280, 70);
     }
 
     public AddBSplineSurfaceFrame(Visualizer visualizer, Scene scene, SceneObject defaultSceneObject) {
@@ -119,6 +121,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         super.actionPerformed(e);
         switch (e.getActionCommand()) {
             case "open_edit_cp":
+                this.setEnabled(false);
                 controlPointsFrame = new ControlPointsFrame(visualizer, bSurface.getControlPoints(), this);
                 controlPointsFrame.setVisible(true);
                 break;

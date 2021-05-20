@@ -12,7 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Arrays;
 
-abstract class AddLightSourceFrame extends Frame implements ActionListener, WindowListener {
+abstract class AddLightSourceFrame extends JFrame implements ActionListener {
 
     private final Visualizer visualizer;
     protected Scene scene;
@@ -23,7 +23,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
     protected TextField textFieldIntensity = new TextField("0.7", 10);
     protected Panel mainPanel = new Panel(new GridBagLayout());
     protected JColorChooser colorChooser;
-    protected Button colorButton = new Button("Choose color");
+    protected JButton colorButton = new JButton("Choose color");
     protected TextField colorTextField = new TextField("(255,255,255)", 10);
     protected Panel colorSubPanel;
     protected int gridy = 0;
@@ -44,7 +44,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
 
     private void createMainPanel() {
         setTitle("Add light");
-        this.addWindowListener(this);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         colorSubPanel = createChooseRGBPanel();
 
@@ -61,7 +61,10 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         mainPanel.add(textFieldIntensity, c);
 
         c.gridy = gridy++;
+        c.gridx=0;
+        c.gridwidth=3;
         mainPanel.add(colorSubPanel, c);
+        this.pack();
     }
 
 
@@ -80,7 +83,7 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         JLabel materialPropertyLabel = new JLabel("Select color:");
         c.gridy = 0;
         c.gridx = 0;
-        c.weightx = 0.5;
+        c.weightx = 0.8;
         c.gridwidth = 1;
         chooseRGBPanel.add(materialPropertyLabel, c);
         JLabel rgbLabel = new JLabel("RGB:");
@@ -89,15 +92,15 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         TextField currentAlbedoLabel = new TextField("(" + currentColor.getRed() + "," + currentColor.getGreen() + "," + currentColor.getBlue() + ")");
         this.colorTextField = currentAlbedoLabel;
         currentAlbedoLabel.setEditable(false);
-        c.gridx = 2;
-        c.weightx = 0.2;
+        c.gridx = 1;
+        c.weightx = 0.1;
         chooseRGBPanel.add(currentAlbedoLabel, c);
-        Button openColorChooserButton = new Button("Pick a color");
+        JButton openColorChooserButton = new JButton("Pick a color");
         this.colorButton = openColorChooserButton;
         openColorChooserButton.setActionCommand("colorChoose");
         openColorChooserButton.addActionListener(this);
-        c.gridx = 3;
-        c.weightx = 0.2;
+        c.gridx = 2;
+        c.weightx = 0.1;
         chooseRGBPanel.add(openColorChooserButton, c);
         return chooseRGBPanel;
     }
@@ -136,41 +139,6 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
         }
     }
 
-    @Override
-    public void windowOpened(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-        setVisible(false);
-        this.dispose();
-    }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowIconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowActivated(WindowEvent e) {
-
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-
-    }
 
     protected void addLightSource() {
         double x = Double.parseDouble(textFieldX.getText());
@@ -194,15 +162,17 @@ abstract class AddLightSourceFrame extends Frame implements ActionListener, Wind
     protected void addSendButton(int gridy) {
         //Add button to send data
         GridBagConstraints c = new GridBagConstraints();
-        Button sendButton = new Button("Create");
+        JButton sendButton = new JButton("Create");
         sendButton.setActionCommand("create");
         sendButton.addActionListener(this);
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = gridy;
-        c.gridx = 1;
+        c.gridx = 0;
         c.weightx = 0;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.insets = new Insets(10, 0, 10, 0);
-        mainPanel.add(sendButton, c);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(sendButton);
+        mainPanel.add(buttonPanel, c);
     }
 }

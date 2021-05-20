@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="css/uikit.min.css" />
     <script src="js/uikit.min.js"></script>
     <script src="js/uikit-icons.min.js"></script>
+    <script src="https://fred-wang.github.io/mathml.css/mspace.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
 </head>
 <body>
 <div class="uk-container uk-container-small">
@@ -21,8 +26,128 @@
             </ul>
         </div>
     </nav>
-    <h1 class="uk-heading-large uk-heading-divider"></h1>
+    <h1 class="uk-heading-large uk-heading-divider">Manuale utente</h1>
+    Avviando il programma viene visualizzata una finestra contenente una <i>scena</i> vuota ed un menù. Attraverso
+    il menù è possibile
+    <ul>
+        <li>Salvare l'immagine corrente, specificando il formato del file ed eventualmente una risoluzione diversa
+            da quella attualmente usata dal programma.</li>
+        <li>Cambiare le impostazioni del programma, in particolare è possibile:
+            <ul>
+                <li>Cambiare la risoluzione</li>
+                <li>Attivare la simulazione dell'illuminazione diffusa indiretta, specificando anche il numero
+                    di raggi utilizzati per "campionare" l'illuminazione indiretta intorno a ciascun punto.
+                    Aumentando il numero di raggi è possibile ridurre il rumore dell'immagine, aumentando però il costo computazionale.
+                    <b>NOTA:</b> questa modalità rallenta pesantemente il processo di rendering, è quindi attualmente sconsigliato
+                    l'utilizzo se non per scene molto semplici.</li>
+                <li>Modificare la scena, aggiungendo oggetti o fonti luminose, oppure modificando o rimuovendo quelli esistenti.</li>
+            </ul>
+        </li>
+    </ul>
+    <img class="uk-box-shadow-xlarge uk-border-rounded" src="img/main_window.PNG">
+    <h2 class="uk-heading-medium uk-heading-divider">Gestione oggetti</h2>
+    Ogni oggetto viene inizialmente creato rispetto al sistema di riferimento "centrale", ovvero l'usuale sistema di riferimento
+    cartesiano destrorso. La <i>camera</i> (il punto di vista) è posizionata nell'origine di tale sistema e orientata nella direzione
+    opposta all'asse \(z\). Per ogni oggetto, è possibile specificare una trasformazione affine per ruotarlo, espanderlo o traslarlo
+    all'interno della scena. <br>
+    <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded" src="img/add_sphere_window.PNG">
+    Sono supportate cinque tipologie di oggetti:
+    <ul>
+        <li>Sfere</li>
+        <li>Parallelepipedi</li>
+        <li>Piani</li>
+        <li>Superfici di Bézier di bigrado \((3,3)\)</li>
+        <li>Superfici B-Spline di bigrado arbitrario</li>
+    </ul>
+    Inoltre, è presente una funzione che permette di interpolare una griglia di punti attraverso una superficie B-Spline.
+    A scopo dimostrativo, è possibile anche aggiungere alcuni oggetti complessi pre-determinati:
+    <ul>
+        <li>Per le superfici di Bézier: la <i>Utah teapot</i>, modello notoriamente utilizzato come test nei programmi di rendering 3D,
+            ottenuta tramite incollamento di patch di Bézier.</li>
+        <li>Per l'interpolazione tramite B-Spline: una "ciambella aperta" </li>
+    </ul>
+
+    Per ogni oggetto è possibile selezionare un tipo di materiale e, a seconda del materiale, eventuali opzioni aggiuntive. I tipi disponibili
+    sono:
+    <ul>
+        <li>
+            Diffuse (perfettamente opaco)
+                <ul><li>Permette di specificare il colore</li></ul>
+        </li>
+        <li>
+            Phong (opaco con componente speculare)
+            <ul><li>Permette di specificare il colore</li></ul>
+        </li>
+        <li>
+            Mirror-like (specchio)
+            <ul><li>Non permette di specificare proprietà aggiuntive</li></ul>
+        </li>
+        <li>
+            Transparent (trasparente)
+            <ul><li>Permette di specificare l'indice di rifrazione</li></ul>
+        </li>
+    </ul>
+
+    <h2 class="uk-heading-medium uk-heading-divider">Gestione fonti luminose</h2>
+    Come per gli oggetti, è possibile aggiungere, rimuovere o modificare fonti luminose.
+    Sono disponibili due tipi di fonti luminose:
+    <ul>
+        <li>
+            Point light (luci puntiformi): determinate unicamente dalla posizione.
+        </li>
+        <li>
+            Distant light (luci distanti): determinate unicamente dalla direzione.
+        </li>
+    </ul>
+    Per entrambe le tipologie è possibile specificare luminosità e colore.
+    <h3 class="uk-heading-small uk-heading-divider">Creare superfici B-Spline</h3>
+
+
+    <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded" width=50% src="img/bspline_main_window.PNG">
+
+        <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded" width=50% src="img/bspline_cp_window.PNG">
+        <img class="uk-align-right uk-box-shadow-xlarge uk-border-rounded"  width=20% src="img/knots_window.PNG">
+
+    Tutte le superfici B-Spline generate dal programma sono superfici <i>clamped</i>, ovvero passano per i punti di controllo
+    alle estremità.
+    È possibile personalizzare una superficie B-Spline agendo su tre diversi aspetti:
+    <ul>
+        <li>
+        Il grado della superficie nelle due direzioni. Nel caso delle superfici B-Spline il grado non è legato al numero di punti di controllo,
+        tuttavia è comunque limitato dal fatto che dev'essere sempre minore o uguale al numero di punti di controllo (nella direzione corrispondente).
+        Per questo motivo, incrementare il grado oltre un certo numero obbligherà il programma ad incrementare il numero di punti di controllo. Per
+        incrementare il numero di punti di controllo evitando di alterare eccessivamente l'aspetto della curva, si è deciso di far sì che il nuovo
+        punto venga generato automaticamente inserendo un nuovo nodo, il cui valore viene chiesto all'utente.
+        In ogni caso, incrementare il grado della curva causerà un "reset" del vettore dei nodi in quella direzione, per cui il valore inserito
+        serve solo avere una forma limitata di controllo su quale parte della superficie verrà maggiormente alterata.
+        </li>
+    <li>
+        Il vettore dei nodi nelle due direzioni. Il programma limita i nodi ad essere contenuti nell'intervallo \((0,1)\), dove i due estremi
+        costituiscono, rispettivamente, primo ed ultimo nodo e hanno molteplicità uguale al grado corrispettivo \(+1\)
+        (necessario per le curve clamped). I nodi interni sono invece modificabili dall'utente ed è possibile anche inserirne di nuovi.
+        La creazione di nuovi nodi è uno degli strumenti fondamentali per poter sfruttare la proprietà di controllo locale delle curve B-Spline.
+        <b>NOTA: la creazione di nuovi punti di controllo ("estendere" la superficie) o l'incremento del grado non preservano il vettore dei
+        nodi, che verrà rigenerato in maniera uniforme.</b>
+    </li>
+    <li>
+        "Estendere" la superficie, aggiungendo nuovi punti di controllo alle estremità. Questa funzione è presente più che altro come comodità, per
+        estendere la superficie direttamente senza dover passare per le altre due opzioni, che possono generare solo punti di controllo all'"interno"
+        della superficie.
+    </li>
+    </ul>
+    <h3 class="uk-heading-small uk-heading-divider">Interpolazione tramite B-Spline</h3>
+    Attraverso un'interfaccia molto simile a quella per la creazione di superfici B-Spline, è possibile interpolare una griglia di punti nello spazio
+    con una superficie B-Spline. <b>NOTA:</b> una volta generata la superficie interpolante, questa viene gestita dal programma come
+    una normale superficie B-Spline (per eventuali modifiche, quindi, verrano visualizzati i punti di controllo determinati dal processo
+    di interpolazione e non i punti originariamente interpolati).
+    <h3 class="uk-heading-small uk-heading-divider">Muoversi nella scena</h3>
+    Seppur il programma non sia abbastanza efficiente da permettere di muoversi in tempo reale all'interno della scena, è possibile utilizzare
+    dei comandi da tastiera per spostarsi o cambiare la direzione della visuale. Il funzionamento dei comandi da tastiera è illustrato dall'immagine
+    seguente (<i>Pos</i> identifica i comandi che modificano la posizione della camera, <i>View</i> quelli che alterano la direzione della visuale):
+    <img class="uk-box-shadow-xlarge uk-border-rounded" src="img/keyboard-layout.png">
 </div>
+
+
 
 
 </body>

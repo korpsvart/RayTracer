@@ -32,7 +32,6 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
     }
 
     private void createMainPanel() {
-        this.visualizer = visualizer;
         buttonCP.setActionCommand("open_edit_cp");
         buttonCP.addActionListener(this);
         spinnerP.addChangeListener(this);
@@ -47,30 +46,33 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelP, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerP, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelQ, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerQ, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelM, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerM, c);
 
         c.gridx = 0;
         c.gridy = gridy++;
         mainPanel.add(jLabelN, c);
-        c.gridx = 1;
+        c.gridx = 2;
         mainPanel.add(spinnerN, c);
 
         c.gridy = gridy++;
         c.gridx = 0;
-        mainPanel.add(buttonCP, c);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(buttonCP);
+        c.gridwidth = 3;
+        mainPanel.add(buttonPanel, c);
 
         addOTWSubPanel(gridy++);
         addMaterialComboBox(gridy++);
@@ -91,7 +93,11 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
 
     @Override
     void updateControlPoints(Vector3f[][] cp) {
-
+//        for (int i = 0; i < m; i++) {
+//            for (int j = 0; j < n; j++) {
+//                controlPointsFrame.controlPoints[i][j] = cp[i][j];
+//            }
+//        }
     }
 
     @Override
@@ -250,6 +256,8 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         super.actionPerformed(e);
         switch (e.getActionCommand()) {
             case "open_edit_cp":
+                controlPointsFrame = new ControlPointsFrame(visualizer, m, n, controlPointsFrame.getControlPoints(), this);
+                this.setEnabled(false);
                 controlPointsFrame.setVisible(true);
                 break;
         }

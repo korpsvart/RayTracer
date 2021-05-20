@@ -6,14 +6,12 @@ class AddTeapotFrame extends AddObjectFrame {
 
     public AddTeapotFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
+        setDivs(4);
         initializeWithTeapotData();
         createMainPanel();
     }
 
     private void createMainPanel() {
-
-
-        setDivs(4);
 
         int gridy = 0;
         addOTWSubPanel(gridy++);
@@ -21,6 +19,7 @@ class AddTeapotFrame extends AddObjectFrame {
         addMaterialPropertySubPanel(gridy++);
         addDivsPanel(gridy++);
         addSendButton(gridy++);
+        this.pack();
     }
 
     public AddTeapotFrame(Visualizer visualizer, Scene scene, SceneObject defaultObject) {
