@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 
 class ControlPointsFrame extends JFrame implements ActionListener, WindowListener {
 
@@ -40,6 +42,9 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 10, 10, 10);
+
+
+        //Add control points textfields and buttons
         //we use the matrix actual dimensions instead of (m,n)
         //to handle adding more control points but allowing
         //to keep using the default control points where they can be used
