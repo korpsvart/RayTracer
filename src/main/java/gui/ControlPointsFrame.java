@@ -15,6 +15,7 @@ import java.awt.geom.Line2D;
 class ControlPointsFrame extends JFrame implements ActionListener, WindowListener {
 
     private final Visualizer visualizer;
+    private JLabel[][] labelsCP;
     private TextField[][] textFieldsCP;
     Vector3f[][] controlPoints;
     private Vector3f[][] original;
@@ -61,22 +62,25 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
                 } else {
                     textFieldsCP[i][j] = new TextField("{0,0,0}");
                 }
+                JLabel label = new JLabel("("+i+","+j+")");
                 textFieldsCP[i][j].setEditable(false);
                 buttonsCP[i][j] = new BasicArrowButton(BasicArrowButton.BOTTOM);
                 buttonsCP[i][j].addActionListener(this);
                 buttonsCP[i][j].setName(i+","+j);
                 buttonsCP[i][j].setActionCommand("edit_cp");
-                c.gridx=j*2;
+                c.gridx=j*3;
                 c.gridy=i;
+                mainPanel.add(label, c);
+                c.gridx=j*3+1;
                 mainPanel.add(textFieldsCP[i][j], c);
-                c.gridx=j*2+1;
+                c.gridx=j*3+2;
                 mainPanel.add(buttonsCP[i][j], c);
             }
         }
         Panel buttonPanel = new Panel();
         c.gridy++;
         c.gridx = 0;
-        c.gridwidth=n*2;
+        c.gridwidth=n*3;
         buttonPanel.add(applyButton, CENTER_ALIGNMENT);
         mainPanel.add(buttonPanel,c);
         this.add(mainPanel);
