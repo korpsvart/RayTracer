@@ -15,8 +15,8 @@ public class Scene{
 
     private int maxRayDepth = 4; //max depth of ray tracing recursion
     private AtomicLong renderingProgress = new AtomicLong(0);
-    private static  Vector3f MIN_BOUND = new Vector3f(-10e6, -10e6, -10e6);
-    private static  Vector3f MAX_BOUND = new Vector3f(10e6, 10e6, 10e6);
+    private static Vector3d MIN_BOUND = new Vector3d(-10e6, -10e6, -10e6);
+    private static Vector3d MAX_BOUND = new Vector3d(10e6, 10e6, 10e6);
 
 
     private static boolean simulateIndirectDiffuse = false;
@@ -46,11 +46,11 @@ public class Scene{
     private BufferedImage img;
     private List<SceneListener> sceneListenerList = new ArrayList<>();
     private final Camera camera;
-    private final Vector3f cameraPosition;
+    private final Vector3d cameraPosition;
     //we save last camera orientation. Rays are always generated with default position and orientation and then
     //transformed. However, we need to store the last camera orientation to handle successive inputs
     //asking for camera orientation change
-    private  Vector3f cameraOrientation = new Vector3f(0, 0, -1); //default orientation
+    private Vector3d cameraOrientation = new Vector3d(0, 0, -1); //default orientation
     private Matrix4D cameraToWorld;
     private BVH BVH;
     private ArrayList<SceneObject> sceneObjects;
@@ -58,7 +58,7 @@ public class Scene{
     private ArrayList<SceneObject> nonBVHSceneObjects;
     private ArrayList<SceneObject> sceneObjectsBVH;
     private ArrayList<LightSource> lightSources;
-    private EnvironmentLight environmentLight = new EnvironmentLight(new Vector3f(1, 1, 1), 0.3f);
+    private EnvironmentLight environmentLight = new EnvironmentLight(new Vector3d(1, 1, 1), 0.3f);
     public ArrayList<SceneObject> getSceneObjects() {
         return sceneObjects;
     }
@@ -118,7 +118,7 @@ public class Scene{
         lightSources.add(lightSource);
     }
 
-    private final Vector3f backgroundColor; //default to black
+    private final Vector3d backgroundColor; //default to black
 
     public static boolean isBackFaceCulling() {
         return backFaceCulling;
@@ -129,7 +129,7 @@ public class Scene{
     }
 
 
-    public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition, Vector3f backgroundColor) {
+    public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3d cameraPosition, Vector3d backgroundColor) {
         this.width = width;
         this.height = height;
         this.fieldOfView = fieldOfView;
@@ -144,13 +144,13 @@ public class Scene{
         setCameraToWorld(cameraPosition, cameraOrientation);
 }
 
-    public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3f cameraPosition) {
+    public Scene(int width, int height, double fieldOfView, BufferedImage img, Vector3d cameraPosition) {
         this.width = width;
         this.height = height;
         this.fieldOfView = fieldOfView;
         this.img = img;
         this.cameraPosition = cameraPosition;
-        this.backgroundColor = new Vector3f(0, 0, 0);
+        this.backgroundColor = new Vector3d(0, 0, 0);
         this.lightSources = new ArrayList<LightSource>();
         this.sceneObjects = new ArrayList<>();
         this.nonBVHSceneObjects = new ArrayList<>();
@@ -192,17 +192,17 @@ public class Scene{
     public void render() {
         double aspectRatio = (double)width/height;
         double scale = Math.tan(Math.toRadians(fieldOfView)/2); //scaling due to fov
-        Vector3f cameraPositionWorld = this.cameraToWorld.transformVector(cameraPosition);
+        Vector3d cameraPositionWorld = this.cameraToWorld.transformVector(cameraPosition);
         Matrix3D cTWForVectors = cameraToWorld.getA();
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
                 double y = (1-2*(j+0.5)/height)*scale;
-                Vector3f rayDirection = new Vector3f(x,y,-1);
-                Vector3f rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
-                Line3d ray = new Line3d(cameraPositionWorld, rayDirectionWorld);
-                Vector3f color = rayTraceWithBVH(ray, 0);
+                Vector3d rayDirection = new Vector3d(x,y,-1);
+                Vector3d rayDirectionWorld = cTWForVectors.transformVector(rayDirection).normalize();
+                Ray ray = new Ray(cameraPositionWorld, rayDirectionWorld);
+                Vector3d color = rayTraceWithBVH(ray, 0);
                 //which can be considered as vacuum for simplicity
                 Color color1 = color.vectorToColor();
                 img.setRGB(i,j,color1.getRGB());
@@ -266,7 +266,7 @@ public class Scene{
     }
 
 
-    public Vector3f rayTrace(Line3d ray, int rayDepth) {
+    public Vector3d rayTrace(Ray ray, int rayDepth) {
         if (rayDepth == maxRayDepth) {
             return this.backgroundColor;
         }
@@ -290,7 +290,7 @@ public class Scene{
     }
 
 
-    public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth) {
+    public Vector3d rayTraceWithBVH(Ray ray, int rayDepth) {
         if (rayDepth == maxRayDepth) {
             return this.backgroundColor;
         }
@@ -302,7 +302,7 @@ public class Scene{
         }
     }
 
-    public Vector3f rayTraceWithBVH(Line3d ray, int rayDepth, RayType rayType) {
+    public Vector3d rayTraceWithBVH(Ray ray, int rayDepth, RayType rayType) {
         //same as above but allow caller to specify ray type
         //TODO: check this method
         if (rayDepth == maxRayDepth) {
@@ -310,7 +310,7 @@ public class Scene{
                 if (useEnvironmentLight) {
                     return environmentLight.getColor().mul(environmentLight.getIntensity());
                 } else {
-                    return new Vector3f(0,0,0);
+                    return new Vector3d(0,0,0);
                 }
             } else {
                 return this.backgroundColor;
@@ -324,7 +324,7 @@ public class Scene{
                 if (useEnvironmentLight) {
                     return environmentLight.getColor().mul(environmentLight.getIntensity());
                 } else {
-                    return new Vector3f(0,0,0);
+                    return new Vector3d(0,0,0);
                 }
             } else {
                 return this.backgroundColor;
@@ -332,7 +332,7 @@ public class Scene{
         }
     }
 
-    public Optional<IntersectionDataPlusObject> calculateIntersection(Line3d ray, RayType rayType) {
+    public Optional<IntersectionDataPlusObject> calculateIntersection(Ray ray, RayType rayType) {
         double interceptMin = Double.POSITIVE_INFINITY;
         SceneObject objectFound = null;
         IntersectionData intersectionDataMin = null;
@@ -360,7 +360,7 @@ public class Scene{
         }
     }
 
-    public boolean checkVisibility(Line3d ray, double maxDistance, SceneObject caller) {
+    public boolean checkVisibility(Ray ray, double maxDistance, SceneObject caller) {
         //similar to calculateIntersection
         //but used to check visibility for diffuse objects
         //thus it can be made more efficient by stopping as
@@ -384,14 +384,14 @@ public class Scene{
 
 
 
-    public void setCameraToWorld(Vector3f from, Vector3f to) {
-        Vector3f aux = new Vector3f(0, 1, 0);
-        Vector3f forward = from.add(to.mul(-1)).normalize();
-        Vector3f right = aux.normalize().crossProduct(forward);
-        Vector3f up = forward.crossProduct(right);
-        Vector3f translation = from;
+    public void setCameraToWorld(Vector3d from, Vector3d to) {
+        Vector3d aux = new Vector3d(0, 1, 0);
+        Vector3d forward = from.add(to.mul(-1)).normalize();
+        Vector3d right = aux.normalize().crossProduct(forward);
+        Vector3d up = forward.crossProduct(right);
+        Vector3d translation = from;
 
-        this.cameraToWorld = new Matrix4D(new Matrix3D(new Vector3f[]{right, up, forward}, Matrix3D.COL_VECTOR), translation);
+        this.cameraToWorld = new Matrix4D(new Matrix3D(new Vector3d[]{right, up, forward}, Matrix3D.COL_VECTOR), translation);
         cameraOrientation = to;
 
     }
@@ -413,10 +413,10 @@ public class Scene{
             for (int j = startY; j < h+startY; j++) {
                 double x = (2*(i+0.5)/width - 1)*aspectRatio*scale;
                 double y = (1-2*(j+0.5)/height)*scale;
-                Vector3f rayDirection = new Vector3f(x,y,-1);
-                Vector3f rayDirectionWorld = camera.convertToFixedSystem(rayDirection).normalize();
-                Line3d ray = new Line3d(camera.getPosition(), rayDirectionWorld);
-                Vector3f color = currentScene.rayTraceWithBVH(ray, 0);
+                Vector3d rayDirection = new Vector3d(x,y,-1);
+                Vector3d rayDirectionWorld = camera.convertToFixedSystem(rayDirection).normalize();
+                Ray ray = new Ray(camera.getPosition(), rayDirectionWorld);
+                Vector3d color = currentScene.rayTraceWithBVH(ray, 0);
                 Color color1 = color.vectorToColor();
                 img.setRGB(i-startX,j-startY,color1.getRGB());
                 currentScene.updateProgress();
@@ -429,7 +429,7 @@ public class Scene{
     }
 
 
-    public Vector3f getCameraOrientation() {
+    public Vector3d getCameraOrientation() {
         return cameraOrientation;
     }
 

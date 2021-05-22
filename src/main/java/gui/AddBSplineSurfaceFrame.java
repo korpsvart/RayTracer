@@ -111,7 +111,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                 bSurface.getP(), bSurface.getQ(), getOTWMatrix());
     }
 
-    public void updateControlPoints(Vector3f[][] cp) {
+    public void updateControlPoints(Vector3d[][] cp) {
         bSurface = new BSurface(cp, bSurface.getKnotsU(), bSurface.getKnotsV(),
                 bSurface.getP(), bSurface.getQ(), Matrix4D.identity);
     }
@@ -136,7 +136,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
 
     private void initializeDataWithSample() {
         if (bSurface ==null) {
-            Vector3f[][] sampleCP = SampleShapes.getBSplineSample1CP();
+            Vector3d[][] sampleCP = SampleShapes.getBSplineSample1CP();
             Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
             double[] u = SampleShapes.getBSplineSample1U();
             double[] v = SampleShapes.getBSplineSample1V();

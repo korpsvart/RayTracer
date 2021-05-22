@@ -31,17 +31,17 @@ public abstract class SceneObject{
         }
     }
 
-    public Vector3f[] getLocalCartesianSystem(Vector3f point, double u, double v) {
+    public Vector3d[] getLocalCartesianSystem(Vector3d point, double u, double v) {
         return geometricObject.getLocalCartesianSystem(point, u, v);
     }
 
 
-    public Optional<IntersectionData> rayIntersection(Line3d ray) {
+    public Optional<IntersectionData> rayIntersection(Ray ray) {
         return geometricObject.rayIntersection(ray);
     }
 
 
-    public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
+    public Vector3d getSurfaceNormal(Vector3d point, double u, double v) {
         return geometricObject.getSurfaceNormal(point, u, v);
     }
 
@@ -51,8 +51,8 @@ public abstract class SceneObject{
 
     }
 
-    public abstract Optional<IntersectionData> trace(Line3d ray, RayType rayType);
-    public abstract Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene);
+    public abstract Optional<IntersectionData> trace(Ray ray, RayType rayType);
+    public abstract Vector3d computeColor(IntersectionData intersectionData, Ray ray, int rayDepth, Scene currentScene);
 
     public abstract void addTrianglesToScene(Scene currentScene, TriangleMesh triangleMesh);
 

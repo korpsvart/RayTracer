@@ -29,7 +29,7 @@ class AddTeapotFrame extends AddObjectFrame {
 
     private void initializeWithTeapotData() {
         BezierPatchesData bpd = SampleShapes.getTeapot();
-        setDefaultOTW(bpd.getObjectToWorld().getC(), new Vector3f(0, 0, 0));
+        setDefaultOTW(bpd.getObjectToWorld().getC(), new Vector3d(0, 0, 0));
     }
 
     @Override

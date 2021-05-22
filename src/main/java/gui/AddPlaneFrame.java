@@ -5,12 +5,12 @@ import rendering.*;
 
 class AddPlaneFrame extends AddObjectFrame {
 
-    private Vector3f normal = new Vector3f(0, 1, 0); //default is y axis
-    private Vector3f position = new Vector3f(0, -0.5, 0); //default is y=-3 (other coords don't matter)
+    private Vector3d normal = new Vector3d(0, 1, 0); //default is y axis
+    private Vector3d position = new Vector3d(0, -0.5, 0); //default is y=-3 (other coords don't matter)
 
     public AddPlaneFrame(Visualizer visualizer, Scene scene) {
         super(visualizer, scene);
-        setDefaultOTW(position, new Vector3f(0, 0, 0));
+        setDefaultOTW(position, new Vector3d(0, 0, 0));
         createMainPanel();
     }
 
@@ -30,8 +30,8 @@ class AddPlaneFrame extends AddObjectFrame {
 
     @Override
     GeometricObject createGeometricObject() {
-        Vector3f n = normal.matrixAffineTransform(getOTWMatrix().getA());
-        Vector3f p = getOTWMatrix().getC();
+        Vector3d n = normal.matrixAffineTransform(getOTWMatrix().getA());
+        Vector3d p = getOTWMatrix().getC();
         try {
             return new Plane3d(p, n);
         } catch (Exception e) {

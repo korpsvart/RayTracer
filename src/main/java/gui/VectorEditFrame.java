@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 class VectorEditFrame extends JFrame implements WindowListener, ActionListener {
 
@@ -23,7 +21,7 @@ class VectorEditFrame extends JFrame implements WindowListener, ActionListener {
     private JButton applyButton = new JButton("Apply");
     int i, j;
 
-    public VectorEditFrame(int i, int j, Vector3f data, ControlPointsFrame mainFrame) {
+    public VectorEditFrame(int i, int j, Vector3d data, ControlPointsFrame mainFrame) {
         this.setTitle("Edit point or vector");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         applyButton.setActionCommand("apply");
@@ -124,7 +122,7 @@ class VectorEditFrame extends JFrame implements WindowListener, ActionListener {
                             JOptionPane.ERROR_MESSAGE);
                     throw ex;
                 }
-                mainFrame.setCP(i, j, new Vector3f(x, y, z));
+                mainFrame.setCP(i, j, new Vector3d(x, y, z));
                 setVisible(false);
                 this.dispose();
                 break;

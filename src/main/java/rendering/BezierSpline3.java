@@ -15,7 +15,7 @@ public class BezierSpline3 {
         this.curves = curves;
     }
 
-    public static BezierSpline3 CreateC2Spline(int l, double[] nodes, Vector3f[] deBorPoints) {
+    public static BezierSpline3 CreateC2Spline(int l, double[] nodes, Vector3d[] deBorPoints) {
         //NOT WORKING!
         //create a spline which satisfies C2 linking condition
 
@@ -30,7 +30,7 @@ public class BezierSpline3 {
             deltas[i] = nodes[i+1]-nodes[i];
         }
         BezierCurve3[] curves = new BezierCurve3[l];
-        Vector3f[] controlPoints = new Vector3f[3*l+1];
+        Vector3d[] controlPoints = new Vector3d[3*l+1];
         controlPoints[0] = deBorPoints[0];
         controlPoints[1] = deBorPoints[1];
         controlPoints[3*l] = deBorPoints[l+2];
@@ -63,7 +63,7 @@ public class BezierSpline3 {
         return new BezierSpline3(l, nodes, curves);
     }
 
-    public Vector3f evaluate(double t) {
+    public Vector3d evaluate(double t) {
         //t must fall inside
         //first and last node values
         //i.e. inside [u0, ul]
@@ -77,11 +77,11 @@ public class BezierSpline3 {
     }
 
 
-    public static BezierSpline3 CreateC1Spline(int l, double[] nodes, Vector3f[] cP) {
+    public static BezierSpline3 CreateC1Spline(int l, double[] nodes, Vector3d[] cP) {
         if (nodes.length != (l+1) || cP.length != (2*l+2)) {
             throw new IllegalArgumentException("Invalid array lengths");
         }
-        Vector3f[] finalCP = new Vector3f[l*3+1];
+        Vector3d[] finalCP = new Vector3d[l*3+1];
         BezierCurve3[] curves = new BezierCurve3[l];
         finalCP[0] = cP[0];
         finalCP[1] = cP[1];
@@ -102,7 +102,7 @@ public class BezierSpline3 {
     }
 
 
-    public static BezierSpline3 piecewiseCubicInterpolation(Vector3f[] dataPoints, Vector3f[] tangents) {
+    public static BezierSpline3 piecewiseCubicInterpolation(Vector3d[] dataPoints, Vector3d[] tangents) {
         //check that the arrays have same number of elements
         int l = dataPoints.length;
         if (l != tangents.length) {
@@ -132,7 +132,7 @@ public class BezierSpline3 {
             nodes[i] = nodes[i-1]+alfa[i-1];
         }
         BezierCurve3[] curves = new BezierCurve3[l-1];
-        Vector3f[] controlPoints = new Vector3f[(l-1)*3+1];
+        Vector3d[] controlPoints = new Vector3d[(l-1)*3+1];
         for (int i = 0; i < l; i++) {
             controlPoints[3*i] = dataPoints[i];
         }

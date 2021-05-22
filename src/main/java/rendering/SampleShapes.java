@@ -8,12 +8,12 @@ public class SampleShapes {
     private final static Sphere[] sphere = new Sphere[]{
             //just a bunch of sphere scattered around space
             //with varying radius
-            new Sphere(new Vector3f(0.3,0,-4), 0.2),
-            new Sphere(new Vector3f(-0.5, 0.5, -8), 1),
-            new Sphere(new Vector3f(2.6, 0.3, -7), 0.6),
-            new Sphere(new Vector3f(0, -2, -7), 0.5),
-            new Sphere(new Vector3f(0, -2, -4), 0.3),
-            new Sphere(new Vector3f(0, -2, -11), 0.6)
+            new Sphere(new Vector3d(0.3,0,-4), 0.2),
+            new Sphere(new Vector3d(-0.5, 0.5, -8), 1),
+            new Sphere(new Vector3d(2.6, 0.3, -7), 0.6),
+            new Sphere(new Vector3d(0, -2, -7), 0.5),
+            new Sphere(new Vector3d(0, -2, -4), 0.3),
+            new Sphere(new Vector3d(0, -2, -11), 0.6)
     };
 
 
@@ -369,62 +369,62 @@ public class SampleShapes {
                 {0, 0, 0, 1}
         });
         cP = otw_internal.transformVector(cP);
-        Matrix4D otw = new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, -5));
+        Matrix4D otw = new Matrix4D(Matrix3D.identity, new Vector3d(0, 0, -5));
         BezierPatchesData bpd = new BezierPatchesData(numPatches, numCP, patchesCP, cP, otw_internal);
         bpd.setObjectToWorld(otw);
         return bpd;
     }
 
     public static BezierSurface33 getBezierSurfaceSample() {
-        return new BezierSurface33(new Vector3f[][]{
-                new Vector3f[]{new Vector3f(0, 0, 0),
-                        new Vector3f(0, 0.5, 0),
-                        new Vector3f(0.1, 0.8, 0),
-                        new Vector3f(0, 1, 0),},
+        return new BezierSurface33(new Vector3d[][]{
+                new Vector3d[]{new Vector3d(0, 0, 0),
+                        new Vector3d(0, 0.5, 0),
+                        new Vector3d(0.1, 0.8, 0),
+                        new Vector3d(0, 1, 0),},
 
-                new Vector3f[]{new Vector3f(0.3, 0, -0.5),
-                        new Vector3f(0.3, 0.6, -0.2),
-                        new Vector3f(0.4, 0.7, -0.5),
-                        new Vector3f(0.3, 0.9, -0.5),
+                new Vector3d[]{new Vector3d(0.3, 0, -0.5),
+                        new Vector3d(0.3, 0.6, -0.2),
+                        new Vector3d(0.4, 0.7, -0.5),
+                        new Vector3d(0.3, 0.9, -0.5),
                 },
-                new Vector3f[]{
-                        new Vector3f(0.7, 0.4, -0.7),
-                        new Vector3f(0.5, 0.5, -0.3),
-                        new Vector3f(0.7, 0.8, -0.7),
-                        new Vector3f(0.8, 1, -0.5),
+                new Vector3d[]{
+                        new Vector3d(0.7, 0.4, -0.7),
+                        new Vector3d(0.5, 0.5, -0.3),
+                        new Vector3d(0.7, 0.8, -0.7),
+                        new Vector3d(0.8, 1, -0.5),
                 },
-                new Vector3f[]{
-                        new Vector3f(1, 0.2, -0.7),
-                        new Vector3f(1, 0.4, -0.5),
-                        new Vector3f(1.1, 0.7, -0.3),
-                        new Vector3f(0.9, 1.2, -0.8)
+                new Vector3d[]{
+                        new Vector3d(1, 0.2, -0.7),
+                        new Vector3d(1, 0.4, -0.5),
+                        new Vector3d(1.1, 0.7, -0.3),
+                        new Vector3d(0.9, 1.2, -0.8)
                 }
         });
     }
 
-    public static Vector3f[][] getBezierSurfaceSampleCP() {
-        return new Vector3f[][]{
-                new Vector3f[]{new Vector3f(0, 0, 0),
-                        new Vector3f(0, 0.5, 0),
-                        new Vector3f(0.1, 0.8, 0),
-                        new Vector3f(0, 1, 0),},
+    public static Vector3d[][] getBezierSurfaceSampleCP() {
+        return new Vector3d[][]{
+                new Vector3d[]{new Vector3d(0, 0, 0),
+                        new Vector3d(0, 0.5, 0),
+                        new Vector3d(0.1, 0.8, 0),
+                        new Vector3d(0, 1, 0),},
 
-                new Vector3f[]{new Vector3f(0.3, 0, -0.5),
-                        new Vector3f(0.3, 0.6, -0.2),
-                        new Vector3f(0.4, 0.7, -0.5),
-                        new Vector3f(0.3, 0.9, -0.5),
+                new Vector3d[]{new Vector3d(0.3, 0, -0.5),
+                        new Vector3d(0.3, 0.6, -0.2),
+                        new Vector3d(0.4, 0.7, -0.5),
+                        new Vector3d(0.3, 0.9, -0.5),
                 },
-                new Vector3f[]{
-                        new Vector3f(0.7, 0.4, -0.7),
-                        new Vector3f(0.5, 0.5, -0.3),
-                        new Vector3f(0.7, 0.8, -0.7),
-                        new Vector3f(0.8, 1, -0.5),
+                new Vector3d[]{
+                        new Vector3d(0.7, 0.4, -0.7),
+                        new Vector3d(0.5, 0.5, -0.3),
+                        new Vector3d(0.7, 0.8, -0.7),
+                        new Vector3d(0.8, 1, -0.5),
                 },
-                new Vector3f[]{
-                        new Vector3f(1, 0.2, -0.7),
-                        new Vector3f(1, 0.4, -0.5),
-                        new Vector3f(1.1, 0.7, -0.3),
-                        new Vector3f(0.9, 1.2, -0.8)
+                new Vector3d[]{
+                        new Vector3d(1, 0.2, -0.7),
+                        new Vector3d(1, 0.4, -0.5),
+                        new Vector3d(1.1, 0.7, -0.3),
+                        new Vector3d(0.9, 1.2, -0.8)
                 }
         };
     }
@@ -436,85 +436,85 @@ public class SampleShapes {
     public static BSurface getBSplineSample1() {
             int p = 3;
             int q = 3;
-            Vector3f[][] controlPointsSurface = {
+            Vector3d[][] controlPointsSurface = {
                     {
-                            new Vector3f(-1, -1, 0),
-                            new Vector3f(-0.9, -0.8, -0.2),
-                            new Vector3f(-0.8, -0.6, -0.2),
-                            new Vector3f(-0.8, -0.2, -0.3),
-                            new Vector3f(-0.7, 0, -0.2)
+                            new Vector3d(-1, -1, 0),
+                            new Vector3d(-0.9, -0.8, -0.2),
+                            new Vector3d(-0.8, -0.6, -0.2),
+                            new Vector3d(-0.8, -0.2, -0.3),
+                            new Vector3d(-0.7, 0, -0.2)
                     },
                     {
-                            new Vector3f(-0.5, -1.2, -0.5),
-                            new Vector3f(-0.4, -0.9, -0.6),
-                            new Vector3f(-0.43, -0.7, -0.6),
-                            new Vector3f(-0.38, -0.3, -0.5),
-                            new Vector3f(-0.34, -0.1, -0.7)
+                            new Vector3d(-0.5, -1.2, -0.5),
+                            new Vector3d(-0.4, -0.9, -0.6),
+                            new Vector3d(-0.43, -0.7, -0.6),
+                            new Vector3d(-0.38, -0.3, -0.5),
+                            new Vector3d(-0.34, -0.1, -0.7)
                     },
                     {
-                            new Vector3f(-0.2, -1, -0.1),
-                            new Vector3f(-0.25, -0.8, -0.9),
-                            new Vector3f(-0.27, -0.5, -0.7),
-                            new Vector3f(-0.21, -0.4, -0.9),
-                            new Vector3f(-0.18, -0.2, -1)
+                            new Vector3d(-0.2, -1, -0.1),
+                            new Vector3d(-0.25, -0.8, -0.9),
+                            new Vector3d(-0.27, -0.5, -0.7),
+                            new Vector3d(-0.21, -0.4, -0.9),
+                            new Vector3d(-0.18, -0.2, -1)
                     },
                     {
-                            new Vector3f(0, -1, -0.5),
-                            new Vector3f(0.1, -0.7, -0.6),
-                            new Vector3f(-0.1, -0.5, -0.2),
-                            new Vector3f(0, -0.2, -0.1),
-                            new Vector3f(0.1, 0, -0.3)
+                            new Vector3d(0, -1, -0.5),
+                            new Vector3d(0.1, -0.7, -0.6),
+                            new Vector3d(-0.1, -0.5, -0.2),
+                            new Vector3d(0, -0.2, -0.1),
+                            new Vector3d(0.1, 0, -0.3)
                     },
                     {
-                            new Vector3f(0.3, -1.3, -0.2),
-                            new Vector3f(0.4, -1, -0.8),
-                            new Vector3f(0.4, -0.8, -0.3),
-                            new Vector3f(0.6, -0.5, -0.0),
-                            new Vector3f(0.5, -0.2, -0.1)
+                            new Vector3d(0.3, -1.3, -0.2),
+                            new Vector3d(0.4, -1, -0.8),
+                            new Vector3d(0.4, -0.8, -0.3),
+                            new Vector3d(0.6, -0.5, -0.0),
+                            new Vector3d(0.5, -0.2, -0.1)
                     },
             };
             double[] knotsU = {0, 0, 0, 0, 0.5, 1, 1, 1, 1};
             double[] knotsV = knotsU.clone();
-            Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -5));
+            Matrix4D objectToWorld = new Matrix4D(Matrix3D.identity, new Vector3d(0, 1.4, -5));
             return new BSurface(controlPointsSurface, knotsU, knotsV, p, q, objectToWorld);
     }
 
-    public static Vector3f[][] getBSplineSample1CP() {
-        return new Vector3f[][] {
+    public static Vector3d[][] getBSplineSample1CP() {
+        return new Vector3d[][] {
                 {
-                        new Vector3f(-1, -1, 0),
-                        new Vector3f(-0.9, -0.8, -0.2),
-                        new Vector3f(-0.8, -0.6, -0.2),
-                        new Vector3f(-0.8, -0.2, -0.3),
-                        new Vector3f(-0.7, 0, -0.2)
+                        new Vector3d(-1, -1, 0),
+                        new Vector3d(-0.9, -0.8, -0.2),
+                        new Vector3d(-0.8, -0.6, -0.2),
+                        new Vector3d(-0.8, -0.2, -0.3),
+                        new Vector3d(-0.7, 0, -0.2)
                 },
                 {
-                        new Vector3f(-0.5, -1.2, -0.5),
-                        new Vector3f(-0.4, -0.9, -0.6),
-                        new Vector3f(-0.43, -0.7, -0.6),
-                        new Vector3f(-0.38, -0.3, -0.5),
-                        new Vector3f(-0.34, -0.1, -0.7)
+                        new Vector3d(-0.5, -1.2, -0.5),
+                        new Vector3d(-0.4, -0.9, -0.6),
+                        new Vector3d(-0.43, -0.7, -0.6),
+                        new Vector3d(-0.38, -0.3, -0.5),
+                        new Vector3d(-0.34, -0.1, -0.7)
                 },
                 {
-                        new Vector3f(-0.2, -1, -0.1),
-                        new Vector3f(-0.25, -0.8, -0.9),
-                        new Vector3f(-0.27, -0.5, -0.7),
-                        new Vector3f(-0.21, -0.4, -0.9),
-                        new Vector3f(-0.18, -0.2, -1)
+                        new Vector3d(-0.2, -1, -0.1),
+                        new Vector3d(-0.25, -0.8, -0.9),
+                        new Vector3d(-0.27, -0.5, -0.7),
+                        new Vector3d(-0.21, -0.4, -0.9),
+                        new Vector3d(-0.18, -0.2, -1)
                 },
                 {
-                        new Vector3f(0, -1, -0.5),
-                        new Vector3f(0.1, -0.7, -0.6),
-                        new Vector3f(-0.1, -0.5, -0.2),
-                        new Vector3f(0, -0.2, -0.1),
-                        new Vector3f(0.1, 0, -0.3)
+                        new Vector3d(0, -1, -0.5),
+                        new Vector3d(0.1, -0.7, -0.6),
+                        new Vector3d(-0.1, -0.5, -0.2),
+                        new Vector3d(0, -0.2, -0.1),
+                        new Vector3d(0.1, 0, -0.3)
                 },
                 {
-                        new Vector3f(0.3, -1.3, -0.2),
-                        new Vector3f(0.4, -1, -0.8),
-                        new Vector3f(0.4, -0.8, -0.3),
-                        new Vector3f(0.6, -0.5, -0.0),
-                        new Vector3f(0.5, -0.2, -0.1)
+                        new Vector3d(0.3, -1.3, -0.2),
+                        new Vector3d(0.4, -1, -0.8),
+                        new Vector3d(0.4, -0.8, -0.3),
+                        new Vector3d(0.6, -0.5, -0.0),
+                        new Vector3d(0.5, -0.2, -0.1)
                 },
         };
     }
@@ -536,41 +536,41 @@ public class SampleShapes {
     }
 
     public static Matrix4D getBSplineSample1OTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 1.4, -5));
+        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 1.4, -5));
     }
 
 
-    public static Vector3f[][] getBSurfaceInterpolationSample1CP() {
-        Vector3f[][] dataPoints = MatrixUtilities.transpose2(new Vector3f[][]{
+    public static Vector3d[][] getBSurfaceInterpolationSample1CP() {
+        Vector3d[][] dataPoints = MatrixUtilities.transpose2(new Vector3d[][]{
                 {
-                        new Vector3f(-0.9, -1, -0.25),
-                        new Vector3f(-0.8, -0.92, -0.2),
-                        new Vector3f(-0.7, -0.9, -0.2),
-                        new Vector3f(-0.6, -0.88, -0.26),
+                        new Vector3d(-0.9, -1, -0.25),
+                        new Vector3d(-0.8, -0.92, -0.2),
+                        new Vector3d(-0.7, -0.9, -0.2),
+                        new Vector3d(-0.6, -0.88, -0.26),
                 },
                 {
-                        new Vector3f(-0.88, -0.77, -0.25),
-                        new Vector3f(-0.8, -0.69, -0.3),
-                        new Vector3f(-0.7, -0.72, -0.2),
-                        new Vector3f(-0.66, -0.68, -0.21),
+                        new Vector3d(-0.88, -0.77, -0.25),
+                        new Vector3d(-0.8, -0.69, -0.3),
+                        new Vector3d(-0.7, -0.72, -0.2),
+                        new Vector3d(-0.66, -0.68, -0.21),
                 },
                 {
-                        new Vector3f(-0.86, -0.6, -0.33),
-                        new Vector3f(-0.8, -0.58, -0.3),
-                        new Vector3f(-0.75, -0.55, -0.2),
-                        new Vector3f(-0.66, -0.55, -0.25),
+                        new Vector3d(-0.86, -0.6, -0.33),
+                        new Vector3d(-0.8, -0.58, -0.3),
+                        new Vector3d(-0.75, -0.55, -0.2),
+                        new Vector3d(-0.66, -0.55, -0.25),
                 },
                 {
-                        new Vector3f(-0.9, -0.52, -0.28),
-                        new Vector3f(-0.82, -0.44, -0.3),
-                        new Vector3f(-0.77, -0.42, -0.22),
-                        new Vector3f(-0.65, -0.47, -0.28),
+                        new Vector3d(-0.9, -0.52, -0.28),
+                        new Vector3d(-0.82, -0.44, -0.3),
+                        new Vector3d(-0.77, -0.42, -0.22),
+                        new Vector3d(-0.65, -0.47, -0.28),
                 }
         });
         //move to default position more or less centered in the screen
         //this is actually not really formally correct since this interpolation
         // its not invariant under affine transform
-        Matrix4D internalOTW = new Matrix4D(Matrix3D.identity, new Vector3f(0.5, 0.5, 0));
+        Matrix4D internalOTW = new Matrix4D(Matrix3D.identity, new Vector3d(0.5, 0.5, 0));
         return internalOTW.transformVector(dataPoints);
     }
 
@@ -583,97 +583,97 @@ public class SampleShapes {
     }
 
     public static Matrix4D getBSurfaceInterpolationSample1OTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, -1.5));
+        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 0, -1.5));
     }
 
 
-    public static Vector3f[][] getInterpolatingSurfaceDonutDP() {
+    public static Vector3d[][] getInterpolatingSurfaceDonutDP() {
         //return a B-Spline surface obtained via interpolation of data points
-        Vector3f[][] dataPoints = {{new Vector3f(2, 0, 0), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(1)), 0, ((double)2/3)* Math.sin(1)), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(2)), 0, ((double)2/3)* Math.sin(2)), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(3)), 0, ((double)2/3)* Math.sin(3)), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(4)), 0, ((double)2/3)* Math.sin(4)), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(5)), 0, ((double)2/3)* Math.sin(5)), new Vector3f(
-                ((double)2/3)* (2 + Math.cos(6)), 0, ((double)2/3)* Math.sin(6))}, {new Vector3f(
+        Vector3d[][] dataPoints = {{new Vector3d(2, 0, 0), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(1)), 0, ((double)2/3)* Math.sin(1)), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(2)), 0, ((double)2/3)* Math.sin(2)), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(3)), 0, ((double)2/3)* Math.sin(3)), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(4)), 0, ((double)2/3)* Math.sin(4)), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(5)), 0, ((double)2/3)* Math.sin(5)), new Vector3d(
+                ((double)2/3)* (2 + Math.cos(6)), 0, ((double)2/3)* Math.sin(6))}, {new Vector3d(
                 2*Math.cos(1), 2*Math.sin(1),
-                0), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(1)), (
+                0), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(1)), (
                 ((double)2/3)* (2 + Math.cos(1)))*Math.sin(1), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(2)), (
+                Math.sin(1)), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(2)), (
                 ((double)2/3)* (2 + Math.cos(2)))*Math.sin(1), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(3)), (
+                Math.sin(2)), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(3)), (
                 ((double)2/3)* (2 + Math.cos(3)))*Math.sin(1), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(4)), (
+                Math.sin(3)), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(4)), (
                 ((double)2/3)* (2 + Math.cos(4)))*Math.sin(1), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(5)), (
+                Math.sin(4)), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(5)), (
                 ((double)2/3)* (2 + Math.cos(5)))*Math.sin(1), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(1))*(2 + Math.cos(6)), (
-                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(1), ((double)2/3)* Math.sin(6))}, {new Vector3f(
-                2*Math.cos(2), 2*Math.sin(2), 0), new Vector3f((((double)2/3)* (2 + Math.cos(1)))*
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(1))*(2 + Math.cos(6)), (
+                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(1), ((double)2/3)* Math.sin(6))}, {new Vector3d(
+                2*Math.cos(2), 2*Math.sin(2), 0), new Vector3d((((double)2/3)* (2 + Math.cos(1)))*
                 Math.cos(2), (((double)2/3)* (2 + Math.cos(1)))*Math.sin(2), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* Math.cos(2))*(2 + Math.cos(2)), (
+                Math.sin(1)), new Vector3d((((double)2/3)* Math.cos(2))*(2 + Math.cos(2)), (
                 ((double)2/3)* (2 + Math.cos(2)))*Math.sin(2), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* Math.cos(2))*(2 + Math.cos(3)), (
+                Math.sin(2)), new Vector3d((((double)2/3)* Math.cos(2))*(2 + Math.cos(3)), (
                 ((double)2/3)* (2 + Math.cos(3)))*Math.sin(2), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* Math.cos(2))*(2 + Math.cos(4)), (
+                Math.sin(3)), new Vector3d((((double)2/3)* Math.cos(2))*(2 + Math.cos(4)), (
                 ((double)2/3)* (2 + Math.cos(4)))*Math.sin(2), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* Math.cos(2))*(2 + Math.cos(5)), (
+                Math.sin(4)), new Vector3d((((double)2/3)* Math.cos(2))*(2 + Math.cos(5)), (
                 ((double)2/3)* (2 + Math.cos(5)))*Math.sin(2), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(2))*(2 + Math.cos(6)), (
-                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(2), ((double)2/3)* Math.sin(6))}, {new Vector3f(
-                2*Math.cos(3), 2*Math.sin(3), 0), new Vector3f((((double)2/3)* (2 + Math.cos(1)))*
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(2))*(2 + Math.cos(6)), (
+                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(2), ((double)2/3)* Math.sin(6))}, {new Vector3d(
+                2*Math.cos(3), 2*Math.sin(3), 0), new Vector3d((((double)2/3)* (2 + Math.cos(1)))*
                 Math.cos(3), (((double)2/3)* (2 + Math.cos(1)))*Math.sin(3), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* (2 + Math.cos(2)))*
+                Math.sin(1)), new Vector3d((((double)2/3)* (2 + Math.cos(2)))*
                 Math.cos(3), (((double)2/3)* (2 + Math.cos(2)))*Math.sin(3), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* Math.cos(3))*(2 + Math.cos(3)), (
+                Math.sin(2)), new Vector3d((((double)2/3)* Math.cos(3))*(2 + Math.cos(3)), (
                 ((double)2/3)* (2 + Math.cos(3)))*Math.sin(3), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* Math.cos(3))*(2 + Math.cos(4)), (
+                Math.sin(3)), new Vector3d((((double)2/3)* Math.cos(3))*(2 + Math.cos(4)), (
                 ((double)2/3)* (2 + Math.cos(4)))*Math.sin(3), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* Math.cos(3))*(2 + Math.cos(5)), (
+                Math.sin(4)), new Vector3d((((double)2/3)* Math.cos(3))*(2 + Math.cos(5)), (
                 ((double)2/3)* (2 + Math.cos(5)))*Math.sin(3), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(3))*(2 + Math.cos(6)), (
-                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(3), ((double)2/3)* Math.sin(6))}, {new Vector3f(
-                2*Math.cos(4), 2*Math.sin(4), 0), new Vector3f((((double)2/3)* (2 + Math.cos(1)))*
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(3))*(2 + Math.cos(6)), (
+                ((double)2/3)* (2 + Math.cos(6)))*Math.sin(3), ((double)2/3)* Math.sin(6))}, {new Vector3d(
+                2*Math.cos(4), 2*Math.sin(4), 0), new Vector3d((((double)2/3)* (2 + Math.cos(1)))*
                 Math.cos(4), (((double)2/3)* (2 + Math.cos(1)))*Math.sin(4), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* (2 + Math.cos(2)))*
+                Math.sin(1)), new Vector3d((((double)2/3)* (2 + Math.cos(2)))*
                 Math.cos(4), (((double)2/3)* (2 + Math.cos(2)))*Math.sin(4), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* (2 + Math.cos(3)))*
+                Math.sin(2)), new Vector3d((((double)2/3)* (2 + Math.cos(3)))*
                 Math.cos(4), (((double)2/3)* (2 + Math.cos(3)))*Math.sin(4), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* Math.cos(4))*(2 + Math.cos(4)), (
+                Math.sin(3)), new Vector3d((((double)2/3)* Math.cos(4))*(2 + Math.cos(4)), (
                 ((double)2/3)* (2 + Math.cos(4)))*Math.sin(4), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* Math.cos(4))* (2 + Math.cos(5)), (
+                Math.sin(4)), new Vector3d((((double)2/3)* Math.cos(4))* (2 + Math.cos(5)), (
                 ((double)2/3)* (2 + Math.cos(5)))* Math.sin(4), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(4)) *(2 + Math.cos(6)), (
-                ((double)2/3)* (2 + Math.cos(6))) *Math.sin(4), ((double)2/3)* Math.sin(6))}, {new Vector3f(
-                2 *Math.cos(5), 2 *Math.sin(5), 0), new Vector3f((((double)2/3)* (2 + Math.cos(1)))*
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(4)) *(2 + Math.cos(6)), (
+                ((double)2/3)* (2 + Math.cos(6))) *Math.sin(4), ((double)2/3)* Math.sin(6))}, {new Vector3d(
+                2 *Math.cos(5), 2 *Math.sin(5), 0), new Vector3d((((double)2/3)* (2 + Math.cos(1)))*
                 Math.cos(5), (((double)2/3)* (2 + Math.cos(1))) *Math.sin(5), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* (2 + Math.cos(2)))*
+                Math.sin(1)), new Vector3d((((double)2/3)* (2 + Math.cos(2)))*
                 Math.cos(5), (((double)2/3)* (2 + Math.cos(2))) *Math.sin(5), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* (2 + Math.cos(3)))*
+                Math.sin(2)), new Vector3d((((double)2/3)* (2 + Math.cos(3)))*
                 Math.cos(5), (((double)2/3)* (2 + Math.cos(3))) *Math.sin(5), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* (2 + Math.cos(4)))*
+                Math.sin(3)), new Vector3d((((double)2/3)* (2 + Math.cos(4)))*
                 Math.cos(5), (((double)2/3)* (2 + Math.cos(4))) *Math.sin(5), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* Math.cos(5)) *(2 + Math.cos(5)), (
+                Math.sin(4)), new Vector3d((((double)2/3)* Math.cos(5)) *(2 + Math.cos(5)), (
                 ((double)2/3)* (2 + Math.cos(5))) *Math.sin(5), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(5)) *(2 + Math.cos(6)), (
-                ((double)2/3)* (2 + Math.cos(6))) *Math.sin(5), ((double)2/3)* Math.sin(6))}, {new Vector3f(
-                2 *Math.cos(6), 2 *Math.sin(6), 0), new Vector3f((((double)2/3)* (2 + Math.cos(1)))*
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(5)) *(2 + Math.cos(6)), (
+                ((double)2/3)* (2 + Math.cos(6))) *Math.sin(5), ((double)2/3)* Math.sin(6))}, {new Vector3d(
+                2 *Math.cos(6), 2 *Math.sin(6), 0), new Vector3d((((double)2/3)* (2 + Math.cos(1)))*
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(1))) *Math.sin(6), ((double)2/3)*
-                Math.sin(1)), new Vector3f((((double)2/3)* (2 + Math.cos(2)))*
+                Math.sin(1)), new Vector3d((((double)2/3)* (2 + Math.cos(2)))*
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(2))) *Math.sin(6), ((double)2/3)*
-                Math.sin(2)), new Vector3f((((double)2/3)* (2 + Math.cos(3)))*
+                Math.sin(2)), new Vector3d((((double)2/3)* (2 + Math.cos(3)))*
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(3))) *Math.sin(6), ((double)2/3)*
-                Math.sin(3)), new Vector3f((((double)2/3)* (2 + Math.cos(4)))*
+                Math.sin(3)), new Vector3d((((double)2/3)* (2 + Math.cos(4)))*
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(4))) *Math.sin(6), ((double)2/3)*
-                Math.sin(4)), new Vector3f((((double)2/3)* (2 + Math.cos(5)))*
+                Math.sin(4)), new Vector3d((((double)2/3)* (2 + Math.cos(5)))*
                 Math.cos(6), (((double)2/3)* (2 + Math.cos(5))) *Math.sin(6), ((double)2/3)*
-                Math.sin(5)), new Vector3f((((double)2/3)* Math.cos(6)) *(2 + Math.cos(6)), (
+                Math.sin(5)), new Vector3d((((double)2/3)* Math.cos(6)) *(2 + Math.cos(6)), (
                 ((double)2/3)* (2 + Math.cos(6))) *Math.sin(6), ((double)2/3)* Math.sin(6))}};
         Matrix4D objectToWorld_internal = new Matrix4D(new Matrix3D(new double[][]{
                 {0, 1, 0},
                 {-1, 0, 0},
                 {0, 0, 1}
-        }), new Vector3f(0, 0, 0));
+        }), new Vector3d(0, 0, 0));
         //note that depending on the order in which we gave the data points,
         //it could be necessary to transpose the data points matrix
         //my function assumes that the u direction increases with the row index
@@ -691,7 +691,7 @@ public class SampleShapes {
     }
 
     public static Matrix4D getInterpolatingSurfaceDonutOTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3f(0, 1, -10));
+        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 1, -10));
     }
 
 }

@@ -119,7 +119,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         mainPanel.add(otwSubPanel, c);
     }
 
-    protected void setDefaultOTW(Vector3f translation, Vector3f rotation) {
+    protected void setDefaultOTW(Vector3d translation, Vector3d rotation) {
         textFieldXTranslation.setText(Double.toString(translation.getX()));
         textFieldYTranslation.setText(Double.toString(translation.getY()));
         textFieldZTranslation.setText(Double.toString(translation.getZ()));
@@ -128,7 +128,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         textFieldZRotation.setText(Double.toString(rotation.getZ()));
     }
 
-    protected void setDefaultOTW(Vector3f translation, Vector3f rotation, Vector3f scaling) {
+    protected void setDefaultOTW(Vector3d translation, Vector3d rotation, Vector3d scaling) {
         setDefaultOTW(translation, rotation);
         textFieldXScaling.setText(Double.toString(scaling.getX()));
         textFieldYScaling.setText(Double.toString(scaling.getY()));
@@ -383,7 +383,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
 
     abstract GeometricObject createGeometricObject();
 
-    protected void addSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3f albedo, double ior) {
+    protected void addSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3d albedo, double ior) {
         switch (materialType) {
             case DIFFUSE:
                 Diffuse diffuse = new Diffuse(geometricObject);
@@ -406,7 +406,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         }
     }
 
-    public void triangulateAndAddSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3f albedo,
+    public void triangulateAndAddSceneObject(GeometricObject geometricObject, MaterialType materialType, Vector3d albedo,
                                              double ior) {
         switch (materialType) {
             case DIFFUSE:
@@ -477,7 +477,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
                 MaterialType mType = Visualizer.materialsMap.get(materialComboBox.getSelectedItem());
                 String albedoVal = albedoTextField.getText().substring(1, albedoTextField.getText().length() - 1);
                 String[] albedoA = albedoVal.split(",");
-                Vector3f albedo = new Vector3f(Arrays.stream(albedoA).mapToDouble((x) -> Double.parseDouble(x)).toArray());
+                Vector3d albedo = new Vector3d(Arrays.stream(albedoA).mapToDouble((x) -> Double.parseDouble(x)).toArray());
                 albedo = albedo.mul((double) 1 / 255);
                 double ior = Double.parseDouble(iorText.getText());
                 GeometricObject geometricObject = createGeometricObject();
@@ -508,12 +508,12 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         }
     }
 
-    protected Vector3f getTranslation() {
+    protected Vector3d getTranslation() {
         //I add a little shift in x direction to translation
         //because if the box is exactly in (0,0,z) position there's an annoying triangulation visual effect
         //(read the ray triangle intersection routine inside TriangleMesh for a detailed explanation)
         try {
-            return new Vector3f(Double.parseDouble(textFieldXTranslation.getText()),
+            return new Vector3d(Double.parseDouble(textFieldXTranslation.getText()),
                     Double.parseDouble(textFieldYTranslation.getText()), Double.parseDouble(textFieldZTranslation.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -524,9 +524,9 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         }
     }
 
-    protected Vector3f getRotation() {
+    protected Vector3d getRotation() {
         try {
-            return new Vector3f(Double.parseDouble(textFieldXRotation.getText()),
+            return new Vector3d(Double.parseDouble(textFieldXRotation.getText()),
                     Double.parseDouble(textFieldYRotation.getText()), Double.parseDouble(textFieldZRotation.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -537,9 +537,9 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         }
     }
 
-    protected Vector3f getScaling() {
+    protected Vector3d getScaling() {
         try {
-            return new Vector3f(Double.parseDouble(textFieldXScaling.getText()),
+            return new Vector3d(Double.parseDouble(textFieldXScaling.getText()),
                     Double.parseDouble(textFieldYScaling.getText()), Double.parseDouble(textFieldZScaling.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -551,19 +551,19 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
     }
 
     protected Matrix4D getOTWMatrix() {
-        Vector3f translation = getTranslation();
-        Vector3f rotation = getRotation();
-        Vector3f scaling = getScaling();
+        Vector3d translation = getTranslation();
+        Vector3d rotation = getRotation();
+        Vector3d scaling = getScaling();
         double anglex = rotation.getX();
         double angley = rotation.getY();
         double anglez = rotation.getZ();
         Matrix3D rotationMatrix = Matrix3D.rotationAroundzAxis(anglez).matrixMult(
                 Matrix3D.rotationAroundyAxis(angley)
         ).matrixMult(Matrix3D.rotationAroundxAxis(anglex));
-        Matrix3D scalingMatrix = new Matrix3D(new Vector3f[]{
-                new Vector3f(scaling.getX(), 0, 0),
-                new Vector3f(0, scaling.getY(), 0),
-                new Vector3f(0, 0, scaling.getZ())
+        Matrix3D scalingMatrix = new Matrix3D(new Vector3d[]{
+                new Vector3d(scaling.getX(), 0, 0),
+                new Vector3d(0, scaling.getY(), 0),
+                new Vector3d(0, 0, scaling.getZ())
         }, Matrix3D.COL_VECTOR);
         Matrix3D a = scalingMatrix.matrixMult(rotationMatrix);
         Matrix4D objectToWorld = new Matrix4D(a, translation);

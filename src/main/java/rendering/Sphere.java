@@ -3,11 +3,11 @@ import java.util.Optional;
 
 public class Sphere extends GeometricObject {
 
-    private final Vector3f centre;
+    private final Vector3d centre;
     private final double radius;
 
 
-    public Sphere(Vector3f centre, double radius) {
+    public Sphere(Vector3d centre, double radius) {
         this.triangulated = false;
         this.centre = centre;
         this.radius = radius;
@@ -15,7 +15,7 @@ public class Sphere extends GeometricObject {
     }
 
 
-    public Vector3f getCentre() {
+    public Vector3d getCentre() {
         return centre;
     }
 
@@ -25,14 +25,14 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Optional<IntersectionData> rayIntersection(Line3d ray) {
+    public Optional<IntersectionData> rayIntersection(Ray ray) {
         //This version uses a quadratic equation to derive the specific
         //t value to put into the ray parametric equation for the intercept
         double interceptT;
-        Vector3f rayOrigin = ray.getPoint();
-        Vector3f rayDirection = ray.getDirection();
+        Vector3d rayOrigin = ray.getPoint();
+        Vector3d rayDirection = ray.getDirection();
         double a = 1; //a = |d|^2, but its already stored as a unit vector
-        Vector3f vectorCE = this.getCentre().moveTo(rayOrigin);
+        Vector3d vectorCE = this.getCentre().moveTo(rayOrigin);
         double b = rayDirection.mul(2).dotProduct(vectorCE);
         double c = vectorCE.magnitudeSquared() - Math.pow(this.getRadius(), 2);
         double d = Math.pow(b, 2) - 4*a*c;
@@ -53,7 +53,7 @@ public class Sphere extends GeometricObject {
 
 
     @Override
-    public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
+    public Vector3d getSurfaceNormal(Vector3d point, double u, double v) {
         return this.centre.moveTo(point).normalize();
     }
 

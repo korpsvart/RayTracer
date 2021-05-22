@@ -52,7 +52,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
     }
 
     @Override
-    void updateControlPoints(Vector3f[][] cp) {
+    void updateControlPoints(Vector3d[][] cp) {
 
     }
 
@@ -72,7 +72,7 @@ class AddBezierSurface extends ControlPointsSurfaceFrame {
 
     @Override
     GeometricObject createGeometricObject() {
-        Vector3f[][] cp = new Vector3f[4][4];
+        Vector3d[][] cp = new Vector3d[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 cp[i][j] = controlPointsFrame.getControlPoints()[i][j];

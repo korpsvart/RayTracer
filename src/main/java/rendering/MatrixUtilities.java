@@ -32,9 +32,9 @@ public class MatrixUtilities {
         return t;
     }
 
-    static Vector3f[][] transpose2(Vector3f[][] m) {
+    static Vector3d[][] transpose2(Vector3d[][] m) {
         //not in place
-        Vector3f[][] t = new Vector3f[m[0].length][m.length];
+        Vector3d[][] t = new Vector3d[m[0].length][m.length];
         for (int i = 0; i < t.length; i++) {
             for (int j = 0; j < t[0].length; j++) {
                 t[i][j] = m[j][i];

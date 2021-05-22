@@ -7,17 +7,17 @@ public class Octree {
 
     class OctreeNode {
         private boolean isLeaf;
-        private Vector3f centroid;
-        private Vector3f minBound;
-        private Vector3f maxBound;
+        private Vector3d centroid;
+        private Vector3d minBound;
+        private Vector3d maxBound;
         private BoundingVolume extents;
         private OctreeNode[] child;
         private int depth;
         private ArrayDeque<SceneObject> objects;
 
 
-        public OctreeNode(Vector3f minBound, Vector3f maxBound) {
-            this.centroid = new Vector3f(
+        public OctreeNode(Vector3d minBound, Vector3d maxBound) {
+            this.centroid = new Vector3d(
                     minBound.add(maxBound).getX()/2,
                     minBound.add(maxBound).getY()/2,
                     minBound.add(maxBound).getZ()/2
@@ -29,7 +29,7 @@ public class Octree {
             this.extents = new BoundingVolume();
         }
 
-        public Optional<Double> rayIntersection(Line3d ray, double[][] precalculated) {
+        public Optional<Double> rayIntersection(Ray ray, double[][] precalculated) {
             return this.extents.intersect(ray,precalculated);
         }
 
@@ -49,7 +49,7 @@ public class Octree {
     private OctreeNode root;
     private static final int MAX_TREE_DEPTH = 16;
 
-    public Octree(Vector3f minBound, Vector3f maxBound) {
+    public Octree(Vector3d minBound, Vector3d maxBound) {
         root = new OctreeNode(minBound, maxBound);
     }
 
@@ -85,12 +85,12 @@ public class Octree {
             //second bit from the right tells us if it's below (0) or above (1)
             //third bit tells us if its on the left (0) or on the right (1)
             int childIndex = 0;
-            Vector3f objectCentroid = sceneObject.getBoundingVolume().getCentroid();
-            Vector3f nodeCentroid = octreeNode.centroid;
+            Vector3d objectCentroid = sceneObject.getBoundingVolume().getCentroid();
+            Vector3d nodeCentroid = octreeNode.centroid;
             if (objectCentroid.getX() > nodeCentroid.getX()) childIndex+=4;
             if (objectCentroid.getY() > nodeCentroid.getY()) childIndex+=2;
             if (objectCentroid.getZ() > nodeCentroid.getZ()) childIndex+=1;
-            Vector3f newNodeBounds[] = calculateSubRegionBounds(octreeNode, childIndex);
+            Vector3d newNodeBounds[] = calculateSubRegionBounds(octreeNode, childIndex);
             if (octreeNode.child[childIndex]==null) {
                 octreeNode.child[childIndex]=new OctreeNode(newNodeBounds[0], newNodeBounds[1]);
                 octreeNode.child[childIndex].depth = octreeNode.depth+1;
@@ -103,20 +103,20 @@ public class Octree {
         insert(root, sceneObject);
     }
 
-    private Vector3f[] calculateSubRegionBounds(OctreeNode octreeNode, int childIndex) {
-        Vector3f minBound, maxBound;
-        Vector3f nodeCentroid = octreeNode.centroid;
-        Vector3f nodeMin = octreeNode.minBound;
-        Vector3f nodeMax = octreeNode.maxBound;
+    private Vector3d[] calculateSubRegionBounds(OctreeNode octreeNode, int childIndex) {
+        Vector3d minBound, maxBound;
+        Vector3d nodeCentroid = octreeNode.centroid;
+        Vector3d nodeMin = octreeNode.minBound;
+        Vector3d nodeMax = octreeNode.maxBound;
         double minX = (childIndex & 4) != 0 ? nodeCentroid.getX() : nodeMin.getX();
         double maxX = (childIndex & 4) != 0 ? nodeMax.getX() : nodeCentroid.getX();
         double minY = (childIndex & 2) != 0 ? nodeCentroid.getY() : nodeMin.getY();
         double maxY = (childIndex & 2) != 0 ? nodeMax.getY() : nodeCentroid.getY();
         double minZ = (childIndex & 1) != 0 ? nodeCentroid.getZ() : nodeMin.getZ();
         double maxZ = (childIndex & 1) != 0 ? nodeMax.getZ() : nodeCentroid.getZ();
-        minBound = new Vector3f(minX, minY, minZ);
-        maxBound = new Vector3f(maxX, maxY, maxZ);
-        return new Vector3f[]{minBound, maxBound};
+        minBound = new Vector3d(minX, minY, minZ);
+        maxBound = new Vector3d(maxX, maxY, maxZ);
+        return new Vector3d[]{minBound, maxBound};
     }
 
     public void build() {

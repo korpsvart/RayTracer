@@ -31,7 +31,7 @@ public class MirrorTransparent extends SceneObject {
 
 
     @Override
-    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Ray ray, RayType rayType) {
         if (rayType==RayType.SHADOW && rayType == RayType.INDIRECT_DIFFUSE) {
             /*Details about the implementation:
             A classic problem is when we are looking at diffuse objects which are
@@ -59,17 +59,17 @@ public class MirrorTransparent extends SceneObject {
     }
 
     @Override
-    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
+    public Vector3d computeColor(IntersectionData intersectionData, Ray ray, int rayDepth, Scene currentScene) {
         Double t = intersectionData.getT();
         Double u = intersectionData.getU();
         Double v = intersectionData.getV();
-        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
+        Vector3d hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3d surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         return reflectionRefraction(hitPoint, ray.getDirection(), surfaceNormal, AIR_IOR, this.ior, rayDepth, currentScene);
     }
 
 
-    public Vector3f reflectionRefraction(Vector3f hitPoint, Vector3f incident, Vector3f surfaceNormal, double ior1, double ior2, int rayDepth,
+    public Vector3d reflectionRefraction(Vector3d hitPoint, Vector3d incident, Vector3d surfaceNormal, double ior1, double ior2, int rayDepth,
                                          Scene currentScene) {
 
         //compute refraction and reflection
@@ -77,8 +77,8 @@ public class MirrorTransparent extends SceneObject {
         //compute ratio of reflected and refracted light
         //using fresnel equation
 
-        Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
-        Vector3f refractionDir;
+        Vector3d reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
+        Vector3d refractionDir;
         double fr; //ratio of reflected light
         double cosi = incident.dotProduct(surfaceNormal);
         if (cosi < 0) {
@@ -95,14 +95,14 @@ public class MirrorTransparent extends SceneObject {
         }
         double eta = ior1 / ior2;
         double c = 1 - Math.pow(eta, 2)*(1-Math.pow(cosi, 2));
-        Vector3f hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
-        Vector3f hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
+        Vector3d hitPointRefl = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //bias in direction of normal
+        Vector3d hitPointRefr = hitPoint.add(surfaceNormal.mul(-Scene.getBias())); //bias in direction opposite of normal
         if (c < 0) {
             assert(ior2 < ior1);
             //incident angle is greater then critical angle:
             //total internal reflection.
             //We don't need to compute refraction direction
-            return currentScene.rayTraceWithBVH(new Line3d(hitPointRefl, reflectionDir), rayDepth+1);
+            return currentScene.rayTraceWithBVH(new Ray(hitPointRefl, reflectionDir), rayDepth+1);
         } else {
             double c2 = Math.sqrt(c);
             //compute refraction direction
@@ -117,8 +117,8 @@ public class MirrorTransparent extends SceneObject {
             double rS = Math.pow((x11-x22)/(x11+x22), 2);
             double rP = Math.pow((x12-x21)/(x12+x21), 2);
             fr = (rS+rP)/2;
-            Vector3f reflectionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
-            Vector3f refractionColor = currentScene.rayTraceWithBVH(new Line3d(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
+            Vector3d reflectionColor = currentScene.rayTraceWithBVH(new Ray(hitPointRefl, reflectionDir), rayDepth+1).mul(fr);
+            Vector3d refractionColor = currentScene.rayTraceWithBVH(new Ray(hitPointRefr, refractionDir), rayDepth+1).mul(1-fr);
             return reflectionColor.add(refractionColor);
         }
 

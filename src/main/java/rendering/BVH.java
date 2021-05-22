@@ -8,7 +8,7 @@ public class BVH {
     private Scene scene;
     Octree octree;
 
-    public BVH(Scene scene, Vector3f minBound, Vector3f maxBound) {
+    public BVH(Scene scene, Vector3d minBound, Vector3d maxBound) {
         this.scene = scene;
         this.octree = new Octree(minBound, maxBound);
         for (SceneObject object :
@@ -18,7 +18,7 @@ public class BVH {
         octree.build();
     }
 
-    Optional<IntersectionDataPlusObject> intersect(Line3d ray, RayType rayType) {
+    Optional<IntersectionDataPlusObject> intersect(Ray ray, RayType rayType) {
         double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);
         Optional<IntersectionDataPlusObject> ret = Optional.empty();
         IntersectionData intersectionDataMin = null;
@@ -54,7 +54,7 @@ public class BVH {
         return ret;
     }
 
-    public boolean checkVisibility(Line3d ray, double maxDistance, SceneObject caller) {
+    public boolean checkVisibility(Ray ray, double maxDistance, SceneObject caller) {
         //simplified version to
         //check visibility for diffuse objects
         double[][] precalculated = BoundingVolume.precalculateForIntersection(ray);

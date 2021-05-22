@@ -134,10 +134,10 @@ class AddSphereFrame extends AddObjectFrame {
     }
 
     protected GeometricObject createGeometricObject() {
-        Vector3f position = null;
+        Vector3d position = null;
         double radius = 0;
         try {
-            position = new Vector3f(Double.parseDouble(posX.getText()),
+            position = new Vector3d(Double.parseDouble(posX.getText()),
                     Double.parseDouble(posY.getText()), Double.parseDouble(posZ.getText()));
             radius = Double.parseDouble(textRadius.getText());
         } catch (NumberFormatException e) {

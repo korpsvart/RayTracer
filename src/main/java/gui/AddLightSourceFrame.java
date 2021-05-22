@@ -8,8 +8,6 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Arrays;
 
 abstract class AddLightSourceFrame extends JFrame implements ActionListener {
@@ -144,11 +142,11 @@ abstract class AddLightSourceFrame extends JFrame implements ActionListener {
         double x = Double.parseDouble(textFieldX.getText());
         double y = Double.parseDouble(textFieldY.getText());
         double z = Double.parseDouble(textFieldZ.getText());
-        Vector3f xyz = new Vector3f(x, y, z);
+        Vector3d xyz = new Vector3d(x, y, z);
         double intensity = Double.parseDouble(textFieldIntensity.getText());
         String colorVal = colorTextField.getText().substring(1, colorTextField.getText().length() - 1);
         String[] colorA = colorVal.split(",");
-        Vector3f color = new Vector3f(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
+        Vector3d color = new Vector3d(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
         color = color.mul((double) 1 / 255);
         LightSource lightSource = getParticularLightSource(intensity, color, xyz);
         lightSource.setNormalizedIntensity(intensity);
@@ -157,7 +155,7 @@ abstract class AddLightSourceFrame extends JFrame implements ActionListener {
         this.dispose();
     }
 
-    abstract LightSource getParticularLightSource(double intensity, Vector3f color, Vector3f xyz);
+    abstract LightSource getParticularLightSource(double intensity, Vector3d color, Vector3d xyz);
 
     protected void addSendButton(int gridy) {
         //Add button to send data

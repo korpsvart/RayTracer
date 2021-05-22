@@ -15,25 +15,25 @@ public class TriangleMesh {
 
 
         private boolean useVertexNormal = false;
-        private Vector3f v0;
-        private final Vector3f v1;
-        private Vector3f v2;
+        private Vector3d v0;
+        private final Vector3d v1;
+        private Vector3d v2;
 
         public void setTriangleMesh(TriangleMesh triangleMesh) {
             this.triangleMesh = triangleMesh;
         }
 
         private TriangleMesh triangleMesh; //corresponding triangle mesh
-        private Vector3f faceNormal = null;
+        private Vector3d faceNormal = null;
         private double area  = -1;
-        public Vector3f[] vertexNormal = null;
+        public Vector3d[] vertexNormal = null;
         private BoundingVolume boundingVolume;
 
         public void setUseVertexNormal(boolean useVertexNormal) {
             this.useVertexNormal = useVertexNormal;
         }
 
-        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Matrix4D objectToWorld) {
+        public Triangle(Vector3d v0, Vector3d v1, Vector3d v2, TriangleMesh triangleMesh, Matrix4D objectToWorld) {
             this.objectToWorld = objectToWorld;
             if (this.objectToWorld != null) {
                 v0 = v0.matrixAffineTransform(objectToWorld);
@@ -44,10 +44,10 @@ public class TriangleMesh {
             this.v1 = v1;
             this.v2 = v2;
             this.triangleMesh = triangleMesh;
-            this.boundingVolume = new BoundingVolume(new Vector3f[]{v0, v1, v2});
+            this.boundingVolume = new BoundingVolume(new Vector3d[]{v0, v1, v2});
         }
 
-        public Triangle(Vector3f v0, Vector3f v1, Vector3f v2, TriangleMesh triangleMesh, Matrix4D objectToWorld, Vector3f vertexNormal[]) {
+        public Triangle(Vector3d v0, Vector3d v1, Vector3d v2, TriangleMesh triangleMesh, Matrix4D objectToWorld, Vector3d vertexNormal[]) {
             this(v0, v1, v2, triangleMesh, objectToWorld);
             this.vertexNormal = vertexNormal.clone();
         }
@@ -57,7 +57,7 @@ public class TriangleMesh {
         }
 
         @Override
-        public Optional<IntersectionData> rayIntersection2(Line3d ray) {
+        public Optional<IntersectionData> rayIntersection2(Ray ray) {
             //Using local coordinates u,v
             //solving linear system with Cramer's rule
             //(akin to Moller-Trumbore algorithm)
@@ -67,14 +67,12 @@ public class TriangleMesh {
             //A should correspond to v0,
             //B to v1, C to v2
 
-            Main.getRayTriangleTests().getAndIncrement();
 
+            Vector3d e1 = v1.moveTo(v0);
+            Vector3d e2 = v2.moveTo(v0);
+            Vector3d h = e1.crossProduct(e2);
 
-            Vector3f e1 = v1.moveTo(v0);
-            Vector3f e2 = v2.moveTo(v0);
-            Vector3f h = e1.crossProduct(e2);
-
-            Vector3f d = ray.getDirection();
+            Vector3d d = ray.getDirection();
 
             double denom = d.dotProduct(h);
 
@@ -102,8 +100,8 @@ public class TriangleMesh {
                 return Optional.empty();
             }
 
-            Vector3f t = ray.getPoint().moveTo(v0);
-            Vector3f k = d.crossProduct(t);
+            Vector3d t = ray.getPoint().moveTo(v0);
+            Vector3d k = d.crossProduct(t);
 
             double u = e2.dotProduct(k) / denom;
 
@@ -119,7 +117,6 @@ public class TriangleMesh {
             } else {
                 double distance = t.dotProduct(h) / denom;
                 if (distance > 0) {
-                    Main.getRayTriangleIntersections().getAndIncrement();
                     return Optional.of(new IntersectionData(distance, u, v));
                 } else {
                     return Optional.empty();
@@ -130,12 +127,12 @@ public class TriangleMesh {
         }
 
         @Override
-        public boolean boxCheck(Line3d ray) {
+        public boolean boxCheck(Ray ray) {
             return triangleMesh.boxCheck(ray);
         }
 
         @Override
-        public boolean boundingVolumeCheck(Line3d ray) {
+        public boolean boundingVolumeCheck(Ray ray) {
             return this.boundingVolume.intersect(ray);
         }
 
@@ -145,13 +142,13 @@ public class TriangleMesh {
         }
 
         @Override
-        public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
+        public Vector3d getSurfaceNormal(Vector3d point, double u, double v) {
             if (!useVertexNormal || u <0 || v <0) {
                 if (this.faceNormal == null) {
                     //also precompute area for performance reasons
-                    Vector3f e1 = v0.moveTo(v1);
-                    Vector3f e2 = v0.moveTo(v2);
-                    Vector3f n = e1.crossProduct(e2); //area of parallelogram
+                    Vector3d e1 = v0.moveTo(v1);
+                    Vector3d e2 = v0.moveTo(v2);
+                    Vector3d n = e1.crossProduct(e2); //area of parallelogram
                     faceNormal = n.normalize();
                     area = n.magnitude()/2;
                 }
@@ -172,9 +169,9 @@ public class TriangleMesh {
         public double getArea() {
             if (area < 0) {
                 //also precompute facenormal for performance reasons
-                Vector3f e1 = v0.moveTo(v1);
-                Vector3f e2 = v0.moveTo(v2);
-                Vector3f n = e1.crossProduct(e2); //area of parallelogram
+                Vector3d e1 = v0.moveTo(v1);
+                Vector3d e2 = v0.moveTo(v2);
+                Vector3d n = e1.crossProduct(e2); //area of parallelogram
                 faceNormal = n.normalize();
                 area = n.magnitude()/2;
             }
@@ -191,8 +188,8 @@ public class TriangleMesh {
     //Face index array is not needed
     private int vertexIndex[];
     private SceneObject sceneObject; //the "top-level" scene object this mesh represents
-    private Vector3f[] vertex;
-    private Vector3f[] vertexNormal;
+    private Vector3d[] vertex;
+    private Vector3d[] vertexNormal;
     private int numTriangles;
     private int numVertices;
     private BoundingBox boundingBox;
@@ -213,7 +210,7 @@ public class TriangleMesh {
     }
 
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[]) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[]) {
         //This is an algorithm I came up with
         //Don't know if it's correct and how fast it is
 
@@ -259,7 +256,7 @@ public class TriangleMesh {
 
     }
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Matrix4D objectToWorld) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[], Matrix4D objectToWorld) {
         //This is an algorithm I came up with
         //Don't know if it's correct and how fast it is
 
@@ -307,7 +304,7 @@ public class TriangleMesh {
 
     }
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], BoundingBox boundingBox) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[], BoundingBox boundingBox) {
         //bounding box given explicitly (ex. for bezier surfaces)
 
         this.vertex = vertex.clone();
@@ -345,7 +342,7 @@ public class TriangleMesh {
         this.boundingBox = boundingBox;
     }
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Vector3f[] vertexNormal, BoundingBox boundingBox) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[], Vector3d[] vertexNormal, BoundingBox boundingBox) {
         //This is an algorithm I came up with
         //Don't know if it's correct and how fast it is
 
@@ -387,7 +384,7 @@ public class TriangleMesh {
         this.boundingBox = boundingBox;
     }
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Vector3f[] vertexNormal, BoundingVolume boundingVolume) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[], Vector3d[] vertexNormal, BoundingVolume boundingVolume) {
         //This is an algorithm I came up with
         //Don't know if it's correct and how fast it is
 
@@ -432,7 +429,7 @@ public class TriangleMesh {
         this.boundingVolume = boundingVolume;
     }
 
-    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3f vertex[], Vector3f[] vertexNormal) {
+    public TriangleMesh(int faceIndex[], int vertexIndex[], Vector3d vertex[], Vector3d[] vertexNormal) {
         //This is an algorithm I came up with
         //Don't know if it's correct and how fast it is
 
@@ -489,7 +486,7 @@ public class TriangleMesh {
                 int index1 = vertexIndex[i*3];
                 int index2 = vertexIndex[i*3+1];
                 int index3 = vertexIndex[i*3+2];
-                Vector3f[] triangleVertexNormal = {vertexNormal[index1], vertexNormal[index2], vertexNormal[index3]};
+                Vector3d[] triangleVertexNormal = {vertexNormal[index1], vertexNormal[index2], vertexNormal[index3]};
                 Triangle triangle = new Triangle(vertex[index1], vertex[index2], vertex[index3], this, objectToWorld,triangleVertexNormal);
                 triangle.setUseVertexNormal(true);
                 triangle.setUseBVH(true);
@@ -502,11 +499,11 @@ public class TriangleMesh {
 
 
 
-    public boolean boxCheck(Line3d ray) {
+    public boolean boxCheck(Ray ray) {
         return this.boundingBox.rayIntersection(ray);
     }
 
-    public boolean boundingVolumeCheck(Line3d ray) {
+    public boolean boundingVolumeCheck(Ray ray) {
         return this.boundingVolume.intersect(ray);
     }
 

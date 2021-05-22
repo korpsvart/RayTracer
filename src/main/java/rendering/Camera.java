@@ -2,10 +2,10 @@ package rendering;
 
 public class Camera {
 
-    private Vector3f position;
-    private Vector3f up, forward, left;
+    private Vector3d position;
+    private Vector3d up, forward, left;
 
-    public Camera(Vector3f position, Vector3f up, Vector3f forward, Vector3f left) {
+    public Camera(Vector3d position, Vector3d up, Vector3d forward, Vector3d left) {
         this.position = position;
         this.up = up;
         this.forward = forward;
@@ -14,10 +14,10 @@ public class Camera {
 
     public Camera() {
         //default
-        this.position = new Vector3f(0, 0, 0);
-        this.up = new Vector3f(0, 1, 0);
-        this.forward = new Vector3f(0, 0, 1);
-        this.left = new Vector3f(1, 0, 0); //it's cross product of up and forward
+        this.position = new Vector3d(0, 0, 0);
+        this.up = new Vector3d(0, 1, 0);
+        this.forward = new Vector3d(0, 0, 1);
+        this.left = new Vector3d(1, 0, 0); //it's cross product of up and forward
     }
 
     public void rotateX(double angle) {
@@ -43,29 +43,29 @@ public class Camera {
 
     }
 
-    public void translate(Vector3f displacement) {
+    public void translate(Vector3d displacement) {
         //displacement is relative to local coordinate system
         //As it's usually given when dealing with user input
         //So it must be translated to global fixed system
         //This can be achieved simply by multiplying the displacement vector
         //by a matrix having the 3 axis as columns
 
-        Matrix3D lcs = new Matrix3D(new Vector3f[]{left, up, forward}, Matrix3D.COL_VECTOR);
+        Matrix3D lcs = new Matrix3D(new Vector3d[]{left, up, forward}, Matrix3D.COL_VECTOR);
         displacement = lcs.transformVector(displacement);
         this.position = this.position.add(displacement);
 
     }
 
-    public Vector3f getPosition() {
+    public Vector3d getPosition() {
         return position;
     }
 
-    public Vector3f getForward() {
+    public Vector3d getForward() {
         return forward;
     }
 
-    public Vector3f convertToFixedSystem(Vector3f v) {
-        Matrix3D lcs = new Matrix3D(new Vector3f[]{left, up, forward}, Matrix3D.COL_VECTOR);
+    public Vector3d convertToFixedSystem(Vector3d v) {
+        Matrix3D lcs = new Matrix3D(new Vector3d[]{left, up, forward}, Matrix3D.COL_VECTOR);
         return lcs.transformVector(v);
     }
 }

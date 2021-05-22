@@ -4,8 +4,6 @@ import rendering.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 class AddBoxFrame extends AddObjectFrame {
 
@@ -149,9 +147,9 @@ class AddBoxFrame extends AddObjectFrame {
 
     @Override
     GeometricObject createGeometricObject() {
-        Vector3f min = new Vector3f(Double.parseDouble(textFieldXMin.getText()),
+        Vector3d min = new Vector3d(Double.parseDouble(textFieldXMin.getText()),
                 Double.parseDouble(textFieldYMin.getText()), Double.parseDouble(textFieldZMin.getText()));
-        Vector3f max = new Vector3f(Double.parseDouble(textFieldXMax.getText()),
+        Vector3d max = new Vector3d(Double.parseDouble(textFieldXMax.getText()),
                 Double.parseDouble(textFieldYMax.getText()), Double.parseDouble(textFieldZMax.getText()));
         PhysicalBox box = new PhysicalBox(min, max, getOTWMatrix());
         return box;

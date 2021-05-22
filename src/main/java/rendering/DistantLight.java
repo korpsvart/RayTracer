@@ -7,31 +7,31 @@ public class DistantLight extends LightSource {
     //The default direction is assumed to be (0, 0, -1) (camera orientation)
     //The direction is computed by multiplying this vector with the rotation matrix
 
-    private final Vector3f direction;
+    private final Vector3d direction;
 
 
-    public Vector3f getDirection() {
+    public Vector3d getDirection() {
         return direction;
     }
 
-    protected DistantLight(Vector3f color, double intensity, Matrix4D lightToWorld) {
+    protected DistantLight(Vector3d color, double intensity, Matrix4D lightToWorld) {
         super(color, intensity, lightToWorld);
-        Vector3f v = new Vector3f(0, 0, -1);
+        Vector3d v = new Vector3d(0, 0, -1);
         direction = v.matrixLinearTransform(lightToWorld.getA()).normalize(); //normalize just to be sure
     }
 
-    public DistantLight(Vector3f color, double intensity, Vector3f direction) {
+    public DistantLight(Vector3d color, double intensity, Vector3d direction) {
         super(color, intensity, Matrix4D.identity);
         this.direction = direction.normalize();
     }
 
 
-    public Vector3f illuminate(double distance) {
+    public Vector3d illuminate(double distance) {
         return this.getColor().mul(this.getIntensity());
     }
 
     @Override
-    public LightInfo getDirectionAndDistance(Vector3f hitPoint) {
+    public LightInfo getDirectionAndDistance(Vector3d hitPoint) {
         return new LightInfo(direction.mul(-1), Double.POSITIVE_INFINITY);
     }
 

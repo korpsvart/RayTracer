@@ -5,19 +5,19 @@ import java.util.Optional;
 public class BoundingVolume {
 
     private static final int planeSetNormalNumber = 7;
-    private static Vector3f[] planeSetNormal = {
-            new Vector3f(1, 0, 0),
-            new Vector3f(0, 1, 0),
-            new Vector3f(0, 0, 1),
-            new Vector3f(Math.sqrt(3)/3, Math.sqrt(3)/3, Math.sqrt(3)/3),
-            new Vector3f(-Math.sqrt(3)/3, Math.sqrt(3)/3, Math.sqrt(3)/3),
-            new Vector3f(-Math.sqrt(3)/3, -Math.sqrt(3)/3, Math.sqrt(3)/3),
-            new Vector3f(Math.sqrt(3)/3, -Math.sqrt(3)/3, Math.sqrt(3)/3)
+    private static Vector3d[] planeSetNormal = {
+            new Vector3d(1, 0, 0),
+            new Vector3d(0, 1, 0),
+            new Vector3d(0, 0, 1),
+            new Vector3d(Math.sqrt(3)/3, Math.sqrt(3)/3, Math.sqrt(3)/3),
+            new Vector3d(-Math.sqrt(3)/3, Math.sqrt(3)/3, Math.sqrt(3)/3),
+            new Vector3d(-Math.sqrt(3)/3, -Math.sqrt(3)/3, Math.sqrt(3)/3),
+            new Vector3d(Math.sqrt(3)/3, -Math.sqrt(3)/3, Math.sqrt(3)/3)
     };
 
     private double dNear[] = new double[planeSetNormalNumber];
     private double dFar[] = new double[planeSetNormalNumber];
-    private Vector3f centroid;
+    private Vector3d centroid;
 
 
 
@@ -63,7 +63,7 @@ public class BoundingVolume {
         this.sceneObject = sceneObject;
     }
 
-    public BoundingVolume(Vector3f vertex[]) {
+    public BoundingVolume(Vector3d vertex[]) {
         for (int i = 0; i < planeSetNormalNumber; i++) {
             double dNearTemp = Double.POSITIVE_INFINITY;
             double dFarTemp = Double.NEGATIVE_INFINITY;
@@ -77,18 +77,18 @@ public class BoundingVolume {
         }
     }
 
-    public BoundingVolume(Vector3f vertex[], SceneObject sceneObject) {
+    public BoundingVolume(Vector3d vertex[], SceneObject sceneObject) {
         this(vertex);
         this.sceneObject = sceneObject;
     }
 
 
 
-    public boolean intersect(Line3d ray) {
+    public boolean intersect(Ray ray) {
         double tNear = Double.NEGATIVE_INFINITY;
         double tFar = Double.POSITIVE_INFINITY;
-        Vector3f origin = ray.getPoint();
-        Vector3f r = ray.getDirection();
+        Vector3d origin = ray.getPoint();
+        Vector3d r = ray.getDirection();
         for (int i = 0; i < planeSetNormalNumber; i++) {
             double num = planeSetNormal[i].dotProduct(origin);
             double den = planeSetNormal[i].dotProduct(r);
@@ -107,14 +107,14 @@ public class BoundingVolume {
         return true;
     }
 
-    public Optional<Double> intersect(Line3d ray, double[][] precalculated) {
+    public Optional<Double> intersect(Ray ray, double[][] precalculated) {
         //make use of precalculated dot products
         //to enhance performance
         //Also returns t
         double tNear = Double.NEGATIVE_INFINITY;
         double tFar = Double.POSITIVE_INFINITY;
-        Vector3f origin = ray.getPoint();
-        Vector3f r = ray.getDirection();
+        Vector3d origin = ray.getPoint();
+        Vector3d r = ray.getDirection();
         for (int i = 0; i < planeSetNormalNumber; i++) {
             double num = precalculated[i][0];
             double den = precalculated[i][1];
@@ -152,9 +152,9 @@ public class BoundingVolume {
         return dNear;
     }
 
-    public static double[][] precalculateForIntersection(Line3d ray) {
-        Vector3f o = ray.getPoint();
-        Vector3f r = ray.getDirection();
+    public static double[][] precalculateForIntersection(Ray ray) {
+        Vector3d o = ray.getPoint();
+        Vector3d r = ray.getDirection();
         double res[][] = new double[planeSetNormalNumber][2];
         for (int i = 0; i < planeSetNormalNumber; i++) {
             res[i][0] = planeSetNormal[i].dotProduct(o); //first element is always numerator
@@ -163,9 +163,9 @@ public class BoundingVolume {
         return res;
     }
 
-    public Vector3f getCentroid() {
+    public Vector3d getCentroid() {
         if (centroid==null) {
-            centroid = new Vector3f(
+            centroid = new Vector3d(
                     dNear[0]+dFar[0],
                     dNear[1]+dFar[1],
                     dNear[2]+dFar[2]

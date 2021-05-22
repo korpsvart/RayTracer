@@ -5,10 +5,10 @@ import java.util.Optional;
 
 public class Diffuse extends SceneObject
 {
-    private Vector3f albedo = new Vector3f(0.3, 0.3, 0.3); //albedo is only considered for diffuse objects
+    private Vector3d albedo = new Vector3d(0.3, 0.3, 0.3); //albedo is only considered for diffuse objects
 
 
-    public Vector3f getAlbedo() {
+    public Vector3d getAlbedo() {
         return albedo;
     }
 
@@ -16,44 +16,44 @@ public class Diffuse extends SceneObject
         super(geometricObject);
     }
 
-    public void setAlbedo(Vector3f albedo) {
+    public void setAlbedo(Vector3d albedo) {
         this.albedo = albedo;
     }
 
     @Override
-    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Ray ray, RayType rayType) {
         return this.rayIntersection(ray);
     }
 
     @Override
-    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
+    public Vector3d computeColor(IntersectionData intersectionData, Ray ray, int rayDepth, Scene currentScene) {
         ArrayList<LightSource> lightSources = currentScene.getLightSources();
         ArrayList<SceneObject> sceneObjects = currentScene.getSceneObjects();
         Double t = intersectionData.getT();
         Double u = intersectionData.getU();
         Double v = intersectionData.getV();
-        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
+        Vector3d hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3d surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         //shading perfect diffuse surfaces using albedo, light intensity, cosine and square rolloff
         //Do this for each light in the scene
         //and sum all the contributions
         //First, verify there's no obstacle between point and light!
-        Vector3f hitPoint2 = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //adding normal bias
-        Vector3f finalColor = new Vector3f(0f,0f,0f);
-        Vector3f directDiffuse = new Vector3f(0, 0, 0);
+        Vector3d hitPoint2 = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //adding normal bias
+        Vector3d finalColor = new Vector3d(0f,0f,0f);
+        Vector3d directDiffuse = new Vector3d(0, 0, 0);
         for (LightSource lightSource:
                 lightSources) {
             LightSource.LightInfo lightInfo = lightSource.getDirectionAndDistance(hitPoint2);
-            Vector3f lDir = lightInfo.getLightDir();
+            Vector3d lDir = lightInfo.getLightDir();
             double distance = lightInfo.getDistance();
-            Vector3f hitPoint3 = hitPoint2.add(lDir.mul(10e-3)); //adding depth bias
-            Line3d shadowRay = new Line3d(hitPoint3, lDir);
+            Vector3d hitPoint3 = hitPoint2.add(lDir.mul(10e-3)); //adding depth bias
+            Ray shadowRay = new Ray(hitPoint3, lDir);
             boolean visibility = currentScene.checkVisibility(shadowRay, distance, this);
             if (visibility) {
                 //compute color
                 //(now using square rolloff)
                 double facingRatio = Math.max(0, surfaceNormal.dotProduct(lDir)); //we still need this
-                Vector3f lightColor = lightSource.illuminate(distance).mul(facingRatio);
+                Vector3d lightColor = lightSource.illuminate(distance).mul(facingRatio);
                 directDiffuse = directDiffuse.add(lightColor);
             }
         }
@@ -61,8 +61,8 @@ public class Diffuse extends SceneObject
         //we don't divide indirectDiffuse by pi cause we didnt multiply it before by the pdf
         directDiffuse = directDiffuse.mul(1/Math.PI);
         if (currentScene.isSimulateIndirectDiffuse()) {
-            Vector3f[] lcs = this.getLocalCartesianSystem(hitPoint, u, v);
-            Vector3f indirectDiffuse = MonteCarloSampling.calculateIndirectDiffuse(currentScene, hitPoint2, lcs, rayDepth);
+            Vector3d[] lcs = this.getLocalCartesianSystem(hitPoint, u, v);
+            Vector3d indirectDiffuse = MonteCarloSampling.calculateIndirectDiffuse(currentScene, hitPoint2, lcs, rayDepth);
             finalColor = directDiffuse.add(indirectDiffuse.mul(2)).elementWiseMul(albedo);
         } else {
             finalColor = directDiffuse.elementWiseMul(albedo);

@@ -13,9 +13,6 @@ import java.util.Map;
 
 import rendering.*;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 public class Visualizer extends Frame implements ActionListener, WindowListener, KeyListener, AWTEventListener {
 
     private Scene scene;
@@ -125,13 +122,13 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
 
     }
 
-    public static Vector3f extractVectorFromTextField(TextField textField) {
+    public static Vector3d extractVectorFromTextField(TextField textField) {
         String vectorVal = textField.getText().substring(1, textField.getText().length()-1);
         String[] vectorA = vectorVal.split(",");
-        return new Vector3f(Arrays.stream(vectorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
+        return new Vector3d(Arrays.stream(vectorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
     }
 
-    public static String extractTextFromVector(Vector3f v) {
+    public static String extractTextFromVector(Vector3d v) {
         Locale currentLocale = Locale.getDefault();
         DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(currentLocale);
         otherSymbols.setDecimalSeparator('.');
@@ -225,8 +222,8 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         System.out.println("blip blop");
         if (e.getExtendedKeyCode()==KeyEvent.VK_RIGHT) {
             Matrix4D currentCTW = scene.getCameraToWorld();
-            Vector3f c = currentCTW.getC();
-            this.scene.setCameraToWorld(c.add(new Vector3f(-0.05, 0, 0)), new Vector3f(0, 0, -1));
+            Vector3d c = currentCTW.getC();
+            this.scene.setCameraToWorld(c.add(new Vector3d(-0.05, 0, 0)), new Vector3d(0, 0, -1));
             renderScene(this.scene);
         }
     }
@@ -242,24 +239,24 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
             KeyEvent key = (KeyEvent) event;
             if (key.getID() == KeyEvent.KEY_PRESSED) { //Handle key presses
                 if (key.getExtendedKeyCode() == KeyEvent.VK_RIGHT) {
-                    scene.getCamera().translate(new Vector3f(0.1, 0, 0));
+                    scene.getCamera().translate(new Vector3d(0.1, 0, 0));
                     renderScene(this.scene);
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_LEFT) {
-                    scene.getCamera().translate(new Vector3f(-0.1, 0, 0));
+                    scene.getCamera().translate(new Vector3d(-0.1, 0, 0));
                     renderScene(this.scene);
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_UP) {
-                    scene.getCamera().translate(new Vector3f(0, 0.1, 0));
+                    scene.getCamera().translate(new Vector3d(0, 0.1, 0));
                     renderScene(this.scene);
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_DOWN) {
-                    scene.getCamera().translate(new Vector3f(0, -0.1, 0));
+                    scene.getCamera().translate(new Vector3d(0, -0.1, 0));
                     renderScene(this.scene);
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_W) {
-                    scene.getCamera().translate(new Vector3f(0, 0, -0.1));
+                    scene.getCamera().translate(new Vector3d(0, 0, -0.1));
                     renderScene(this.scene);
                 }
                 else if (key.getExtendedKeyCode() == KeyEvent.VK_S) {
-                    scene.getCamera().translate(new Vector3f(0, 0, 0.1));
+                    scene.getCamera().translate(new Vector3d(0, 0, 0.1));
                     renderScene(this.scene);
                 } else if (key.getExtendedKeyCode() == KeyEvent.VK_Q) {
                     scene.getCamera().rotateY(2); //degrees

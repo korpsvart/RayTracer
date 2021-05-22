@@ -14,34 +14,34 @@ public class MonteCarloSampling {
 
     private static int SAMPLING_N = 32;
 
-    public static Vector3f uniformSamplingHemisphere(double r1, double r2) {
+    public static Vector3d uniformSamplingHemisphere(double r1, double r2) {
         //given two random numbers r1, r2 in [0, 1]
         //uniformly samples direction inside hemisphere
         double sinTheta = Math.sqrt(1 - Math.pow(r1, 2));
         double phi = r2*2*Math.PI;
         double x = sinTheta*Math.cos(phi);
         double z = sinTheta*Math.sin(phi);
-        return new Vector3f(x, r1, z);
+        return new Vector3d(x, r1, z);
     }
 
 
 
-    public static Vector3f calculateIndirectDiffuse(Scene currentScene, Vector3f hitPoint, Vector3f[] localCoordinateSystem, int rayDepth) {
-        Vector3f indirectDiffuse = new Vector3f(0, 0, 0);
+    public static Vector3d calculateIndirectDiffuse(Scene currentScene, Vector3d hitPoint, Vector3d[] localCoordinateSystem, int rayDepth) {
+        Vector3d indirectDiffuse = new Vector3d(0, 0, 0);
         if (rayDepth+1 > currentScene.getMaxRayDepth()) {
             return indirectDiffuse;
         }
-        Matrix3D sampleToWorld = new Matrix3D(new Vector3f[]{localCoordinateSystem[0], localCoordinateSystem[1], localCoordinateSystem[2]}, Matrix3D.COL_VECTOR);
+        Matrix3D sampleToWorld = new Matrix3D(new Vector3d[]{localCoordinateSystem[0], localCoordinateSystem[1], localCoordinateSystem[2]}, Matrix3D.COL_VECTOR);
         for (int i = 0; i < SAMPLING_N; i++) {
             Random random = new Random();
             double r1 = random.nextDouble();
             double r2 = random.nextDouble();
-            Vector3f sampleDirection = uniformSamplingHemisphere(r1, r2);
-            Vector3f sampleDirectionWorld = sampleDirection.matrixLinearTransform(sampleToWorld);
+            Vector3d sampleDirection = uniformSamplingHemisphere(r1, r2);
+            Vector3d sampleDirectionWorld = sampleDirection.matrixLinearTransform(sampleToWorld);
             assert(Math.abs(sampleDirectionWorld.magnitude() - 1) < 10e-2);
             hitPoint = hitPoint.add(sampleDirectionWorld.mul(10e-3)); //equivalent of depth bias
-            Line3d indirectDiffuseRay = new Line3d(hitPoint, sampleDirectionWorld);
-            Vector3f color = currentScene.rayTraceWithBVH(indirectDiffuseRay, rayDepth+1, RayType.INDIRECT_DIFFUSE);
+            Ray indirectDiffuseRay = new Ray(hitPoint, sampleDirectionWorld);
+            Vector3d color = currentScene.rayTraceWithBVH(indirectDiffuseRay, rayDepth+1, RayType.INDIRECT_DIFFUSE);
             //apply cosine law
             //we should multiply the color obtained by the dot product of ray direction and surface normal
             //that is, multiplying by cos(theta) where theta is the angle between the two vectors (they are normalized)

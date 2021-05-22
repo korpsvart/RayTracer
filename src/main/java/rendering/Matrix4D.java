@@ -5,11 +5,11 @@ public class Matrix4D {
     //A matrix to describe affine transform
     //using homogeneous points
 
-    public static final Matrix4D identity = new Matrix4D(Matrix3D.identity, new Vector3f(0, 0, 0));
+    public static final Matrix4D identity = new Matrix4D(Matrix3D.identity, new Vector3d(0, 0, 0));
 
     private double mInternal[][] = new double[4][4];
     private Matrix3D a;
-    private Vector3f c;
+    private Vector3d c;
 
     public Matrix4D(double[][] matrix) {
 
@@ -18,7 +18,7 @@ public class Matrix4D {
         c = this.getC();
     }
 
-    public Matrix4D(Matrix3D a, Vector3f c) {
+    public Matrix4D(Matrix3D a, Vector3d c) {
         this.a = a;
         this.c = c;
         double[][] m = a.getmInternal();
@@ -36,7 +36,7 @@ public class Matrix4D {
         mInternal[3][3] = 1;
     }
 
-    public Matrix4D(Vector3f c) {
+    public Matrix4D(Vector3d c) {
         //Pure translation matrix
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -67,14 +67,14 @@ public class Matrix4D {
         return new Matrix3D(matrix);
     }
 
-    public Vector3f getC() {
+    public Vector3d getC() {
         //get translational part of affine transform
-        Vector3f c = new Vector3f(mInternal[0][3], mInternal[1][3], mInternal[2][3]);
+        Vector3d c = new Vector3d(mInternal[0][3], mInternal[1][3], mInternal[2][3]);
         return c;
     }
 
-    public Vector3f transformVector(Vector3f v) {
-        Vector3f vTransform;
+    public Vector3d transformVector(Vector3d v) {
+        Vector3d vTransform;
         double x = 0;
         double y = 0;
         double z = 0;
@@ -95,37 +95,37 @@ public class Matrix4D {
         y+=mInternal[1][3];
         z+=mInternal[2][3];
         w+=mInternal[3][3];
-        vTransform = new Vector3f(x, y, z);
+        vTransform = new Vector3d(x, y, z);
         if (w != 1 && w != 0) {
             vTransform = vTransform.mul(1/w);
         }
         return vTransform;
     }
 
-    public Vector3f[] transformVector(Vector3f[] v) {
-        Vector3f[] transformed = new Vector3f[v.length];
+    public Vector3d[] transformVector(Vector3d[] v) {
+        Vector3d[] transformed = new Vector3d[v.length];
         for (int i = 0; i < transformed.length; i++) {
             transformed[i] = transformVector(v[i]);
         }
         return transformed;
     }
 
-    public Vector3f transformVector(double[] v) {
-        Vector3f vector3f = new Vector3f(v);
-        return transformVector(vector3f);
+    public Vector3d transformVector(double[] v) {
+        Vector3d vector3D = new Vector3d(v);
+        return transformVector(vector3D);
     }
 
     public double[][] transformVector(double[][] v) {
         double[][] result = new double[v.length][3];
         for (int i = 0; i < result.length; i++) {
-            Vector3f vector3f = transformVector(v[i]);
-            result[i] = new double[]{vector3f.getX(),vector3f.getY(),vector3f.getZ()};
+            Vector3d vector3D = transformVector(v[i]);
+            result[i] = new double[]{vector3D.getX(), vector3D.getY(), vector3D.getZ()};
         }
         return result;
     }
 
-    public Vector3f[][] transformVector(Vector3f[][] v) {
-        Vector3f[][] transformed = new Vector3f[v.length][v[0].length];
+    public Vector3d[][] transformVector(Vector3d[][] v) {
+        Vector3d[][] transformed = new Vector3d[v.length][v[0].length];
         for (int i = 0; i < transformed.length; i++) {
             transformed[i] = transformVector(v[i]);
         }
@@ -151,7 +151,7 @@ public class Matrix4D {
     public Matrix4D invertRotationMatrix() {
         //see method for 3D matrix
         Matrix3D m = this.getA().invertRotationMatrix();
-        return m.get4DMatrix(new Vector3f(0, 0, 0));
+        return m.get4DMatrix(new Vector3d(0, 0, 0));
     }
 
 

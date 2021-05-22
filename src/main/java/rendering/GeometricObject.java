@@ -13,11 +13,11 @@ public abstract class GeometricObject {
      */
 
     protected Matrix4D objectToWorld = null;
-    private Vector3f rotationData;
+    private Vector3d rotationData;
     protected int divs = 16; //default value
 
 
-    private Vector3f scalingData;
+    private Vector3d scalingData;
     protected boolean triangulated = true;
     private boolean useBVH = false;//set to true if you wish to use bvh to accelerate intersection
     //1)do not use bvh acceleration with plane
@@ -45,7 +45,7 @@ public abstract class GeometricObject {
         this.objectToWorld = objectToWorld;
     }
 
-    public Optional<IntersectionData> rayIntersection2(Line3d ray) {
+    public Optional<IntersectionData> rayIntersection2(Ray ray) {
         //default implementation
         //for objects for which we are not able to calculate directly intersection
         //(i.e. bezier surfaces, which are always triangulated)
@@ -53,7 +53,7 @@ public abstract class GeometricObject {
         return Optional.empty();
     }
 
-    public Optional<IntersectionData> rayIntersection(Line3d ray) {
+    public Optional<IntersectionData> rayIntersection(Ray ray) {
         //this is the version which should be always called from outside
         //which always includes the bounding box check
         if (this.boundingVolumeCheck(ray)) {
@@ -63,12 +63,12 @@ public abstract class GeometricObject {
         }
     }
 
-    public Vector3f getSurfaceNormal(Vector3f point, double u, double v) {
+    public Vector3d getSurfaceNormal(Vector3d point, double u, double v) {
         return null;
     }
 
 
-    public Vector3f[] getLocalCartesianSystem(Vector3f point, double u, double v) {
+    public Vector3d[] getLocalCartesianSystem(Vector3d point, double u, double v) {
         //get local cartesian coordinate system
         //Since we only have interpolated normals data
         //we can't exploit the actual parametric surface tangent and bitangent
@@ -76,30 +76,30 @@ public abstract class GeometricObject {
         //Thus we use a different and simple method
 
         //get normal
-        Vector3f normal = getSurfaceNormal(point, u, v);
-        Vector3f Nt;
+        Vector3d normal = getSurfaceNormal(point, u, v);
+        Vector3d Nt;
 
         //here we should check that normal doesnt already have same direction as y axis
         //...
 
         //check if Ny > Nx
         if (Math.abs(normal.getX()) > Math.abs(normal.getY())) {
-            Nt = new Vector3f(normal.getZ(), 0, -normal.getX()).normalize();
+            Nt = new Vector3d(normal.getZ(), 0, -normal.getX()).normalize();
         } else {
             //else consider vector in the plane satisfying x = 0
-            Nt = new Vector3f(0, -normal.getZ(), normal.getY()).normalize();
+            Nt = new Vector3d(0, -normal.getZ(), normal.getY()).normalize();
         }
-        Vector3f Nb = normal.crossProduct(Nt);
-        return new Vector3f[]{Nt, normal, Nb};
+        Vector3d Nb = normal.crossProduct(Nt);
+        return new Vector3d[]{Nt, normal, Nb};
     }
 
-    public boolean boxCheck(Line3d ray) {
+    public boolean boxCheck(Ray ray) {
         //default implementation for objects
         //for which box check is overkill
         return true;
     }
 
-    public boolean boundingVolumeCheck(Line3d ray) {
+    public boolean boundingVolumeCheck(Ray ray) {
         return true;
     }
 
@@ -117,28 +117,28 @@ public abstract class GeometricObject {
         return triangulated;
     }
 
-    public Vector3f getRotationData() {
+    public Vector3d getRotationData() {
         return rotationData;
     }
 
-    public void setRotationData(Vector3f rotationData) {
+    public void setRotationData(Vector3d rotationData) {
         this.rotationData = rotationData;
     }
 
 
-    public Vector3f getScalingData() {
+    public Vector3d getScalingData() {
         return scalingData;
     }
 
-    public void setScalingData(Vector3f scalingData) {
+    public void setScalingData(Vector3d scalingData) {
         this.scalingData = scalingData;
     }
 
-    public Vector3f getTranslationData() {
+    public Vector3d getTranslationData() {
         if (objectToWorld != null)
             return objectToWorld.getC();
         else
-            return new Vector3f(0,0,0);
+            return new Vector3d(0,0,0);
     }
 
     public int getDivs() {

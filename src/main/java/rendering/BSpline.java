@@ -4,7 +4,7 @@ public class BSpline {
 
     //Class for BSplines
 
-    private Vector3f[] controlPoints;
+    private Vector3d[] controlPoints;
     private double[] knots;
     private int degree;
     private boolean clamped = true;
@@ -20,7 +20,7 @@ public class BSpline {
     };
 
 
-    public BSpline(Vector3f[] controlPoints, double[] knots, int degree) {
+    public BSpline(Vector3d[] controlPoints, double[] knots, int degree) {
         //check that number of control points in each direction >= (degree+1)
         //Note that if we have equality, then the bspline becomes a bezier curve
         if (controlPoints.length <= degree) {
@@ -86,7 +86,7 @@ public class BSpline {
                     newSpline = newSpline.knotInsertion(u0).knotInsertion(u1);
             }
             //the bezier points are given by Pi, Pi+1,...,Pi+p
-            Vector3f[] cp = new Vector3f[degree+1];
+            Vector3d[] cp = new Vector3d[degree+1];
             for (int j = 0; j < degree + 1; j++) {
                     cp[j] = newSpline.controlPoints[i+j];
             }
@@ -131,7 +131,7 @@ public class BSpline {
             newSpline = newSpline.multipleKnotInsertion(u0, degree-1).multipleKnotInsertion(u1, degree-1);
         }
         //the bezier points are given by Pi-1, Pi,...,Pi+p-1
-        Vector3f[] cp = new Vector3f[degree+1];
+        Vector3d[] cp = new Vector3d[degree+1];
         for (int j = 0; j < degree + 1; j++) {
             cp[j] = newSpline.controlPoints[(i-degree)*degree+j];
         }
@@ -139,7 +139,7 @@ public class BSpline {
 
     }
 
-    public Vector3f evaluateNonClamped(double u) {
+    public Vector3d evaluateNonClamped(double u) {
         //check u is inside spline domain
         if (u < knots[degree-1] || u > knots[controlPoints.length-1]) {
             throw new IllegalArgumentException("Parameter value outside of spline domain");
@@ -150,7 +150,7 @@ public class BSpline {
         for(I=0; (I+1) < knots.length && knots[I+1]<=u; I++) {
             if (knots[I+1]==u) r++;
         }
-        Vector3f[] localPoints = new Vector3f[degree+1];
+        Vector3d[] localPoints = new Vector3d[degree+1];
         for (int j = 0; j <= degree; j++) {
             localPoints[j] = controlPoints[I-degree+1+j];
         }
@@ -178,7 +178,7 @@ public class BSpline {
         for (int i = I+2; i < newKnots.length; i++) {
             newKnots[i]=knots[i-1];
         }
-        Vector3f[] newCP = new Vector3f[controlPoints.length+1];
+        Vector3d[] newCP = new Vector3d[controlPoints.length+1];
         for (int i = 0; i <= I - degree + 1; i++) {
             newCP[i] = controlPoints[i];
         }
@@ -204,7 +204,7 @@ public class BSpline {
     public BSpline knotInsertionClamped(double u) {
         //only works on clamped bsplines
         //where first and last knots have degree+1 multiplicity
-        Vector3f[] newCP = new Vector3f[controlPoints.length+1];
+        Vector3d[] newCP = new Vector3d[controlPoints.length+1];
         double[] newKnots = new double[knots.length+1];
         int I;
         for(I=0; (I+1) < knots.length && knots[I+1]<=u; I++) {
@@ -245,9 +245,9 @@ public class BSpline {
             v[i] = knots[i-h]; //copy remaining knots after the newly inserted one(s)
         }
         k=k-1; //correct knot span index
-        Vector3f[] newPoints = new Vector3f[controlPoints.length+h];
+        Vector3d[] newPoints = new Vector3d[controlPoints.length+h];
         int p = degree; //only for simplicity
-        Vector3f[][] aux = new Vector3f[p+1-s][h+1];
+        Vector3d[][] aux = new Vector3d[p+1-s][h+1];
         for (int i = 0; i < p + 1 - s; i++) {
             aux[i][0] = controlPoints[i+(k-p)];
         }
@@ -277,7 +277,7 @@ public class BSpline {
         return new BSpline(newPoints, v, degree);
     }
 
-    public Vector3f evaluateClamped(double u) {
+    public Vector3d evaluateClamped(double u) {
         //new version, for clamped bsplines
         //based on the principle of knot insertion
         //In this case, we can use a single vector instead of a matrix
@@ -308,7 +308,7 @@ public class BSpline {
             return u==knots[0] ? controlPoints[0] : controlPoints[k-s];
         }
         //insert u only (p-s) times
-        Vector3f[] aux = new Vector3f[p+1-s];
+        Vector3d[] aux = new Vector3d[p+1-s];
         for (int i = 0; i < p + 1 - s; i++) {
             aux[i] = controlPoints[i+(k-p)];
         }
@@ -322,7 +322,7 @@ public class BSpline {
         return aux[0];
     }
 
-    public static Vector3f deBoor(Vector3f[] cp, double knots[], double u, int s, int p, int k) {
+    public static Vector3d deBoor(Vector3d[] cp, double knots[], double u, int s, int p, int k) {
         //u is the parameter at which we want to evaluate the B-Spline
         //p is degree
         //s is knot multiplicity (multiplicity is defined to be zero if parameter is not a knot)
@@ -330,7 +330,7 @@ public class BSpline {
         //This routine assumes that the caller has already chosen the significant control points
         //necessary for evaluation
         if (cp.length == 1) return cp[0];
-        Vector3f[] aux = cp.clone(); //to avoid modifying the array passed
+        Vector3d[] aux = cp.clone(); //to avoid modifying the array passed
         for (int r = 1; r <= p-s; r++) {
             for (int i = r; i < p+1-s; i++) {
                 int j = i+(k-p); //"real" index in global knots indexing
@@ -342,7 +342,7 @@ public class BSpline {
     }
 
 
-    public Vector3f evaluate(double u) {
+    public Vector3d evaluate(double u) {
         if (clamped) {
             return this.evaluateClamped(u);
         } else {
@@ -351,10 +351,10 @@ public class BSpline {
     }
 
 
-    public Vector3f derivative(double u) {
+    public Vector3d derivative(double u) {
         //calculate derivative at u
         //by creating a new p-1 curve and evaluating that curve
-        Vector3f[] points = new Vector3f[controlPoints.length-1];
+        Vector3d[] points = new Vector3d[controlPoints.length-1];
         double[] newKnots = new double[knots.length-1];
         for (int i = 0; i < newKnots.length; i++) {
             newKnots[i] = knots[i+1];
@@ -370,7 +370,7 @@ public class BSpline {
 
     }
 
-    public static double[] findParameters(ParameterMethod method, Vector3f[] dataPoints, double a, double b) {
+    public static double[] findParameters(ParameterMethod method, Vector3d[] dataPoints, double a, double b) {
         int n = dataPoints.length;
         double[] t = new double[n];
         if (method==ParameterMethod.CHORD_LENGTH || true) {
@@ -390,7 +390,7 @@ public class BSpline {
         return t;
     }
 
-    public static double[] findParameters(Vector3f[] dataPoints, double a, double b) {
+    public static double[] findParameters(Vector3d[] dataPoints, double a, double b) {
         //if not specified, use arc length as method for parameter selection
         int n = dataPoints.length;
         double[] t = new double[n];
@@ -409,7 +409,7 @@ public class BSpline {
         return t;
     }
 
-    public static double[] findParameters(Vector3f[][] dataPoints, double a, double b) {
+    public static double[] findParameters(Vector3d[][] dataPoints, double a, double b) {
         //if multiple rows are given, take an average of the parameters for each row
         //(just experimenting, no idea if this will work out nicely)
         int n = dataPoints[0].length;
@@ -501,7 +501,7 @@ public class BSpline {
     }
 
 
-    public static BSpline interpolate(Vector3f[] dataPoints, int p) {
+    public static BSpline interpolate(Vector3d[] dataPoints, int p) {
         int n = dataPoints.length;
         double[] t = findParameters(ParameterMethod.CHORD_LENGTH,dataPoints, 0, 1);
         double[] knots = generateKnots(t, p);
@@ -515,9 +515,9 @@ public class BSpline {
         }
         //get control points
         P = MatrixUtilities.solve(N, D);
-        Vector3f[] controlPoints = new Vector3f[n];
+        Vector3d[] controlPoints = new Vector3d[n];
         for (int i = 0; i < n; i++) {
-            controlPoints[i] = new Vector3f(P[i]);
+            controlPoints[i] = new Vector3d(P[i]);
         }
         //build B-Spline
         BSpline interpolant = new BSpline(controlPoints, knots, p);
@@ -525,7 +525,7 @@ public class BSpline {
         return interpolant;
     }
 
-    public Vector3f[] getControlPoints() {
+    public Vector3d[] getControlPoints() {
         return controlPoints;
     }
 

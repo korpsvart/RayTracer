@@ -18,17 +18,17 @@ public class Matrix3D {
     }
 
 
-    public Matrix3D(Vector3f vectors[], int option) {
+    public Matrix3D(Vector3d vectors[], int option) {
         if (option==COL_VECTOR) {
             for (int j = 0; j < 3; j++) {
-                Vector3f v = vectors[j];
+                Vector3d v = vectors[j];
                 for (int i = 0; i < 3; i++) {
                     mInternal[i][j] = v.getElement(i);
                 }
             }
         } else if (option==ROW_VECTOR) {
             for (int i = 0; i < 3; i++) {
-                Vector3f v = vectors[i];
+                Vector3d v = vectors[i];
                 for (int j = 0; j < 3; j++) {
                     mInternal[i][j] = v.getElement(j);
                 }
@@ -42,22 +42,22 @@ public class Matrix3D {
         return mInternal.clone();
     }
 
-    public Vector3f getColumnVector(int j) {
+    public Vector3d getColumnVector(int j) {
         if (j < 0 || j > 2) {
             throw new IllegalArgumentException("column number should be a number from 0 to 2");
         } else {
             double x = mInternal[0][j];
             double y = mInternal[1][j];
             double z = mInternal[2][j];
-            return new Vector3f(x, y, z);
+            return new Vector3d(x, y, z);
         }
     }
 
 
-    public Vector3f transformVector(Vector3f v) {
-        Vector3f c1 = getColumnVector(0).mul(v.getX());
-        Vector3f c2 = getColumnVector(1).mul(v.getY());
-        Vector3f c3 = getColumnVector(2).mul(v.getZ());
+    public Vector3d transformVector(Vector3d v) {
+        Vector3d c1 = getColumnVector(0).mul(v.getX());
+        Vector3d c2 = getColumnVector(1).mul(v.getY());
+        Vector3d c3 = getColumnVector(2).mul(v.getZ());
         return c1.add(c2.add(c3));
     }
 
@@ -74,48 +74,48 @@ public class Matrix3D {
 
     public static Matrix3D rotationAroundzAxis(double angle) {
         double theta = Math.toRadians(angle);
-        Vector3f c1 = new Vector3f(Math.cos(theta), Math.sin(theta), 0);
-        Vector3f c2 = new Vector3f(-Math.sin(theta), Math.cos(theta), 0);
-        Vector3f c3  = new Vector3f(0, 0, 1);
-        return new Matrix3D(new Vector3f[]{c1, c2, c3}, COL_VECTOR);
+        Vector3d c1 = new Vector3d(Math.cos(theta), Math.sin(theta), 0);
+        Vector3d c2 = new Vector3d(-Math.sin(theta), Math.cos(theta), 0);
+        Vector3d c3  = new Vector3d(0, 0, 1);
+        return new Matrix3D(new Vector3d[]{c1, c2, c3}, COL_VECTOR);
     }
 
     public static Matrix3D rotationAroundxAxis(double angle) {
         double theta = Math.toRadians(angle);
-        Vector3f c1 = new Vector3f(1, 0, 0);
-        Vector3f c2 = new Vector3f(0, Math.cos(theta), Math.sin(theta));
-        Vector3f c3  = new Vector3f(0, -Math.sin(theta), Math.cos(theta));
-        return new Matrix3D(new Vector3f[]{c1, c2, c3}, COL_VECTOR);
+        Vector3d c1 = new Vector3d(1, 0, 0);
+        Vector3d c2 = new Vector3d(0, Math.cos(theta), Math.sin(theta));
+        Vector3d c3  = new Vector3d(0, -Math.sin(theta), Math.cos(theta));
+        return new Matrix3D(new Vector3d[]{c1, c2, c3}, COL_VECTOR);
     }
 
     public static Matrix3D rotationAroundyAxis(double angle) {
         double theta = Math.toRadians(angle);
-        Vector3f c1 = new Vector3f(Math.cos(theta), 0, -Math.sin(theta));
-        Vector3f c2 = new Vector3f(0, 1, 0);
-        Vector3f c3  = new Vector3f(Math.sin(theta), 0, Math.cos(theta));
-        return new Matrix3D(new Vector3f[]{c1, c2, c3}, COL_VECTOR);
+        Vector3d c1 = new Vector3d(Math.cos(theta), 0, -Math.sin(theta));
+        Vector3d c2 = new Vector3d(0, 1, 0);
+        Vector3d c3  = new Vector3d(Math.sin(theta), 0, Math.cos(theta));
+        return new Matrix3D(new Vector3d[]{c1, c2, c3}, COL_VECTOR);
     }
 
-    public static Matrix3D rotationAroundArbitraryAxis(double angle, Vector3f axis) {
+    public static Matrix3D rotationAroundArbitraryAxis(double angle, Vector3d axis) {
         axis = axis.normalize();
         double theta = Math.toRadians(angle);
         double cos = Math.cos(theta);
         double sin = Math.sin(theta);
-        Vector3f c1 = new Vector3f(cos +Math.pow(axis.getX(),2)*(1- cos),
+        Vector3d c1 = new Vector3d(cos +Math.pow(axis.getX(),2)*(1- cos),
                 axis.getY()*axis.getX()*(1- cos)+axis.getZ()* sin,
                 axis.getZ()*axis.getX()*(1- cos)-axis.getY()+ sin);
-        Vector3f c2 = new Vector3f(axis.getX()*axis.getY()*(1- cos)-axis.getZ()* sin,
+        Vector3d c2 = new Vector3d(axis.getX()*axis.getY()*(1- cos)-axis.getZ()* sin,
                 cos +Math.pow(axis.getY(),2)*(1- cos),
                 axis.getZ()*axis.getY()*(1- cos)+axis.getX()* sin);
-        Vector3f c3 = new Vector3f(axis.getX()*axis.getZ()*(1- cos)+axis.getY()* sin,
+        Vector3d c3 = new Vector3d(axis.getX()*axis.getZ()*(1- cos)+axis.getY()* sin,
                 axis.getY()*axis.getZ()*(1- cos)-axis.getX()* sin,
                 cos +Math.pow(axis.getZ(),2)*(1- cos));
-        return new Matrix3D(new Vector3f[]{c1,c2,c3}, COL_VECTOR);
+        return new Matrix3D(new Vector3d[]{c1,c2,c3}, COL_VECTOR);
 
     }
 
 
-    public Matrix4D get4DMatrix(Vector3f c) {
+    public Matrix4D get4DMatrix(Vector3d c) {
         //Add c vector column for affine transform
         //last row defaults to [0 0 0 1]
         double[][] matrix = new double[4][4];

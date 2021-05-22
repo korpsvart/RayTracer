@@ -9,22 +9,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 
 class ControlPointsFrame extends JFrame implements ActionListener, WindowListener {
 
     private final Visualizer visualizer;
     private JLabel[][] labelsCP;
     private TextField[][] textFieldsCP;
-    Vector3f[][] controlPoints;
-    private Vector3f[][] original;
+    Vector3d[][] controlPoints;
+    private Vector3d[][] original;
     int m, n;
     private BasicArrowButton[][] buttonsCP;
     private ControlPointsSurfaceFrame callerFrame;
     private JButton applyButton = new JButton("Apply");
 
-    public ControlPointsFrame(Visualizer visualizer, int m, int n, Vector3f[][] defaultSampleCP, ControlPointsSurfaceFrame callerFrame) {
+    public ControlPointsFrame(Visualizer visualizer, int m, int n, Vector3d[][] defaultSampleCP, ControlPointsSurfaceFrame callerFrame) {
         setTitle("Edit control or data points");
         this.original = defaultSampleCP;
         this.addWindowListener(this);
@@ -33,7 +31,7 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
         this.visualizer = visualizer;
         this.m = m;
         this.n = n;
-        controlPoints = new Vector3f[m][n];
+        controlPoints = new Vector3d[m][n];
         this.callerFrame = callerFrame;
         textFieldsCP = new TextField[m][n];
         buttonsCP = new BasicArrowButton[m][n];
@@ -87,7 +85,7 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
         this.pack();
     }
 
-    public ControlPointsFrame(Visualizer visualizer, Vector3f[][] cp, ControlPointsSurfaceFrame callerFrame) {
+    public ControlPointsFrame(Visualizer visualizer, Vector3d[][] cp, ControlPointsSurfaceFrame callerFrame) {
         this(visualizer, cp.length, cp[0].length, cp, callerFrame);
     }
 
@@ -99,7 +97,7 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
         return textFieldsCP;
     }
 
-    public Vector3f[][] getControlPoints() {
+    public Vector3d[][] getControlPoints() {
         return controlPoints;
     }
 
@@ -140,7 +138,7 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
 
     }
 
-    public void setCP(int i, int j, Vector3f data) {
+    public void setCP(int i, int j, Vector3d data) {
         controlPoints[i][j] = data;
         textFieldsCP[i][j].setText(Visualizer.extractTextFromVector(data));
 //        textFieldsCP[i][j].setText(Visualizer.extractTextFromVector(data));
@@ -155,7 +153,7 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
                 String[] pos = button.getName().split(",");
                 int i = Integer.parseInt(pos[0]);
                 int j = Integer.parseInt(pos[1]);
-                Vector3f currentData = controlPoints[i][j];
+                Vector3d currentData = controlPoints[i][j];
                 VectorEditFrame vectorEditFrame = new VectorEditFrame(i, j, currentData,this);
                 break;
             case "apply":

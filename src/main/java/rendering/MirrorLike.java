@@ -13,7 +13,7 @@ public class MirrorLike extends SceneObject{
     }
 
     @Override
-    public Optional<IntersectionData> trace(Line3d ray, RayType rayType) {
+    public Optional<IntersectionData> trace(Ray ray, RayType rayType) {
         if (rayType == RayType.INDIRECT_DIFFUSE) {
             return Optional.empty();
         } else {
@@ -23,16 +23,16 @@ public class MirrorLike extends SceneObject{
 
 
     @Override
-    public Vector3f computeColor(IntersectionData intersectionData, Line3d ray, int rayDepth, Scene currentScene) {
+    public Vector3d computeColor(IntersectionData intersectionData, Ray ray, int rayDepth, Scene currentScene) {
         Double t = intersectionData.getT();
         Double u = intersectionData.getU();
         Double v = intersectionData.getV();
-        Vector3f hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
-        Vector3f surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
+        Vector3d hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
+        Vector3d surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
         hitPoint = hitPoint.add(surfaceNormal.mul(Scene.getBias())); //add bias in direction of surface normal
-        Vector3f incident = ray.getDirection();
-        Vector3f reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
-        Line3d reflectionRay = new Line3d(hitPoint, reflectionDir);
+        Vector3d incident = ray.getDirection();
+        Vector3d reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
+        Ray reflectionRay = new Ray(hitPoint, reflectionDir);
         return currentScene.rayTraceWithBVH(reflectionRay, rayDepth+1).mul(fr);
     }
 

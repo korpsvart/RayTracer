@@ -40,9 +40,9 @@ public class BezierPatchesData extends GeometricObject {
     public BezierSurface33[] getSurfaces() {
         BezierSurface33[] patches = new BezierSurface33[numPatches];
         for (int i = 0; i < numPatches; i++) {
-            Vector3f controlPoints[] = new Vector3f[16];
+            Vector3d controlPoints[] = new Vector3d[16];
             for (int j = 0; j < 16; j++) {
-                controlPoints[j] = new Vector3f(cP[patchesCP[i][j]-1]);
+                controlPoints[j] = new Vector3d(cP[patchesCP[i][j]-1]);
             }
             BezierSurface33 bSurface = new BezierSurface33(controlPoints, objectToWorld);
             bSurface.setDivs(divs);

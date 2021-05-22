@@ -92,7 +92,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
     }
 
     @Override
-    void updateControlPoints(Vector3f[][] cp) {
+    void updateControlPoints(Vector3d[][] cp) {
 //        for (int i = 0; i < m; i++) {
 //            for (int j = 0; j < n; j++) {
 //                controlPointsFrame.controlPoints[i][j] = cp[i][j];
@@ -106,7 +106,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         int n = (int) spinnerN.getValue();
         int p = (int) spinnerP.getValue();
         int q = (int) spinnerQ.getValue();
-        Vector3f[][] dataPoints = new Vector3f[m][n];
+        Vector3d[][] dataPoints = new Vector3d[m][n];
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 dataPoints[i][j] = controlPointsFrame.getControlPoints()[i][j];
@@ -179,7 +179,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         }
     }
 
-    protected Vector3f[][] getSampleDP() {
+    protected Vector3d[][] getSampleDP() {
         return SampleShapes.getBSurfaceInterpolationSample1CP();
     }
 
@@ -197,7 +197,7 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
 
 
     private void initializeDataWithSample() {
-        Vector3f[][] sampleCP = getSampleDP();
+        Vector3d[][] sampleCP = getSampleDP();
         Matrix4D sampleOTW = getSampleOTW();
         this.m = sampleCP.length;
         this.n = sampleCP[0].length;
@@ -223,11 +223,11 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
         //For now I'm not considering rotation
         //since I should implement a method that translates
         //rotation matrix back to rotation angle around each axis
-        setDefaultOTW(sampleOTW.getC(), new Vector3f(0, 0, 0));
+        setDefaultOTW(sampleOTW.getC(), new Vector3d(0, 0, 0));
     }
 
     private void initializeDataWithSample(BSurface bSurface) {
-        Vector3f[][] sampleCP = getSampleDP();
+        Vector3d[][] sampleCP = getSampleDP();
         Matrix4D sampleOTW = bSurface.getObjectToWorld();
         this.m = sampleCP.length;
         this.n = sampleCP[0].length;

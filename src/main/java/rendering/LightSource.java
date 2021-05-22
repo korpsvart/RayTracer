@@ -4,7 +4,7 @@ public abstract class LightSource {
 
     //Lights are unaffected by scaling transform
 
-    private final Vector3f color;
+    private final Vector3d color;
     private double normalizedIntensity;
     private final double intensity;
     private final Matrix4D lightToWorld;
@@ -13,31 +13,31 @@ public abstract class LightSource {
         return intensity;
     }
 
-    public abstract Vector3f illuminate(double distance);
+    public abstract Vector3d illuminate(double distance);
 
 
 
-    protected LightSource(Vector3f color, double intensity, Matrix4D lightToWorld) {
+    protected LightSource(Vector3d color, double intensity, Matrix4D lightToWorld) {
         this.color = color;
         this.intensity = intensity;
         this.lightToWorld = lightToWorld;
     }
 
 
-    public Vector3f getColor() {
+    public Vector3d getColor() {
         return color;
     }
 
-    public LightInfo getDirectionAndDistance(Vector3f hitPoint) {
+    public LightInfo getDirectionAndDistance(Vector3d hitPoint) {
         return null;
     }
 
     class LightInfo {
 
-        Vector3f lightDir;
+        Vector3d lightDir;
         double distance;
 
-        public LightInfo(Vector3f lightDir, double distance) {
+        public LightInfo(Vector3d lightDir, double distance) {
             this.lightDir = lightDir;
             this.distance = distance;
         }
@@ -46,7 +46,7 @@ public abstract class LightSource {
             return distance;
         }
 
-        public Vector3f getLightDir() {
+        public Vector3d getLightDir() {
             return lightDir;
         }
     }
