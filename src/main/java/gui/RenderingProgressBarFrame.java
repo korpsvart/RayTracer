@@ -18,6 +18,8 @@ public class RenderingProgressBarFrame extends JFrame implements SceneListener {
 
 
     public RenderingProgressBarFrame(Scene scene, int maxProgressBar, RenderingTask task) {
+        setLocationRelativeTo(null);
+        setUndecorated(true);
         scene.addSceneListener(this);
         progressBar = new JProgressBar(0, maxProgressBar);
         progressBar.setValue(0);

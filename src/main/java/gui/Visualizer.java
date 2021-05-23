@@ -119,7 +119,6 @@ public class Visualizer extends Frame implements ActionListener, WindowListener,
         setLayout(null);
         addWindowListener(this);
         setResizable(false);
-
     }
 
     public static Vector3d extractVectorFromTextField(TextField textField) {
