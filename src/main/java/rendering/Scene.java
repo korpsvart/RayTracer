@@ -44,6 +44,16 @@ public class Scene{
     }
 
     private BufferedImage img;
+
+    public boolean isShadowMirror() {
+        return shadowMirror;
+    }
+
+    public void setShadowMirror(boolean shadowMirror) {
+        this.shadowMirror = shadowMirror;
+    }
+
+    private boolean shadowMirror = false; //cast shadows by computing visibility on mirror-like and transparent objects too
     private List<SceneListener> sceneListenerList = new ArrayList<>();
     private final Camera camera;
     private final Vector3d cameraPosition;

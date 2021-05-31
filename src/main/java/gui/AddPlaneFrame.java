@@ -33,7 +33,9 @@ class AddPlaneFrame extends AddObjectFrame {
         Vector3d n = normal.matrixAffineTransform(getOTWMatrix().getA());
         Vector3d p = getOTWMatrix().getC();
         try {
-            return new Plane3d(p, n);
+            Plane3d plane3d = new Plane3d(p, n);
+            plane3d.setObjectToWorld(getOTWMatrix());
+            return plane3d;
         } catch (Exception e) {
             System.out.println("Invalid plane");
             //TODO: handle this

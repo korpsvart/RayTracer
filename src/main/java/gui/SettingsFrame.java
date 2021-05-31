@@ -17,6 +17,7 @@ public class SettingsFrame extends JFrame implements ActionListener {
     private Scene scene;
     GridBagConstraints c = new GridBagConstraints();
     JCheckBox indirectDiffuseCB;
+    JCheckBox shadowMirrorCB;
     TextField samplesNTextField;
     JButton applyButton;
     TextField widthTextField;
@@ -101,6 +102,32 @@ public class SettingsFrame extends JFrame implements ActionListener {
         c.gridy++;
 
 
+        c.gridx=0;
+        c.gridwidth=2;
+        c.insets  = new Insets(20,0,0,0);
+        mainPanel.add(new JSeparator(SwingConstants.HORIZONTAL), c);
+        c.gridy++;
+        c.gridwidth=1;
+
+        //shadow on mirror objects section
+        c.insets = new Insets(0,0,0,0);
+        JLabel shadowMirrorLabel = new JLabel("Cast shadows on reflective objects: ");
+        shadowMirrorCB = new JCheckBox();
+        shadowMirrorCB.setActionCommand("shadow_mirror");
+        shadowMirrorCB.addActionListener(this);
+        mainPanel.add(shadowMirrorLabel, c);
+        c.gridx=1;
+        mainPanel.add(shadowMirrorCB, c);
+
+        if (scene.isShadowMirror()) {
+            shadowMirrorCB.setSelected(true);
+        }
+
+        c.gridy++;
+
+        c.insets = new Insets(20, 0, 0, 0);
+
+
 
 
         //apply button
@@ -143,6 +170,9 @@ public class SettingsFrame extends JFrame implements ActionListener {
                         }
                     } else {
                         Scene.setSimulateIndirectDiffuse(false);
+                    }
+                    if (shadowMirrorCB.isSelected()) {
+                        scene.setShadowMirror(true);
                     }
                 try {
                     scene.setMaxRayDepth(Integer.parseInt(maxDepthTextField.getText()));

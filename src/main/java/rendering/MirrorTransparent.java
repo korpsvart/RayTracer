@@ -65,7 +65,11 @@ public class MirrorTransparent extends SceneObject {
         Double v = intersectionData.getV();
         Vector3d hitPoint = ray.getPoint().add(ray.getDirection().mul(t));
         Vector3d surfaceNormal = this.getSurfaceNormal(hitPoint, u, v);
-        return reflectionRefraction(hitPoint, ray.getDirection(), surfaceNormal, AIR_IOR, this.ior, rayDepth, currentScene);
+        Vector3d reflectionRefractionColor =  reflectionRefraction(hitPoint, ray.getDirection(), surfaceNormal, AIR_IOR, this.ior, rayDepth, currentScene);
+        if (currentScene.isShadowMirror()) {
+            reflectionRefractionColor = MirrorLike.accountForVisibility(currentScene, hitPoint, reflectionRefractionColor, this);
+        }
+        return reflectionRefractionColor;
     }
 
 

@@ -1,5 +1,6 @@
 package rendering;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MirrorLike extends SceneObject{
@@ -33,7 +34,34 @@ public class MirrorLike extends SceneObject{
         Vector3d incident = ray.getDirection();
         Vector3d reflectionDir = surfaceNormal.mul(incident.dotProduct(surfaceNormal)*-2).add(incident);
         Ray reflectionRay = new Ray(hitPoint, reflectionDir);
-        return currentScene.rayTraceWithBVH(reflectionRay, rayDepth+1).mul(fr);
+        Vector3d reflectionColor =  currentScene.rayTraceWithBVH(reflectionRay, rayDepth+1).mul(fr);
+        if (currentScene.isShadowMirror()) {
+            reflectionColor = accountForVisibility(currentScene, hitPoint, reflectionColor, this);
+        }
+        return reflectionColor;
+    }
+
+    public static Vector3d accountForVisibility(Scene currentScene, Vector3d hitPoint, Vector3d reflectionColor, SceneObject sceneObject) {
+        //check if light is blocked by another object
+        //if it is, then make the color darker
+        List<LightSource> lightSourceList = currentScene.getLightSources();
+        int n = lightSourceList.size();
+        Vector3d dimAmount = reflectionColor.mul(-(double)1/n);
+        for (LightSource lightSource:
+                lightSourceList) {
+            LightSource.LightInfo lightInfo = lightSource.getDirectionAndDistance(hitPoint);
+            Vector3d lDir = lightInfo.getLightDir();
+            double distance = lightInfo.getDistance();
+            Vector3d hitPoint3 = hitPoint.add(lDir.mul(10e-3)); //adding depth bias
+            Ray shadowRay = new Ray(hitPoint3, lDir);
+            boolean visibility = currentScene.checkVisibility(shadowRay, distance, sceneObject);
+            if (!visibility) {
+                //compute color
+                //(now using square rolloff)
+                reflectionColor = reflectionColor.add(dimAmount);
+            }
+        }
+        return reflectionColor;
     }
 
     @Override
