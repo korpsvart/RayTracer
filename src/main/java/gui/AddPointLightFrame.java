@@ -66,8 +66,8 @@ class AddPointLightFrame extends AddLightSourceFrame {
 
     @Override
     LightSource getParticularLightSource(double intensity, Vector3d color, Vector3d xyz) {
-        //remapping intensity over [0,150]
-        intensity *= 150;
+        //remapping intensity over [0,300]
+        intensity *= 300;
         if (removeMode) {
             scene.removeLightSource(defaultPointLight);
         }

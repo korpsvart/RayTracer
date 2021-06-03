@@ -64,8 +64,8 @@ class AddDistantLightFrame extends AddLightSourceFrame {
 
     @Override
     LightSource getParticularLightSource(double intensity, Vector3d color, Vector3d xyz) {
-        //remapping intensity over [0,10]
-        intensity *= 10;
+        //remapping intensity over [0,2]
+        intensity *= 2;
         if (removeMode) {
             scene.removeLightSource(defaultDistantLight);
         }
