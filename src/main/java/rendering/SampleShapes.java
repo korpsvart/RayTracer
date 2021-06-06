@@ -18,7 +18,7 @@ public class SampleShapes {
 
 
     public static BezierPatchesData getTeapot() {
-        int numPatches = 32;
+        int numPatches = 31;
         int numCP = 306;
         double[][] cP = new double[][] {
                 { 1.4000,  0.0000,  2.4000},

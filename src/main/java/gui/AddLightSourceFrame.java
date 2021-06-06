@@ -144,6 +144,13 @@ abstract class AddLightSourceFrame extends JFrame implements ActionListener {
         double z = Double.parseDouble(textFieldZ.getText());
         Vector3d xyz = new Vector3d(x, y, z);
         double intensity = Double.parseDouble(textFieldIntensity.getText());
+        if (intensity < 0 || intensity > 1) {
+            JOptionPane.showMessageDialog(this,
+                    "Intensity value must be inside [0,1]",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw new IllegalArgumentException("Intensity value must be inside [0,1]");
+        }
         String colorVal = colorTextField.getText().substring(1, colorTextField.getText().length() - 1);
         String[] colorA = colorVal.split(",");
         Vector3d color = new Vector3d(Arrays.stream(colorA).mapToDouble((h) -> Double.parseDouble(h)).toArray());
