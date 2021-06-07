@@ -571,7 +571,12 @@ public class SampleShapes {
         //move to default position more or less centered in the screen
         //this is actually not really formally correct since this interpolation
         // its not invariant under affine transform
-        Matrix4D internalOTW = new Matrix4D(Matrix3D.identity, new Vector3d(0.5, 0.5, 0));
+        Matrix4D internalOTW = new Matrix4D(new double[][]{
+                {3, 0, 0, 1.5},
+                {0, 3, 0, 2.5},
+                {0, 0, 3, 0},
+                {0, 0, 0, 1}
+        });
         return internalOTW.transformVector(dataPoints);
     }
 
@@ -584,7 +589,7 @@ public class SampleShapes {
     }
 
     public static Matrix4D getBSurfaceInterpolationSample1OTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 0, -1.5));
+        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 0, -4.5));
     }
 
 
