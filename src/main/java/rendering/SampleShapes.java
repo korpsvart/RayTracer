@@ -480,7 +480,7 @@ public class SampleShapes {
     }
 
     public static Vector3d[][] getBSplineSample1CP() {
-        return new Vector3d[][] {
+        Vector3d[][] cp =  new Vector3d[][] {
                 {
                         new Vector3d(-1, -1, 0),
                         new Vector3d(-0.9, -0.8, -0.2),
@@ -517,6 +517,7 @@ public class SampleShapes {
                         new Vector3d(0.5, -0.2, -0.1)
                 },
         };
+        return getBSplineSample1OTW().transformVector(cp);
     }
 
     public static int getBSplineSample1P() {
@@ -536,7 +537,7 @@ public class SampleShapes {
     }
 
     public static Matrix4D getBSplineSample1OTW() {
-        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 1.4, -5));
+        return new Matrix4D(Matrix3D.identity, new Vector3d(0, 1, 0));
     }
 
 

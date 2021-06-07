@@ -137,7 +137,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
     private void initializeDataWithSample() {
         if (bSurface ==null) {
             Vector3d[][] sampleCP = SampleShapes.getBSplineSample1CP();
-            Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
+//            Matrix4D sampleOTW = SampleShapes.getBSplineSample1OTW();
             double[] u = SampleShapes.getBSplineSample1U();
             double[] v = SampleShapes.getBSplineSample1V();
             int p = SampleShapes.getBSplineSample1P();
