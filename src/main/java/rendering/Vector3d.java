@@ -188,7 +188,7 @@ public class Vector3d {
                 return false;
             }
         } else {
-            return this.equals(obj);
+            return super.equals(obj);
         }
     }
 

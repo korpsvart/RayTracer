@@ -145,11 +145,11 @@ class KnotsEditFrame extends JFrame implements WindowListener, ActionListener {
         if (direction.equals("u")) {
             bSurface = bSurface.knotInsertionU(newKnot);
         } else {
-
             bSurface = bSurface.knotInsertionV(newKnot);
         }
         addedKnot = true;
-        this.dispose();
+        //rebuild frame
+        handleApply();
     }
 
     private void handleApply() {
@@ -159,7 +159,7 @@ class KnotsEditFrame extends JFrame implements WindowListener, ActionListener {
             for (int i = 0; i < l; i++) {
                 try {
                     double knot = Double.parseDouble(textFields[i].getText());
-                    if (knot <= 0 || knot >= 1) throw new NumberFormatException("value outside of permitted range");
+                    if (i != 0 && i!=(l-1) && (knot <= 0 || knot >= 1)) throw new NumberFormatException("value outside of permitted range");
                     this.knots[i + degree] = knot;
                 } catch (NumberFormatException exception) {
                     JOptionPane.showMessageDialog(this,

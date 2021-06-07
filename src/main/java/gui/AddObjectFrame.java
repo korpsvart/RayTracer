@@ -20,6 +20,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
     protected JColorChooser colorChooser;
     protected SceneObject defaultSceneObject;
     protected JButton albedoButton;
+    private double ior = 1.5;
     protected TextField iorText;
     protected JLabel materialLabel;
     protected Scene scene;
@@ -67,7 +68,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         c.weightx = 0.8;
         c.gridwidth = 2;
         transparentSubPanel.add(iorLabel, c);
-        TextField iorTextField = new TextField("1.5");
+        TextField iorTextField = new TextField(Double.toString(ior));
         this.iorText = iorTextField;
         c.gridx = 2;
         c.gridwidth = 1;
@@ -104,6 +105,7 @@ abstract class AddObjectFrame extends JFrame implements ActionListener {
         } else if (defaultSceneObject instanceof MirrorLike) {
             material = "Mirror-Like";
         } else if (defaultSceneObject instanceof  MirrorTransparent) {
+            ior = ((MirrorTransparent) defaultSceneObject).getIor();
             material = "Transparent";
         }
         constructor();
