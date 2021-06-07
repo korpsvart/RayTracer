@@ -157,17 +157,13 @@ class KnotsEditFrame extends JFrame implements WindowListener, ActionListener {
             callerFrame.setBSurface(bSurface);
         } else {
             for (int i = 0; i < l; i++) {
-                try {
-                    double knot = Double.parseDouble(textFields[i].getText());
-                    if (i != 0 && i!=(l-1) && (knot <= 0 || knot >= 1)) throw new NumberFormatException("value outside of permitted range");
-                    this.knots[i + degree] = knot;
-                } catch (NumberFormatException exception) {
-                    JOptionPane.showMessageDialog(this,
-                            "Invalid input",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    throw exception;
-                }
+                double knot = 0;
+                if (i != 0 && i !=(l-1))
+                    knot = parseKnotValue(this, textFields[i].getText(),
+                            textFields[i-1].getText());
+                else
+                    knot = Double.parseDouble(textFields[i].getText());
+                this.knots[i + degree] = knot;
                 if (direction.equals("u")) {
                     bSurface.setKnotsU(this.knots);
                 } else {
@@ -178,5 +174,36 @@ class KnotsEditFrame extends JFrame implements WindowListener, ActionListener {
         }
         setVisible(false);
         this.dispose();
+    }
+
+    private static double parseKnotValue(Component callerComponent, String knotString) {
+        double knot;
+        try {
+            knot = Double.parseDouble(knotString);
+            if (knot <= 0 || knot >= 1) throw new NumberFormatException("value outside of permitted range");
+        } catch (NumberFormatException exception) {
+            JOptionPane.showMessageDialog(callerComponent,
+                    "Invalid input",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw exception;
+        }
+        return knot;
+    }
+
+    private static double parseKnotValue(Component callerComponent, String knotString, String precedingKnotString) {
+        double knot;
+        try {
+            knot = Double.parseDouble(knotString);
+            double precedingKnot = Double.parseDouble(precedingKnotString);
+            if (knot <= 0 || knot >= 1 || knot < precedingKnot) throw new NumberFormatException("value outside of permitted range");
+        } catch (NumberFormatException exception) {
+            JOptionPane.showMessageDialog(callerComponent,
+                    "Invalid input",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw exception;
+        }
+        return knot;
     }
 }
