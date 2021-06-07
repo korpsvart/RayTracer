@@ -222,4 +222,33 @@ public class MatrixUtilities {
 
     }
 
+    public static Vector3d[][] extendU(Vector3d[][] controlPoints) {
+        Vector3d[][] cp = new Vector3d[controlPoints.length+1][controlPoints[0].length];
+        for (int i = 0; i < controlPoints.length; i++) {
+            for (int j = 0; j < controlPoints[0].length; j++) {
+                cp[i][j] = controlPoints[i][j];
+            }
+        }
+        for (int j = 0; j < cp[0].length; j++) {
+            Vector3d direction = cp[cp.length-2][j].add(cp[cp.length-3][j].mul(-1)).normalize();
+            cp[cp.length-1][j] = cp[cp.length-2][j].add(direction.mul(0.2));
+        }
+        return cp;
+    }
+
+    public static Vector3d[][] extendV(Vector3d[][] controlPoints) {
+        Vector3d[][] cp = new Vector3d[controlPoints.length][controlPoints[0].length+1];
+        for (int i = 0; i < controlPoints.length; i++) {
+            for (int j = 0; j < controlPoints[0].length; j++) {
+                cp[i][j] = controlPoints[i][j];
+            }
+        }
+        int n = cp[0].length;
+        for (int i = 0; i < cp.length; i++) {
+            Vector3d direction = cp[i][n-2].add(cp[i][n-3].mul(-1)).normalize();
+            cp[i][n-1] = cp[i][n-2].add(direction.mul(0.2));
+        }
+        return cp;
+    }
+
 }

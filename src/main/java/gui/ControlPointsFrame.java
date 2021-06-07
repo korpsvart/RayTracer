@@ -54,6 +54,8 @@ class ControlPointsFrame extends JFrame implements ActionListener, WindowListene
                 //a bigger dimension than the control points matrix
                 //so it needs a bit of refactoring
                 if (i < defaultSampleCP.length && j < defaultSampleCP[0].length) {
+//                    if (defaultSampleCP[i][j] == null)
+//                        defaultSampleCP[i][j] = new Vector3d(0,0,0);
                     textFieldsCP[i][j] = new TextField(Visualizer.extractTextFromVector(defaultSampleCP[i][j]),
                             15);
                     controlPoints[i][j] = defaultSampleCP[i][j];

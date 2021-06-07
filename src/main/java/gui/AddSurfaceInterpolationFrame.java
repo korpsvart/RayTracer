@@ -264,6 +264,8 @@ class AddSurfaceInterpolationFrame extends ControlPointsSurfaceFrame implements 
     }
 
     private void setControlPointsFrameDefault(int m, int n) {
-        controlPointsFrame = new ControlPointsFrame(visualizer, m, n, SampleShapes.getBSurfaceInterpolationSample1CP(), this);
+        Vector3d[][] cp = MatrixUtilities.extendU(controlPointsFrame.getControlPoints());
+        cp = MatrixUtilities.extendV(cp);
+        controlPointsFrame = new ControlPointsFrame(visualizer, m, n, cp, this);
     }
 }
