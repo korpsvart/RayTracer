@@ -176,7 +176,7 @@ class KnotsEditFrame extends JFrame implements WindowListener, ActionListener {
         this.dispose();
     }
 
-    private static double parseKnotValue(Component callerComponent, String knotString) {
+    public static double parseKnotValue(Component callerComponent, String knotString) {
         double knot;
         try {
             knot = Double.parseDouble(knotString);

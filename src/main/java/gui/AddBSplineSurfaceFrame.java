@@ -197,6 +197,7 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
         //Only the first way will preserve the existing knot spacing. Appending new control points will reset
         //the existing knot spacing, making it uniform.
         double[] newKnots;
+        double newKnot = 0;
         int p, q;
         if (e.getSource() instanceof JSpinner) {
             JSpinner source = (JSpinner) e.getSource();
@@ -205,7 +206,13 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     int pNew = (int) source.getValue();
                     int m = bSurface.getControlPoints().length;
                     if (pNew == m) {
-                        double newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                        try {
+                            newKnot = KnotsEditFrame.parseKnotValue(this,
+                                    JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                        } catch (Exception exception) {
+                            source.setValue(pNew-1);
+                            break;
+                        }
                         bSurface = bSurface.knotInsertionU(newKnot);
                         newKnots = BSpline.uniformKnots(m + 1, pNew);
                     } else {
@@ -221,7 +228,13 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
                     int qNew = (int) source.getValue();
                     int n = bSurface.getControlPoints()[0].length;
                     if (qNew == n) {
-                        double newKnot = Double.parseDouble(JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                        try {
+                            newKnot = KnotsEditFrame.parseKnotValue(this,
+                                    JOptionPane.showInputDialog("Insert new knot value (inside (0, 1) range)"));
+                        } catch (Exception exception) {
+                            source.setValue(qNew-1);
+                            break;
+                        }
                         bSurface = bSurface.knotInsertionV(newKnot);
                         newKnots = BSpline.uniformKnots(n + 1, qNew);
                     } else {
