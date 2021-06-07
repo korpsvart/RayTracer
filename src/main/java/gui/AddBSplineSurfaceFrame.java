@@ -276,5 +276,11 @@ class AddBSplineSurfaceFrame extends ControlPointsSurfaceFrame implements Change
 
     public void setBSurface(BSurface bSurface) {
         this.bSurface = bSurface;
+        spinnerM.removeChangeListener(this);
+        spinnerN.removeChangeListener(this);
+        spinnerM.setValue(bSurface.getControlPoints().length);
+        spinnerN.setValue(bSurface.getControlPoints()[0].length);
+        spinnerM.addChangeListener(this);
+        spinnerN.addChangeListener(this);
     }
 }
